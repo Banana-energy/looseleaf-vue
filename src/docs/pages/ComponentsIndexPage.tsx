@@ -45,14 +45,14 @@ export const ComponentsIndexPage = defineUi<{}>("ComponentsIndexPage", [], (_pro
   const empty = computed(() => catalog.value.components.length === 0);
   const text = useLocaleText();
   return () => {
+    const zh = text.value.locale === "zh-CN";
     return <Page kicker={text.value.t("page.library")} title={text.value.t("nav.components")} description={empty.value ? text.value.locale === "zh-CN" ? "组件库仍在持续完善，组件会随着文档编写逐步出现。" : "The library is still being drawn. Components appear here as their docs are written." : text.value.locale === "zh-CN" ? `${catalog.value.components.length} 个组件，分为 ${catalog.value.groups.length} 个分类，每个组件都提供实时示例、源码和 API 表格。` : `${catalog.value.components.length} components in ${catalog.value.groups.length} categories, each with live examples, code and API tables.`} toc={empty.value || trimmed.value ? undefined : catalog.value.groups.map(g => ({
       id: categoryAnchor(g.category),
       label: categoryLabel(text.value.locale, g.category)
     }))}>
       {empty.value ? <EmptyState title={text.value.t("nav.noComponents")}>
           <p>
-            A component shows up when it has a <InlineCode>src/docs/meta/&lt;slug&gt;.ts</InlineCode> file. Its examples in{" "}
-            <InlineCode>src/docs/examples/&lt;slug&gt;/</InlineCode> are picked up automatically.
+            {zh ? <>组件拥有 <InlineCode>src/docs/meta/&lt;slug&gt;.ts</InlineCode> 文件后会出现在这里，<InlineCode>src/docs/examples/&lt;slug&gt;/</InlineCode> 中的示例会自动收录。</> : <>A component shows up when it has a <InlineCode>src/docs/meta/&lt;slug&gt;.ts</InlineCode> file. Its examples in{" "}<InlineCode>src/docs/examples/&lt;slug&gt;/</InlineCode> are picked up automatically.</>}
           </p>
         </EmptyState> : <ContentSlot contentKey="components-gallery" fallback={<>
                   <SearchInput label={text.value.t("page.filterComponents")} placeholder={text.value.t("page.filterComponents")} value={query.value} onChange={e => setQuery(e.target.value)} class="dk-filter max-w-md" />

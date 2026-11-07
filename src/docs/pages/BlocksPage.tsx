@@ -24,11 +24,11 @@ export const BlocksIndexPage = defineUi<{}>("BlocksIndexPage", [], (_props, {
   const catalog = useCatalog();
   const text = useSettings();
   return () => {
+    const zh = text.value.locale === "zh-CN";
     return <Page kicker={text.value.locale === "zh-CN" ? "组件库" : "Library"} title={text.value.locale === "zh-CN" ? "区块" : "Blocks"} description={text.value.locale === "zh-CN" ? "由组件组合而成的完整页面：登录页、仪表盘以及更多界面。安装后即可继续编辑。" : "Whole pages composed from the components: sign in, dashboards and more. Install one and edit it; it is your code."}>
       {catalog.value.blocks.length === 0 ? <EmptyState title={text.value.locale === "zh-CN" ? "暂无区块" : "No blocks yet"}>
           <p>
-            A block appears here when it has files in <InlineCode>src/blocks/&lt;name&gt;/</InlineCode>. Add{" "}
-            <InlineCode>src/docs/content/blocks/&lt;name&gt;.tsx</InlineCode> to show a live preview.
+            {zh ? <>区块在 <InlineCode>src/blocks/&lt;name&gt;/</InlineCode> 中包含文件后会出现在这里；添加 <InlineCode>src/docs/content/blocks/&lt;name&gt;.tsx</InlineCode> 即可显示实时预览。</> : <>A block appears here when it has files in <InlineCode>src/blocks/&lt;name&gt;/</InlineCode>. Add <InlineCode>src/docs/content/blocks/&lt;name&gt;.tsx</InlineCode> to show a live preview.</>}
           </p>
         </EmptyState> : <TileGrid>
           {catalog.value.blocks.map(b => <Tile key={b.slug} to={paths.blocks(b.slug)} title={localizedBlockTitle(text.value.locale, b.slug, b.title)} description={localizedBlockDescription(text.value.locale, b.title, b.description)} meta={b.tags.map(t => <Chip key={t} tone="outline" plain>
@@ -75,7 +75,7 @@ const BlockDocPage = defineUi<{
     }, {
       id: "files" as const,
       label: text.value.locale === "zh-CN" ? "文件" : "Files"
-    }]} footer={<Pager label="Previous and next block" prev={prev.value && {
+    }]} footer={<Pager label={text.value.locale === "zh-CN" ? "上一区块和下一区块" : "Previous and next block"} prev={prev.value && {
       to: paths.blocks(prev.value.slug),
       title: prev.value.title
     }} next={next.value && {
@@ -84,13 +84,11 @@ const BlockDocPage = defineUi<{
     }} />}>
       <Section id="preview" title={text.value.locale === "zh-CN" ? "预览" : "Preview"}>
         {block.value.contentKey ? <PreviewFrame>
-            <Stage layout="full" height={520} label={`${block.value.title} preview`} surface={block.value.surface}>
+            <Stage layout="full" height={520} label={`${block.value.title} ${text.value.locale === "zh-CN" ? "预览" : "preview"}`} surface={block.value.surface}>
               <ContentSlot contentKey={block.value.contentKey} />
             </Stage>
-          </PreviewFrame> : <Callout tone="todo" title="No live preview yet">
-            <p>
-              Add <InlineCode>src/docs/content/blocks/{block.value.slug}.tsx</InlineCode> that default-exports the block to see it here.
-            </p>
+          </PreviewFrame> : <Callout tone="todo" title={zh ? "暂无实时预览" : "No live preview yet"}>
+            <p>{text.value.locale === "zh-CN" ? <>添加默认导出区块的 <InlineCode>src/docs/content/blocks/{block.value.slug}.tsx</InlineCode> 文件，即可在这里看到预览。</> : <>Add <InlineCode>src/docs/content/blocks/{block.value.slug}.tsx</InlineCode> that default-exports the block to see it here.</>}</p>
           </Callout>}
       </Section>
 
@@ -112,12 +110,12 @@ const BlockInstall = defineUi<{
   const block = computed(() => _props["block"]);
   const _hook1 = useSettings();
   const packageManager = computed(() => _hook1.value.packageManager);
+  const text = _hook1;
   return () => {
     return <>
       <CommandTabs command={pm => addCommand(pm, block.value.slug)} />
       <p class="dk-hint">
-        Installs under <InlineCode>components/blocks/{block.value.slug}/</InlineCode> together with the components it uses. Not registered yet? See{" "}
-        <Link to={`${paths.gettingStarted}#registry`}>Getting started</Link>, or use <InlineCode>{addCommand(packageManager.value, block.value.slug, "url")}</InlineCode>.
+        {text.value.locale === "zh-CN" ? <>会安装到 <InlineCode>components/blocks/{block.value.slug}/</InlineCode>，并一并安装它使用的组件。还没有注册命名空间？请查看<Link to={`${paths.gettingStarted}#registry`}>快速开始</Link>，或使用 <InlineCode>{addCommand(packageManager.value, block.value.slug, "url")}</InlineCode>。</> : <>Installs under <InlineCode>components/blocks/{block.value.slug}/</InlineCode> together with the components it uses. Not registered yet? See <Link to={`${paths.gettingStarted}#registry`}>Getting started</Link>, or use <InlineCode>{addCommand(packageManager.value, block.value.slug, "url")}</InlineCode>.</>}
       </p>
     </>;
   };
@@ -128,9 +126,10 @@ const BlockFiles = defineUi<{
   slots: _slots
 }) => {
   const block = computed(() => _props["block"]);
+  const text = useSettings();
   return () => {
-    if (block.value.files.length === 0) return <p class="dk-hint">No source files found in this build.</p>;
-    return <Tabs label={`${block.value.title} files`} items={block.value.files.map(file => ({
+    if (block.value.files.length === 0) return <p class="dk-hint">{text.value.locale === "zh-CN" ? "当前构建中没有找到源码文件。" : "No source files found in this build."}</p>;
+    return <Tabs label={`${block.value.title} ${text.value.locale === "zh-CN" ? "文件" : "files"}`} items={block.value.files.map(file => ({
       id: file.path,
       label: file.path,
       content: () => <BlockFileSource block={block.value.slug} file={file} />
@@ -146,8 +145,9 @@ const BlockFileSource = defineUi<{
   const block = computed(() => _props["block"]);
   const file = computed(() => _props["file"]);
   const state = useLoaded(() => file.value.source);
+  const text = useSettings();
   return () => {
-    if (state.value.status === "loading") return <Skeleton height={120} label="Loading source" />;
+    if (state.value.status === "loading") return <Skeleton height={120} label={text.value.locale === "zh-CN" ? "正在加载源码" : "Loading source"} />;
     if (state.value.status === "error") return <Callout tone="error">{state.value.error.message}</Callout>;
     const lang = file.value.path.split(".").pop();
     return <CodeBlock code={state.value.value} lang={lang} title={`blocks/${block.value}/${file.value.path}`} lineNumbers maxHeight={560} />;

@@ -10,6 +10,7 @@ import { Link, useAnchorHref } from "../core/router";
 import { paths } from "../core/router-core";
 import { AnchorHeading, Callout, CodeBlock, InlineCode, Prose, Section } from "../kit";
 import { CommandTabs } from "../widgets/CommandTabs";
+import { useLocaleText } from "../core/settings";
 const JUMPS = [{
   id: "requirements" as const,
   label: "Requirements" as const
@@ -237,11 +238,92 @@ const PROBLEMS: {
   symptom: "Windows high contrast looks different" as const,
   fix: <>On purpose: the overlay drawings hide and real borders show, so every control keeps an edge. Sticker, doodle, stamp and mascot art is kept.</>
 }];
+// 中文默认页面使用独立文案，保留相同的安装命令和代码示例，避免英文说明混入中文文档。
+const ChineseGettingStartedBody = defineUi<{
+  base: string;
+}>("ChineseGettingStartedBody", ["base"], (_props, {
+  slots: _slots
+}) => {
+  const base = computed(() => _props["base"]);
+  return () => <>
+    <nav aria-label="页面章节">
+      <ul class="dk-chips" role="list">
+        {[['requirements', '环境要求'], ['install', '注册表安装'], ['manual', '手动安装'], ['fonts', '字体'], ['tokens', '设计令牌'], ['provider', 'Provider'], ['ssr', '服务端渲染'], ['troubleshooting', '排查问题']].map(([id, label]) => <li key={id}><Jump id={id}>{label}</Jump></li>)}
+      </ul>
+    </nav>
+    <Prose>
+      <p>Looseleaf 由 Kevin T. Ngo 制作。如果你有问题、想法，或用它做出了作品，欢迎在 X 上联系 <a href="https://x.com/kevin_t_ngo" target="_blank" rel="noreferrer noopener">@kevin_t_ngo</a>。</p>
+    </Prose>
+    <Section id="requirements" title="环境要求">
+      <Prose><ul>
+        <li><strong>Vue 3。</strong>组件使用 Vue 3 的能力加载纹理，并把 <InlineCode>ref</InlineCode> 作为普通属性使用。</li>
+        <li><strong>Tailwind CSS v4。</strong>主题使用 <InlineCode>@theme inline</InlineCode>、<InlineCode>@utility</InlineCode> 和 <InlineCode>@custom-variant</InlineCode>。</li>
+        <li><strong>shadcn CLI 4.x。</strong>先运行 <InlineCode>shadcn init</InlineCode>，Looseleaf 会沿用 shadcn 的目录、别名和组件 API。</li>
+        <li><strong><InlineCode>@/*</InlineCode> 导入别名。</strong>安装后的文件通过这个别名相互导入。</li>
+        <li><strong>现代浏览器。</strong>绘制层使用 <InlineCode>:has()</InlineCode>、<InlineCode>clip-path</InlineCode> 和 <InlineCode>mix-blend-mode</InlineCode>。</li>
+      </ul></Prose>
+      <CommandTabs command={initCommand} />
+    </Section>
+    <Section id="install" title="使用注册表安装" description="最快的方式：CLI 会添加文件、依赖包、主题和字体。">
+      <AnchorHeading id="registry" level={3}>1. 注册命名空间</AnchorHeading>
+      <p class="dk-hint">每个项目只需执行一次命令，或将条目添加到 components.json。</p>
+      <CommandTabs command={pm => registerNamespaceCommand(pm, base.value)} />
+      <CodeBlock code={componentsJsonSnippet(base.value)} lang="json" title="components.json" />
+      <AnchorHeading id="add" level={3}>2. 添加需要的内容</AnchorHeading>
+      <CommandTabs command={pm => addCommand(pm, "looseleaf")} title="全部内容" />
+      <Callout tone="warn" title="此命令会覆盖颜色令牌"><p><InlineCode>looseleaf</InlineCode> 包含主题、字体、墨水引擎和全部组件，安装时会用 Notebook 配色替换 shadcn 颜色令牌。想保留自己的配色，请单独添加组件。</p></Callout>
+      <CommandTabs command={pm => addCommand(pm, "button")} title="单个组件" />
+      <p class="dk-hint">单独安装组件会保留已有颜色令牌，并补充缺少的 Looseleaf 令牌。区块会安装到 <InlineCode>components/blocks/</InlineCode>。</p>
+      <AnchorHeading id="verify" level={3}>3. 验证安装</AnchorHeading>
+      <CodeBlock code={VERIFY} lang="tsx" title="App.vue" />
+      <p class="dk-hint">如果按钮仍是普通描边，请查看下方的“排查问题”部分。</p>
+    </Section>
+    <Section id="manual" title="手动安装" description="不使用 CLI 时，可以手动复制这些文件。">
+      <Prose><ol>
+        <li>安装共享依赖：<InlineCode>reka-ui</InlineCode>、<InlineCode>class-variance-authority</InlineCode>、<InlineCode>clsx</InlineCode>、<InlineCode>tailwind-merge</InlineCode> 和 <InlineCode>tw-animate-css</InlineCode>。</li>
+        <li>复制 <InlineCode>src/styles/looseleaf.css</InlineCode> 与 <InlineCode>src/styles/fonts.css</InlineCode>，并在入口文件中各引入一次。</li>
+        <li>复制绘制引擎 <InlineCode>src/lib/ink/</InlineCode> 和工具函数 <InlineCode>src/lib/utils.ts</InlineCode>。</li>
+        <li>把需要的组件复制到 <InlineCode>src/components/ui/</InlineCode>，每个组件页面的“手动”标签都提供完整源码。</li>
+      </ol></Prose>
+      <CodeBlock code={PATH_ALIAS} lang="json" title="tsconfig.json" />
+    </Section>
+    <Section id="fonts" title="字体" description="Kevin Sans 负责界面、标题和标记，IBM Plex Mono 负责代码。">
+      <Prose><p><InlineCode>font-hand</InlineCode>、<InlineCode>font-script</InlineCode> 和 <InlineCode>font-type</InlineCode> 都是为不同用途调校的 Kevin Sans；<InlineCode>font-mono</InlineCode> 使用 IBM Plex Mono。通过注册表安装时会自动加入主题，也可以手动加载：</p></Prose>
+      <CommandTabs command={pm => packagesCommand(pm, FONT_PACKAGES)} />
+      <CodeBlock code={FONT_IMPORTS} lang="css" title="index.css" />
+      <CodeBlock code={FONT_TOKENS} lang="css" title="index.css" />
+    </Section>
+    <Section id="tokens" title="设计令牌" description="颜色、宽度和时长都使用 CSS 自定义属性，换主题无需修改组件代码。">
+      <Prose><p>配色定义在 <InlineCode>--ll-*</InlineCode> 变量中，shadcn 的语义变量会映射到这些令牌，Tailwind 可以直接把它们作为工具类使用。</p></Prose>
+      <CodeBlock code={TOKEN_USE} lang="tsx" title="使用配色" />
+      <CodeBlock code={TOKEN_OVERRIDE} lang="css" title="覆盖令牌" />
+    </Section>
+    <Section id="provider" title="Provider" description="用一个包装器统一设置绘制质量、密度、动效和方向。">
+      <CodeBlock code={PROVIDER} lang="tsx" title="App.vue" />
+      <Prose><p><InlineCode>tier</InlineCode> 控制绘制质量，<InlineCode>density</InlineCode> 控制密度，<InlineCode>motion</InlineCode> 控制动效，另外还可以设置主题、方向、纹理和 SVG 图案。</p><p>密度和动效也能通过 <InlineCode>html</InlineCode> 等祖先元素的属性设置。</p></Prose>
+      <CodeBlock code={ATTRIBUTES.replace('lang="en"', 'lang="zh-CN"')} lang="text" title="index.html" copy={false} />
+      <AnchorHeading id="desk" level={3}>桌面</AnchorHeading><p class="dk-hint">纸张无需额外设置；如果需要布面桌面，请使用 <InlineCode>ll-desk</InlineCode> 工具类和对应纹理。</p>
+      <AnchorHeading id="portals" level={3}>Portal</AnchorHeading><p class="dk-hint">Portal 挂载在 <InlineCode>body</InlineCode> 下时，请在自己的根节点上使用 <InlineCode>useInkScope()</InlineCode>。</p>
+    </Section>
+    <Section id="ssr" title="服务端渲染" description="在 Next.js、Remix 等环境中，了解最终生成的 HTML。">
+      <Prose><p>每次绘制都由 <InlineCode>useId()</InlineCode> 或 <InlineCode>seed</InlineCode> 生成稳定种子，因此服务端和客户端可以保持一致。<InlineCode>InkProvider</InlineCode> 会添加纹理遮罩，<InlineCode>Paper</InlineCode> 会复用对应纸张纹理。</p></Prose>
+      <CodeBlock code={SSR} lang="tsx" title="layout.tsx" copy={false} />
+      <AnchorHeading id="csp" level={3}>内容安全策略</AnchorHeading>
+      <Callout tone="warn" title="严格策略需要允许三类内容"><p>纹理使用 <InlineCode>data:</InlineCode> 图片和内联 <InlineCode>style</InlineCode>。服务端渲染时请允许对应的图片来源、style nonce，以及 <InlineCode>style-src-attr 'unsafe-inline'</InlineCode>。</p></Callout>
+      <CodeBlock code={CSP} lang="text" title="Content-Security-Policy" copy={false} />
+    </Section>
+    <Section id="troubleshooting" title="排查问题" description="常见问题和对应处理方式。">
+      <Prose><ul><li>控件只有普通描边：确认根部只挂载一次 <InlineCode>InkProvider</InlineCode>，并检查 <InlineCode>@/lib/ink</InlineCode> 导入。</li><li>字体没有生效：安装 Fontsource 字体包并确认 <InlineCode>--font-hand</InlineCode> 等变量已定义。</li><li>颜色异常：安装 <InlineCode>looseleaf-theme</InlineCode> 会覆盖 Notebook 配色，单独安装组件可以保留已有配色。</li><li>Portal 样式丢失：在 Portal 根节点展开 <InlineCode>useInkScope()</InlineCode>。</li></ul></Prose>
+    </Section>
+  </>;
+});
 const GettingStartedBody = defineUi<{}>("GettingStartedBody", [], (_props, {
   slots: _slots
 }) => {
   const base = computed(() => registryBase());
+  const text = useLocaleText();
   return () => {
+    if (text.value.locale === "zh-CN") return <ChineseGettingStartedBody base={base.value} />;
     return <>
       <nav aria-label="Sections of this page">
         <ul class="dk-chips" role="list">

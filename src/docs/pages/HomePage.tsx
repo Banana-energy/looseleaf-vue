@@ -57,7 +57,7 @@ const DefaultHome = defineUi<{}>("DefaultHome", [], (_props, {
           <ContentSlot contentKey="home-hero" />
         </div> : null}
 
-      <CodeBlock code={addCommand(packageManager.value, "looseleaf")} lang="bash" title="Everything, in one line" />
+      <CodeBlock code={addCommand(packageManager.value, "looseleaf")} lang="bash" title={zh ? "一条命令安装全部内容" : "Everything, in one line"} />
 
       <dl class="dk-stats grid grid-cols-3 gap-4 text-center">
         {[[zh ? "组件" : "Components", catalog.value.components.length], [zh ? "区块" : "Blocks", catalog.value.blocks.length], [zh ? "基础" : "Foundations", FOUNDATIONS.length]].map(([label, value]) => <div key={label} class="flex flex-col-reverse items-center gap-1">
@@ -69,16 +69,24 @@ const DefaultHome = defineUi<{}>("DefaultHome", [], (_props, {
       <Section id="principles" title={zh ? "你将获得什么" : "What you get"}>
         <ul class="dk-principles grid gap-x-8 gap-y-5 sm:grid-cols-3" role="list">
           {PRINCIPLES.map(p => <li key={p.title}>
-              <h3 class="font-script text-2xl leading-tight font-bold">{p.title}</h3>
-              <p class="mt-1 text-[15px] leading-snug text-ink-soft">{p.text}</p>
+              <h3 class="font-script text-2xl leading-tight font-bold">{zh ? ({
+                "Drop-in": "即插即用",
+                "Drawn, not styled": "绘制，而非装饰",
+                Practical: "注重实用"
+              } as Record<string, string>)[p.title] : p.title}</h3>
+              <p class="mt-1 text-[15px] leading-snug text-ink-soft">{zh ? ({
+                "Drop-in": "保留 shadcn/ui 在 Reka UI 上的部件名、属性和 data-slot 值，替换文件即可继续使用 JSX。",
+                "Drawn, not styled": "线条有压力变化，填充收在轮廓内，纸张保留纹理；每一笔都有固定种子，服务端和客户端的绘制结果一致。",
+                Practical: "支持键盘操作、AA 级文本、真实焦点环、减少动效和三种密度；手绘感可以按需调低。"
+              } as Record<string, string>)[p.title] : p.text}</p>
             </li>)}
         </ul>
       </Section>
 
       <Section id="components" title={showNew.value ? zh ? "最新组件" : "New and noteworthy" : text.value.t("nav.components")}>
-        {catalog.value.components.length === 0 ? <EmptyState title="The library is still being drawn">
+        {catalog.value.components.length === 0 ? <EmptyState title={zh ? "组件库仍在绘制中" : "The library is still being drawn"}>
             <p>
-              Components appear here as their docs are written. Meanwhile, read <Link to={paths.gettingStarted}>how installation works</Link>.
+              {zh ? <>组件会随着文档编写逐步出现在这里。你可以先阅读<Link to={paths.gettingStarted}>安装方式</Link>。</> : <>Components appear here as their docs are written. Meanwhile, read <Link to={paths.gettingStarted}>how installation works</Link>.</>}
             </p>
           </EmptyState> : <>
             <TileGrid>

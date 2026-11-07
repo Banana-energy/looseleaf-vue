@@ -55,13 +55,15 @@ const Placeholder = defineUi<{
   slots: _slots
 }) => {
   const topic = computed(() => _props["topic"]);
+  const text = useLocaleText();
   return () => {
+    const zh = text.value.locale === "zh-CN";
     return <>
-      <Callout tone="todo" title="This page is still being drawn">
-        <p>Here is the short version. The illustrated page replaces it when it is ready.</p>
+      <Callout tone="todo" title={zh ? "这个页面仍在绘制中" : "This page is still being drawn"}>
+        <p>{zh ? "这里先提供简要版本，完成后会替换为插画页面。" : "Here is the short version. The illustrated page replaces it when it is ready."}</p>
       </Callout>
 
-      <Section id="in-brief" title="In brief">
+      <Section id="in-brief" title={zh ? "简要说明" : "In brief"}>
         <Prose>
           <ul>
             {topic.value.facts.map(fact => <li key={fact}>{fact}</li>)}
@@ -69,7 +71,7 @@ const Placeholder = defineUi<{
         </Prose>
       </Section>
 
-      {topic.value.swatches ? <Section id="swatches" title="Palette" description="Drawn live from the tokens in the loaded stylesheet.">
+      {topic.value.swatches ? <Section id="swatches" title={zh ? "配色" : "Palette"} description={zh ? "根据当前样式表中的令牌实时绘制。" : "Drawn live from the tokens in the loaded stylesheet."}>
           <ul class="dk-swatches grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-4" role="list">
             {topic.value.swatches.map(s => <li key={s.token} class="dk-swatch flex flex-col gap-1">
                 <span class="dk-swatch-chip block h-14 shadow-[inset_0_0_0_1.5px_var(--ll-pencil-mark)] [border-radius:3px_8px_4px_9px/8px_3px_9px_4px]" style={cssStyle({
@@ -81,7 +83,7 @@ const Placeholder = defineUi<{
           </ul>
         </Section> : null}
 
-      {topic.value.fonts ? <Section id="faces" title="Faces">
+      {topic.value.fonts ? <Section id="faces" title={zh ? "字体" : "Faces"}>
           <ul class="dk-specimens flex flex-col gap-5" role="list">
             {topic.value.fonts.map(f => <li key={f.token} class="dk-specimen flex flex-col gap-1 border-b border-dashed border-pencil-mark/60 pb-4">
                 <span class="dk-specimen-text text-3xl leading-tight" style={cssStyle({
@@ -96,7 +98,7 @@ const Placeholder = defineUi<{
           </ul>
         </Section> : null}
 
-      {topic.value.see ? <Section id="see-also" title="See also">
+      {topic.value.see ? <Section id="see-also" title={zh ? "另请参阅" : "See also"}>
           <ul class="dk-inline-list flex flex-wrap gap-x-5 gap-y-2 font-bold" role="list">
             {topic.value.see.map(s => <li key={s.to}>
                 <Link to={s.to}>{s.label}</Link>
