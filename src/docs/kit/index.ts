@@ -1,0 +1,24 @@
+// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。
+import * as UI from "@/lib/types";
+import { defineUi, omitProps, domProps, elementRef, jsxTag } from "@/lib/component";
+import { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from "@/lib/composables";
+import { Children, cloneElement, createElement, isValidElement } from "@/lib/vnode";
+import { cssStyle } from "@/lib/css";
+import { computed } from "vue";
+export { ApiTable, type ApiTableProps } from "./ApiTable";
+export { Button, ButtonLink, IconButton, type ButtonLinkProps, type ButtonProps, type IconButtonProps } from "./Button";
+export { Callout, type CalloutProps, type CalloutTone } from "./Callout";
+export { Chip, StatusChip, type ChipProps, type ChipTone } from "./Chip";
+export { CodeBlock, CopyButton, InlineCode, Kbd, type CodeBlockProps } from "./CodeBlock";
+export { cx } from "./cx";
+export { SearchInput, type SearchInputProps } from "./Field";
+export { Glyph, type GlyphName, type GlyphProps } from "./glyphs";
+export { NavGroup, NavItem, NavSection, type NavGroupProps, type NavItemProps, type NavSectionProps } from "./Nav";
+export { Overlay, Scrim, type OverlayProps } from "./Overlay";
+export { EmptyState, Skeleton, VisuallyHidden, type EmptyStateProps } from "./Misc";
+export { Page, TableOfContents, type PageProps, type TocItem } from "./Page";
+export { Pager, type PagerLink } from "./Pager";
+export { AnchorHeading, Prose, Section, type AnchorHeadingProps, type SectionProps } from "./Section";
+export { Stage, type StageProps } from "./Stage";
+export { Tabs, type TabItem, type TabsProps } from "./Tabs";
+export { Tile, TileGrid, type TileProps } from "./Tile";

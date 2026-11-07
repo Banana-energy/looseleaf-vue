@@ -1,0 +1,41 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sidebar-01",
+  "type": "registry:block",
+  "title": "Sidebar 01",
+  "description": "A simple sidebar with the navigation grouped by section: an order pad hung from a binder clip, an edition switcher and a search box on top, the current page in highlighter with a bracket in the margin. Mirrors shadcn's sidebar-01. Looks right on the desk and on plain paper.",
+  "categories": [
+    "sidebar"
+  ],
+  "registryDependencies": [
+    "looseleaf-theme",
+    "sidebar",
+    "sidebar-shared"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/sidebar-01/components/sidebar-01-app-sidebar.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/sidebar-01/components/sidebar-01-app-sidebar.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { docsNav, docsVersions } from \"@/blocks/sidebar-shared/sidebar-data\";\nimport { SearchForm } from \"@/blocks/sidebar-shared/sidebar-search-form\";\nimport { VersionSwitcher } from \"@/blocks/sidebar-shared/sidebar-version-switcher\";\nimport { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from \"@/components/ui/sidebar\";\nexport const AppSidebar = defineUi<UI.ComponentProps<typeof Sidebar>>(\"AppSidebar\", [], (_props, {\n  slots: _slots\n}) => {\n  const props = computed(() => omitProps(_props, []));\n  return () => {\n    return <Sidebar role=\"navigation\" aria-label=\"Field guide\" {...domProps(props.value)}>\r\n      <SidebarHeader>\r\n        <VersionSwitcher versions={docsVersions} defaultVersion={docsVersions[0]!} />\r\n        <SearchForm />\r\n      </SidebarHeader>\r\n      <SidebarContent class=\"[&_[data-slot=sidebar-menu-button-mark]]:overflow-visible!\">\r\n        {docsNav.map(section => <SidebarGroup key={section.title}>\r\n            <SidebarGroupLabel>{section.title}</SidebarGroupLabel>\r\n            <SidebarGroupContent>\r\n              <SidebarMenu>\r\n                {section.items.map(item => <SidebarMenuItem key={item.title}>\r\n                    <SidebarMenuButton asChild isActive={item.isActive}>\r\n                      <a href={item.url}>{item.title}</a>\r\n                    </SidebarMenuButton>\r\n                  </SidebarMenuItem>)}\r\n              </SidebarMenu>\r\n            </SidebarGroupContent>\r\n          </SidebarGroup>)}\r\n      </SidebarContent>\r\n      <SidebarRail />\r\n    </Sidebar>;\n  };\n});\n"
+    },
+    {
+      "path": "src/blocks/sidebar-01/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/sidebar-01/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { AppSidebar } from \"@/blocks/sidebar-01/components/sidebar-01-app-sidebar\";\nimport { containedClasses } from \"@/blocks/sidebar-shared/sidebar-contained\";\nimport { docsTrail } from \"@/blocks/sidebar-shared/sidebar-data\";\nimport { PageBody, PageHeader, PageNote, PageSheet } from \"@/blocks/sidebar-shared/sidebar-page\";\nimport { SidebarProvider } from \"@/components/ui/sidebar\";\nconst Page = defineUi<{\n  contained?: boolean;\n}>(\"Page\", [\"contained\"], (_props, {\n  slots: _slots\n}) => {\n  const contained = computed(() => _props[\"contained\"] === undefined ? false : _props[\"contained\"]);\n  const c = computed(() => containedClasses(contained.value));\n  return () => {\n    return <SidebarProvider class={c.value.provider}>\r\n      <AppSidebar class={c.value.sidebar} />\r\n      <PageSheet class={c.value.inset}>\r\n        <PageHeader crumbs={docsTrail} bordered class=\"overflow-x-clip\" />\r\n        <PageBody title=\"Margins\" kicker=\"Writing on paper\">\r\n          <PageNote title=\"The margin is empty\" pose=\"write\">\r\n            Nothing scribbled here yet. Pick another page from the pad, or grab a pencil and start one.\r\n          </PageNote>\r\n        </PageBody>\r\n      </PageSheet>\r\n    </SidebarProvider>;\n  };\n});\nexport default Page;\n"
+    }
+  ],
+  "docs": "Installed the \"Sidebar 01\" block into your components directory under blocks/sidebar-01/.\nImport it: import Page from \"<your components alias>/blocks/sidebar-01/page\"",
+  "meta": {
+    "tags": [
+      "sidebar",
+      "navigation",
+      "docs"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

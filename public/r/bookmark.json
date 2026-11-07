@@ -1,0 +1,53 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "bookmark",
+  "type": "registry:ui",
+  "title": "Bookmark",
+  "description": "A ribbon bookmark you can press. Unpressed, a dashed pencil ghost of a ribbon marks the place; pressed, the woven, edge-stitched cloth ribbon hangs there in its color and casts a short shadow. It is a Toggle underneath, so `aria-pressed`, Space and Enter come for free. `BookmarkRibbon` is the same ribbon as a page marker with no behavior.",
+  "categories": [
+    "Paper"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-paper",
+    "looseleaf-theme",
+    "use-paper-object"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/bookmark.tsx",
+      "type": "registry:ui",
+      "target": "@ui/bookmark.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Toggle as TogglePrimitive } from \"@/lib/primitives\";\nimport { useShapedSheet } from \"@/hooks/use-paper-object\";\nimport type { Accent } from \"@/lib/ink/paper/props\";\nimport { bookmarkRecipe } from \"@/lib/ink/recipes/bookmark-ink\";\nimport { cn } from \"@/lib/utils\";\nconst RIBBON_TILT = \"[&>svg]:[rotate:clamp(calc(var(--ll-tilt-max)*-1),var(--ll-tilt,0deg),var(--ll-tilt-max))]\";\nconst RIBBON_SHADOW = \"data-[state=on]:[&>svg]:[filter:var(--ll-drop-sticker)]\";\nconst FORCED_ON = \"forced-colors:data-[state=on]:bg-[Highlight]\";\ntype BookmarkProps = UI.ComponentProps<typeof TogglePrimitive.Root> & {\n  tone?: Accent;\n  tilt?: boolean | number;\n  seed?: string | number;\n  size?: readonly [number, number];\n};\nconst Bookmark = defineUi<BookmarkProps>(\"Bookmark\", [\"class\", \"style\", \"tone\", \"tilt\", \"seed\", \"size\", \"disabled\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const style = computed(() => _props[\"style\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const ref = computed(() => _props[\"ref\"]);\n  const tone = computed(() => _props[\"tone\"] === undefined ? \"tomato\" as const : _props[\"tone\"]);\n  const tilt = computed(() => _props[\"tilt\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const size = computed(() => _props[\"size\"]);\n  const disabled = computed(() => _props[\"disabled\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"style\", \"children\", \"ref\", \"tone\", \"tilt\", \"seed\", \"size\", \"disabled\"]));\n  const o = useShapedSheet(() => ({\n    recipe: bookmarkRecipe,\n    params: {\n      tone: tone.value,\n      mode: \"toggle\" as const,\n      disabled: !!disabled.value\n    },\n    ref: ref.value as UI.Ref<HTMLElement>,\n    seed: seed.value,\n    tilt: tilt.value,\n    tiltMax: 1.4,\n    size: size.value,\n    kind: \"bookmark\" as const\n  }));\n  return () => {\n    return <TogglePrimitive.Root data-slot=\"bookmark\" disabled={disabled.value} {...domProps(o.value.root)} {...domProps(props.value)} class={cn(\"relative isolate inline-block h-12 w-8 shrink-0 cursor-pointer align-top after:absolute after:-inset-1.5 disabled:cursor-not-allowed\", RIBBON_TILT, RIBBON_SHADOW, FORCED_ON, className.value)} style={cssStyle({\n      ...o.value.root.style,\n      ...style.value\n    })}>\r\n      {o.value.node}\r\n      <span class=\"sr-only\">{readSlot(_slots.default) ?? \"Bookmark\"}</span>\r\n    </TogglePrimitive.Root>;\n  };\n});\ntype BookmarkRibbonProps = UI.ComponentProps<\"div\"> & {\n  tone?: Accent;\n  tilt?: boolean | number;\n  seed?: string | number;\n  size?: readonly [number, number];\n};\nconst BookmarkRibbon = defineUi<BookmarkRibbonProps>(\"BookmarkRibbon\", [\"class\", \"style\", \"tone\", \"tilt\", \"seed\", \"size\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const style = computed(() => _props[\"style\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const tone = computed(() => _props[\"tone\"] === undefined ? \"tomato\" as const : _props[\"tone\"]);\n  const tilt = computed(() => _props[\"tilt\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const size = computed(() => _props[\"size\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"style\", \"ref\", \"tone\", \"tilt\", \"seed\", \"size\"]));\n  const o = useShapedSheet(() => ({\n    recipe: bookmarkRecipe,\n    params: {\n      tone: tone.value,\n      mode: \"static\" as const,\n      disabled: false\n    },\n    ref: ref.value as UI.Ref<HTMLElement>,\n    seed: seed.value,\n    tilt: tilt.value,\n    tiltMax: 1.4,\n    size: size.value,\n    kind: \"bookmark\" as const\n  }));\n  return () => {\n    return <div data-slot=\"bookmark-ribbon\" aria-hidden=\"true\" {...domProps(o.value.root)} {...domProps(props.value)} class={cn(\"pointer-events-none relative isolate inline-block h-14 w-8 shrink-0 [&>svg]:[filter:var(--ll-drop-sticker)]\", RIBBON_TILT, className.value)} style={cssStyle({\n      ...o.value.root.style,\n      ...style.value\n    })}>\r\n      {o.value.node}\r\n    </div>;\n  };\n});\nexport { Bookmark, BookmarkRibbon };\nexport type { BookmarkProps, BookmarkRibbonProps };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/bookmark-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/bookmark-ink.ts",
+      "content": "import { defineRecipe } from '@/lib/ink/recipes'\r\nimport { num, pathTag, tok } from '@/lib/ink/recipes/paper-set-ink'\r\nimport type { Accent } from '@/lib/ink/paper/props'\r\nimport { wash } from '@/lib/ink/fills'\r\nimport { densify } from '@/lib/ink/geom'\r\nimport type { Rng } from '@/lib/ink/rng'\r\nimport type { Pt } from '@/lib/ink/types'\r\n\r\nexport interface BookmarkParams {\r\n  tone: Accent\r\n  mode: 'toggle' | 'static'\r\n  disabled: boolean\r\n}\r\n\r\nexport const NOTCH = 0.55\r\n\r\nexport function ribbonPoly(w: number, h: number): Pt[] {\r\n  const n = Math.min(h * 0.4, w * NOTCH)\r\n  return [[0, 0], [w, 0], [w, h], [w / 2, h - n], [0, h]]\r\n}\r\n\r\nconst ribbonD = (w: number, h: number, r: Rng) => {\r\n  const p = densify([...ribbonPoly(w, h), ribbonPoly(w, h)[0]], 6).slice(0, -1)\r\n  return `M${num(p[0][0])} ${num(p[0][1])}` + p.slice(1).map((q) => `L${num(q[0] + r.gauss(0, 0.22))} ${num(q[1] + r.gauss(0, 0.22))}`).join('') + 'z'\r\n}\r\n\r\nexport const bookmarkRecipe = defineRecipe<BookmarkParams>({\r\n  id: 'bookmark-ribbon',\r\n  kind: 'bookmark',\r\n  layers: ['rest', 'checked', 'disabled', 'hover'],\r\n  pad: 6,\r\n  draw(ink, { w, h }, { tone, mode, disabled }, ctx) {\r\n    const d = ribbonD(w, h, ink.next('edge'))\r\n    const ribbon = () => {\r\n      const r = ink.next('cloth')\r\n      const id = `ll-bm${ink.seed.toString(36)}`\r\n      let s = `<clipPath id=\"${id}c\"><path d=\"${d}\"/></clipPath>`\r\n      s += pathTag(d, { fill: tok(tone) })\r\n      let g = ''\r\n      for (let x = 2.2; x < w - 1; x += 2.3) g += `M${num(x + r.gauss(0, 0.08))} 0V${num(h)}`\r\n      s += `<g clip-path=\"url(#${id}c)\">`\r\n      s += pathTag(g, { stroke: tok('ink'), sw: 0.7, op: 0.1 })\r\n      s += pathTag(`M0 0H${num(w * 0.34)}V${num(h)}H0z`, { fill: tok('photo'), op: 0.22 })\r\n      s += pathTag(`M${num(w * 0.7)} 0H${num(w)}V${num(h)}H${num(w * 0.7)}z`, { fill: tok('ink'), op: 0.13 })\r\n      s += pathTag(`M0 ${num(h)}L${num(w / 2)} ${num(h - Math.min(h * 0.4, w * NOTCH))}L${num(w)} ${num(h)}V${num(h + 4)}H0z`, { fill: tok('ink'), op: 0.16 })\r\n      s += `</g>`\r\n      s += pathTag(`M2.6 1.5V${num(h - 3)}M${num(w - 2.6)} 1.5V${num(h - 3)}`, { stroke: tok('photo'), sw: 0.8, op: 0.6, extra: `stroke-dasharray=\"${num(r.range(2, 2.6))} ${num(r.range(1.5, 2.1))}\"` })\r\n      s += pathTag(d, { stroke: tok('ink'), sw: 0.7, op: 0.36 })\r\n      return s\r\n    }\r\n    const ghost = (alpha: number) => {\r\n      ink.raw(pathTag(d, { fill: tok('paper-shade'), op: alpha }) + pathTag(d, { stroke: tok('pencil'), sw: 1.1, op: 0.85, extra: 'stroke-dasharray=\"3.6 3.2\"' }), 'under')\r\n    }\r\n    if (disabled) {\r\n      ink.layer('disabled', () => ghost(0.3))\r\n      return\r\n    }\r\n    if (mode === 'static') {\r\n      ink.layer('rest', () => ink.raw(ribbon(), 'under'))\r\n      return\r\n    }\r\n    ink.layer('rest', () => ghost(0.45))\r\n    ink.layer('checked', () => ink.raw(ribbon(), 'under'))\r\n    if (!ctx.calm) ink.layer('hover', () => wash(ink, ribbonPoly(w, h), tone, { alpha: 0.52, inset: 1.2 }))\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "toggle",
+      "notebook",
+      "label-tag",
+      "card"
+    ],
+    "a11y": [
+      "Bookmark is a real toggle button: it announces \"pressed\" or \"not pressed\", it is reached by Tab and pressed with Space or Enter. Give it a name that says what it saves (\"Save this article\"); the name does not change with the state, `aria-pressed` does.",
+      "The ribbon, its stitching and its ghost are aria-hidden decoration, so the state is never carried by color alone: `aria-pressed` and the ghost-versus-ribbon shape (dashed outline versus a filled tail) both tell it. Focus shows the standard focus ring around the box.",
+      "The hit area is 44 x 60 px with its extension (24 px minimum). Windows high contrast replaces the drawing with a button outline, and a pressed bookmark fills with the system highlight color so the state is still visible; `aria-pressed` follows either way."
+    ],
+    "usage": "import { Bookmark, BookmarkRibbon } from \"@/components/ui/bookmark\"\n\n<Card class=\"relative\">\n  <Bookmark class=\"absolute -top-1 end-6\" defaultPressed onPressedChange={save}>\n    Save this article\n  </Bookmark>\n  …\n</Card>\n\n<Paper class=\"relative\"><BookmarkRibbon tone=\"grape\" class=\"absolute -top-1 end-8\" /></Paper>",
+    "parts": [
+      "Bookmark",
+      "BookmarkRibbon"
+    ]
+  }
+}

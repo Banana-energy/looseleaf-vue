@@ -1,0 +1,48 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "error-404",
+  "type": "registry:block",
+  "title": "404, page not found",
+  "description": "A torn scrap with 404 in riso lettering and Stubby shrugging beside it, a sentence, a search box (press / to reach it) and two ways out, all on one taped sheet. Looks right on paper or on the desk.",
+  "categories": [
+    "feedback"
+  ],
+  "registryDependencies": [
+    "button",
+    "icon",
+    "input-group",
+    "kbd",
+    "lettering",
+    "looseleaf-theme",
+    "mascot",
+    "napkin",
+    "paper"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/error-404/components/error-404-scene.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/error-404/components/error-404-scene.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Lettering } from \"@/components/ui/lettering\";\nimport { Mascot } from \"@/components/ui/mascot\";\nimport { Napkin, NapkinContent } from \"@/components/ui/napkin\";\nconst Error404Scene = defineUi<{}>(\"Error404Scene\", [], (_props, {\n  slots: _slots\n}) => {\n  return () => {\n    return <div data-slot=\"error-scene\" aria-hidden=\"true\" class=\"flex flex-col items-center gap-y-6 @xl:flex-row @xl:items-end @xl:justify-center @xl:gap-x-2\">\r\n      <Napkin fold=\"quarter\" stain fastener=\"pin\" fastenerTone=\"tomato\" seed=\"error-404-napkin\" class=\"min-h-0 w-72 max-w-full p-7\">\r\n        <NapkinContent class=\"flex items-center justify-center\">\r\n          <Lettering as=\"p\" size=\"hero\" tone=\"tomato\" seed=\"error-404-digits\" class=\"ll-num\">\r\n            404\r\n          </Lettering>\r\n        </NapkinContent>\r\n      </Napkin>\r\n      <Mascot pose=\"shrug\" size={184} class=\"mb-1 h-[184px] w-auto @xl:-ms-10\" />\r\n    </div>;\n  };\n});\nexport { Error404Scene };\n"
+    },
+    {
+      "path": "src/blocks/error-404/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/error-404/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, useId, shallowRef } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { InputGroup, InputGroupAddon, InputGroupInput } from \"@/components/ui/input-group\";\nimport { Kbd } from \"@/components/ui/kbd\";\nimport { Lettering } from \"@/components/ui/lettering\";\nimport { Paper } from \"@/components/ui/paper\";\nimport { Error404Scene } from \"@/blocks/error-404/components/error-404-scene\";\ntype Error404Props = {\n  onSearch?: (query: string) => void;\n  onGoBack?: () => void;\n};\nconst Error404 = defineUi<Error404Props>(\"Error404\", [\"onSearch\", \"onGoBack\"], (_props, {\n  slots: _slots\n}) => {\n  const onSearch = computed(() => _props[\"onSearch\"]);\n  const onGoBack = computed(() => _props[\"onGoBack\"] === undefined ? () => window.history.back() : _props[\"onGoBack\"]);\n  const titleId = useId();\n  const inputRef = shallowRef<HTMLInputElement | null>(null);\n  const query = shallowRef(initialState(\"\"));\n  const setQuery = stateSetter(query);\n  watchDependencies(() => {\n    const onKey = (e: KeyboardEvent) => {\n      if (e.key !== \"/\" || e.metaKey || e.ctrlKey || e.altKey) return;\n      const t = e.target as HTMLElement | null;\n      if (t && (t.isContentEditable || /^(input|textarea|select)$/i.test(t.tagName))) return;\n      e.preventDefault();\n      inputRef.value?.focus();\n    };\n    document.addEventListener(\"keydown\", onKey);\n    return () => document.removeEventListener(\"keydown\", onKey);\n  }, () => [], false);\n  return () => {\n    return <section aria-labelledby={titleId} class=\"@container w-full\">\r\n      <div class=\"px-8 py-10 @xl:py-14\">\r\n        <Paper stock=\"paper\" tilt={false} tape=\"both\" tapeKind=\"masking\" seed=\"error-404\" class=\"mx-auto max-w-3xl px-6 py-12 text-center @xl:px-12\">\r\n          <Error404Scene />\r\n\r\n          <p class=\"mt-10 font-type text-sm text-pencil-text\">Error 404 &middot; Page not found</p>\r\n          <Lettering as=\"h1\" id={titleId} size=\"md\" tone=\"marker\" wobble={0.4} seed=\"error-404-title\" class=\"mt-3\">\r\n            This page wandered off\r\n          </Lettering>\r\n          <p class=\"mx-auto mt-4 max-w-md text-lg/7 text-ink-soft\">We looked under the desk, behind the stapler and in the recycling. Nothing. The link may be old, or mistyped.</p>\r\n\r\n          <form role=\"search\" class=\"mx-auto mt-8 max-w-md\" onSubmit={(e: SubmitEvent) => {\n            e.preventDefault();\n            onSearch.value?.(query.value.trim());\n          }}>\r\n            <InputGroup>\r\n              <InputGroupAddon>\r\n                <Icon name=\"search\" />\r\n              </InputGroupAddon>\r\n              <InputGroupInput ref={inputRef} type=\"search\" name=\"q\" class=\"text-start\" aria-label=\"Search the site\" placeholder=\"Try searching for pages…\" value={query.value} onChange={(e: Event) => setQuery((e.target as HTMLInputElement).value)} />\r\n              <InputGroupAddon align=\"inline-end\" class=\"max-sm:hidden\">\r\n                <Kbd aria-hidden=\"true\">/</Kbd>\r\n              </InputGroupAddon>\r\n            </InputGroup>\r\n          </form>\r\n\r\n          <div class=\"mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-3\">\r\n            <Button asChild size=\"lg\">\r\n              <a href=\"#home\">\r\n                <Icon name=\"house\" />\r\n                Take me home\r\n              </a>\r\n            </Button>\r\n            <Button type=\"button\" size=\"lg\" variant=\"outline\" onClick={onGoBack.value}>\r\n              <Icon name=\"arrow-left\" class=\"rtl:-scale-x-100\" />\r\n              Go back\r\n            </Button>\r\n          </div>\r\n\r\n          <p class=\"mt-8 text-[15px] text-ink-muted\">\r\n            Still lost?{\" \"}\r\n            <a href=\"#contact\" class=\"text-link underline underline-offset-4 hover:text-link-hover\">\r\n              Tell us what you were looking for\r\n            </a>\r\n            .\r\n          </p>\r\n        </Paper>\r\n      </div>\r\n    </section>;\n  };\n});\nexport default Error404;\nexport type { Error404Props };\n"
+    }
+  ],
+  "docs": "Installed the \"404, page not found\" block into your components directory under blocks/error-404/.\nImport it: import Error404 from \"<your components alias>/blocks/error-404/page\"",
+  "meta": {
+    "tags": [
+      "marketing",
+      "error",
+      "404",
+      "stubby"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "switch",
+  "type": "registry:ui",
+  "title": "Switch",
+  "description": "An on/off switch drawn as one clean felt pill: the terracotta marker fills the track when it is on, and a paper coin for a thumb slides across. Reka UI Switch underneath.",
+  "categories": [
+    "Forms"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/switch.tsx",
+      "type": "registry:ui",
+      "target": "@ui/switch.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Switch as SwitchPrimitive } from \"@/lib/primitives\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { switchRecipe, switchThumbRecipe } from \"@/lib/ink/recipes/switch-ink\";\nimport { cn } from \"@/lib/utils\";\nconst SwitchThumb = defineUi<UI.ComponentProps<typeof SwitchPrimitive.Thumb> & {\n  seed: string;\n  disabled: boolean;\n}>(\"SwitchThumb\", [\"class\", \"seed\", \"disabled\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const disabled = computed(() => _props[\"disabled\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"seed\", \"disabled\", \"ref\"]));\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: switchThumbRecipe,\n    params: {\n      disabled: disabled.value\n    },\n    kind: \"thumb\" as const,\n    seed: seed.value,\n    still: true\n  }));\n  return () => {\n    return <SwitchPrimitive.Thumb data-slot=\"switch-thumb\" ref={useMergedRef<HTMLSpanElement>(hostRef, ref.value)} {...domProps(hostProps.value)} class={cn(\"pointer-events-none relative isolate block shrink-0 transition-transform duration-(--ll-dur-pop) ease-pop forced-colors:rounded-full forced-colors:bg-[ButtonText]\", \"size-(--sw-t) data-[state=unchecked]:translate-x-1 rtl:data-[state=unchecked]:-translate-x-1 data-[state=checked]:translate-x-(--sw-on) rtl:data-[state=checked]:-translate-x-(--sw-on)\", className.value)} {...domProps(props.value)}>\r\n      {node.value}\r\n    </SwitchPrimitive.Thumb>;\n  };\n});\nconst Switch = defineUi<UI.ComponentProps<typeof SwitchPrimitive.Root> & {\n  size?: \"sm\" | \"default\";\n  seed?: string | number;\n}>(\"Switch\", [\"class\", \"size\", \"seed\", \"disabled\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const size = computed(() => _props[\"size\"] === undefined ? \"default\" as const : _props[\"size\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const disabled = computed(() => _props[\"disabled\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"size\", \"seed\", \"disabled\", \"ref\"]));\n  const invalid = computed(() => props.value[\"aria-invalid\"] === true || props.value[\"aria-invalid\"] === \"true\");\n  const {\n    hostRef,\n    hostProps,\n    node,\n    seed: hostSeed\n  } = useInk(() => ({\n    recipe: switchRecipe,\n    params: {\n      disabled: !!disabled.value,\n      invalid: invalid.value\n    },\n    kind: \"switch\" as const,\n    seed: seed.value\n  }));\n  return () => {\n    return <SwitchPrimitive.Root data-slot=\"switch\" data-size={size.value} ref={useMergedRef<HTMLButtonElement>(hostRef, ref.value)} {...domProps(hostProps.value)} disabled={disabled.value} class={cn(\"peer group/switch relative isolate inline-flex shrink-0 items-center after:absolute after:-inset-1 disabled:cursor-not-allowed\", \"h-6 w-11 [--sw-on:1.5rem] [--sw-t:1rem] data-[size=sm]:h-5 data-[size=sm]:w-9 data-[size=sm]:[--sw-on:1.25rem] data-[size=sm]:[--sw-t:0.75rem] calm:h-5 calm:w-9 calm:[--sw-on:1.25rem] calm:[--sw-t:0.75rem]\", \"forced-colors:border forced-colors:border-[ButtonText] forced-colors:data-[state=checked]:bg-[Highlight]\", \"group-hover/field:[&>svg_[data-layer=hover]]:visible group-hover/field:[&>svg_[data-layer=hover]]:opacity-100\", \"has-[+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:visible has-[+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:opacity-100\", \"has-[+input+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:visible has-[+input+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:opacity-100\", className.value)} {...domProps(props.value)}>\r\n      {node.value}\r\n      <SwitchThumb seed={`${hostSeed.value}|thumb`} disabled={!!disabled.value} />\r\n    </SwitchPrimitive.Root>;\n  };\n});\nexport { Switch };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/switch-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/switch-ink.ts",
+      "content": "import { solidFill, wash } from '@/lib/ink/fills'\r\nimport { pillPoly } from '@/lib/ink/geom'\r\nimport { dashedBox, focusRing, loop, RULER } from '@/lib/ink/shapes'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\nimport type { Ink } from '@/lib/ink/builder'\r\nimport type { PenName, Pt } from '@/lib/ink/types'\r\n\r\nexport interface SwitchParams {\r\n  disabled?: boolean\r\n  invalid?: boolean\r\n}\r\n\r\nfunction pillLine(x: number, y: number, w: number, h: number): Pt[] {\r\n  const r = h / 2\r\n  const pts: Pt[] = [[x + w / 2, y]]\r\n  const end = (cx: number, a0: number): void => {\r\n    for (let i = 0; i <= 12; i++) {\r\n      const a = a0 + (i / 12) * Math.PI\r\n      pts.push([cx + Math.cos(a) * r, y + r + Math.sin(a) * r])\r\n    }\r\n  }\r\n  end(x + w - r, -Math.PI / 2)\r\n  end(x + r, Math.PI / 2)\r\n  pts.push([x + w / 2 + Math.min(3, w * 0.08), y])\r\n  return pts\r\n}\r\n\r\nfunction liftLine(w: number, h: number, d: number): Pt[] {\r\n  const r = (h - 1) / 2\r\n  const cx = w - 0.5 - r + d\r\n  const cy = 0.5 + r + d\r\n  const pts: Pt[] = [[0.5 + r + d + 2, cy + r], [cx, cy + r]]\r\n  for (let i = 1; i <= 12; i++) {\r\n    const a = Math.PI / 2 - (i / 12) * (Math.PI / 2 + 0.75)\r\n    pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r])\r\n  }\r\n  return pts\r\n}\r\n\r\nexport const switchRecipe = defineRecipe<SwitchParams>({\r\n  id: 'switch',\r\n  kind: 'switch',\r\n  layers: ['rest', 'hover', 'checked', 'focus'],\r\n  lazy: ['focus'],\r\n  pad: 12,\r\n  draw(ink, { w, h }, { disabled, invalid }, ctx) {\r\n    const r = h / 2\r\n    const calm = ctx.calm\r\n    const body = pillPoly(0.5, 0.5, w - 1, h - 1)\r\n\r\n    if (!disabled) ctx.lazy('focus', (f) => focusRing(f, 0, 0, w, h, { r }))\r\n    if (ctx.lazyOnly) return\r\n\r\n    const outline = (width?: number): void => {\r\n      const pen: PenName = invalid ? (calm ? 'red.fine' : 'red') : calm ? 'pencil.fine' : 'ink'\r\n      ink.stroke(pillLine(0.5, 0.5, w - 1, h - 1), pen, { ...RULER, width, simple: true })\r\n    }\r\n\r\n    ink.layer('rest', () => {\r\n      if (disabled) {\r\n        wash(ink, body, 'pencil-mark', { alpha: 0.35, material: 'wash' })\r\n        dashedBox(ink, 0, 0, w, h, { r, pen: 'pencil', opts: { color: 'pencil', width: 1.2 } })\r\n        return\r\n      }\r\n      ink.poly('under', body, 'slip', 0.85)\r\n      outline(invalid ? 1.2 : undefined)\r\n    })\r\n\r\n    if (!disabled) {\r\n      ink.layer('hover', () => {\r\n        if (calm) ink.stroke(pillLine(2, 2, w - 4, h - 4), invalid ? 'red.fine' : 'pencil.fine', { ...RULER, alpha: 0.75, simple: true })\r\n        else ink.stroke(liftLine(w, h, 2 + h / 24), 'ink.fine', { ...RULER, width: 1.1 })\r\n      })\r\n    }\r\n\r\n    ink.layer('checked', () => {\r\n      if (disabled) {\r\n        wash(ink, body, 'pencil-mark', { alpha: 0.4, material: 'wash' })\r\n        return\r\n      }\r\n      ink.part('fill', () => solidFill(ink, body, 'marker', { alpha: 0.94 }))\r\n      if (invalid) outline(1.3)\r\n    })\r\n  },\r\n})\r\n\r\nexport interface SwitchThumbParams {\r\n  disabled?: boolean\r\n}\r\n\r\nexport const switchThumbRecipe = defineRecipe<SwitchThumbParams>({\r\n  id: 'switch-thumb',\r\n  kind: 'thumb',\r\n  layers: ['rest'],\r\n  pad: 6,\r\n  draw(ink: Ink, { w, h }, { disabled }, ctx) {\r\n    const d = Math.min(w, h)\r\n    const cx = w / 2\r\n    const cy = h / 2\r\n    const rad = d / 2 - 0.8\r\n    ink.layer('rest', () => {\r\n      if (disabled) {\r\n        dashedBox(ink, 0, 0, w, h, { r: d / 2, pen: 'pencil', opts: { color: 'pencil', width: 1.1 } })\r\n        return\r\n      }\r\n      const disc: Pt[] = []\r\n      for (let i = 0; i < 24; i++) disc.push([cx + Math.cos((i / 24) * Math.PI * 2) * (rad + 0.4), cy + Math.sin((i / 24) * Math.PI * 2) * (rad + 0.4)])\r\n      ink.poly('under', disc, 'slip', 1)\r\n      loop(ink, cx, cy, rad, rad, { pen: ctx.calm ? 'pencil.fine' : d < 14 ? 'ink.fine' : 'ink', clean: true, opts: { simple: true } })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "switch",
+    "related": [
+      "checkbox",
+      "toggle",
+      "radio-group",
+      "field",
+      "label"
+    ],
+    "a11y": [
+      "role=\"switch\" with aria-checked true or false. Space and Enter toggle it, Tab focuses it (Reka UI). Label it with <Label htmlFor>, wrap it, or use aria-label.",
+      "State is not carried by color alone: the thumb sits at the start when off and at the end when on, and the track fills when it is on.",
+      "The hit area is 8 px larger than the track on every side (an ::after, so layout never moves). The track is 24 px tall at the default size, 20 px small with the enlarged hit area.",
+      "A Label beside it is a peer: peer-disabled dims it, and hovering the row (a `group/field`) or the label right after it lights the switch's hover overlay.",
+      "Keyboard focus draws a blue felt ring; the drawing is aria-hidden, pointer-events: none and never focusable. Windows high contrast replaces the ink by a real border, a Highlight fill when on and a solid thumb.",
+      "Reduced motion (the OS setting or data-motion=\"reduced\") makes the thumb jump and the marker appear at once.",
+      "Right-to-left: the thumb starts at the right and travels left (rtl: twins)."
+    ],
+    "usage": "import { Label } from \"@/components/ui/label\"\nimport { Switch } from \"@/components/ui/switch\"\n\nexport function Example() {\n  return (\n    <div class=\"flex items-center gap-3\">\n      <Switch id=\"airplane\" />\n      <Label htmlFor=\"airplane\">Airplane mode</Label>\n    </div>\n  )\n}",
+    "parts": [
+      "Switch"
+    ]
+  }
+}

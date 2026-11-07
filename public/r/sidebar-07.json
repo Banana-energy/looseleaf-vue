@@ -1,0 +1,50 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sidebar-07",
+  "type": "registry:block",
+  "title": "Sidebar 07",
+  "description": "A sidebar that collapses to icons: the header button, Ctrl/Cmd+B or the strip on the pad's edge shrinks it to a 3rem column, the clip comes off and each icon names itself in a tooltip. Team switcher, folding rows, projects and an account menu. Mirrors shadcn's sidebar-07. Looks right on the desk and on plain paper.",
+  "categories": [
+    "sidebar"
+  ],
+  "registryDependencies": [
+    "collapsible",
+    "icon",
+    "looseleaf-theme",
+    "sidebar",
+    "sidebar-shared"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/sidebar-07/components/sidebar-07-app-sidebar.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/sidebar-07/components/sidebar-07-app-sidebar.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { NavMain } from \"@/blocks/sidebar-07/components/sidebar-07-nav-main\";\nimport { appNav, appProjects, appTeams, appUser } from \"@/blocks/sidebar-shared/sidebar-data\";\nimport { NavProjects } from \"@/blocks/sidebar-shared/sidebar-nav-app\";\nimport { TeamSwitcher } from \"@/blocks/sidebar-shared/sidebar-team-switcher\";\nimport { NavUser } from \"@/blocks/sidebar-shared/sidebar-user-menu\";\nimport { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from \"@/components/ui/sidebar\";\nconst nav = appNav.map(item => ({\n  ...item,\n  items: item.items?.map(sub => ({\n    ...sub,\n    isActive: sub.title === \"Recent\"\n  }))\n}));\nexport const AppSidebar = defineUi<UI.ComponentProps<typeof Sidebar>>(\"AppSidebar\", [], (_props, {\n  slots: _slots\n}) => {\n  const props = computed(() => omitProps(_props, []));\n  return () => {\n    return <Sidebar collapsible=\"icon\" role=\"navigation\" aria-label=\"Studio\" {...domProps(props.value)}>\r\n      <SidebarHeader>\r\n        <TeamSwitcher teams={appTeams} />\r\n      </SidebarHeader>\r\n      <SidebarContent>\r\n        <NavMain items={nav} />\r\n        <NavProjects projects={appProjects} />\r\n      </SidebarContent>\r\n      <SidebarFooter>\r\n        <NavUser user={appUser} />\r\n      </SidebarFooter>\r\n      <SidebarRail />\r\n    </Sidebar>;\n  };\n});\n"
+    },
+    {
+      "path": "src/blocks/sidebar-07/components/sidebar-07-nav-main.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/sidebar-07/components/sidebar-07-nav-main.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport type { AppNavItem } from \"@/blocks/sidebar-shared/sidebar-data\";\nimport { Collapsible, CollapsibleContent, CollapsibleIndicator, CollapsibleTrigger } from \"@/components/ui/collapsible\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from \"@/components/ui/sidebar\";\nexport const NavMain = defineUi<{\n  items: AppNavItem[];\n  label?: string;\n}>(\"NavMain\", [\"items\", \"label\"], (_props, {\n  slots: _slots\n}) => {\n  const items = computed(() => _props[\"items\"]);\n  const label = computed(() => _props[\"label\"] === undefined ? \"Studio\" as const : _props[\"label\"]);\n  return () => {\n    return <SidebarGroup>\r\n      <SidebarGroupLabel>{label.value}</SidebarGroupLabel>\r\n      <SidebarMenu>\r\n        {items.value.map(item => <Collapsible key={item.title} asChild defaultOpen={item.isActive}>\r\n            <SidebarMenuItem>\r\n              <CollapsibleTrigger asChild>\r\n                <SidebarMenuButton tooltip={item.title}>\r\n                  <Icon name={item.icon} />\r\n                  <span class=\"truncate\">{item.title}</span>\r\n                  <CollapsibleIndicator class=\"ms-auto group-data-[collapsible=icon]:hidden\" />\r\n                </SidebarMenuButton>\r\n              </CollapsibleTrigger>\r\n              <CollapsibleContent>\r\n                <SidebarMenuSub>\r\n                  {item.items?.map(sub => <SidebarMenuSubItem key={sub.title}>\r\n                      <SidebarMenuSubButton asChild isActive={sub.isActive}>\r\n                        <a href={sub.url}>\r\n                          <span>{sub.title}</span>\r\n                        </a>\r\n                      </SidebarMenuSubButton>\r\n                    </SidebarMenuSubItem>)}\r\n                </SidebarMenuSub>\r\n              </CollapsibleContent>\r\n            </SidebarMenuItem>\r\n          </Collapsible>)}\r\n      </SidebarMenu>\r\n    </SidebarGroup>;\n  };\n});\n"
+    },
+    {
+      "path": "src/blocks/sidebar-07/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/sidebar-07/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { AppSidebar } from \"@/blocks/sidebar-07/components/sidebar-07-app-sidebar\";\nimport { containedClasses } from \"@/blocks/sidebar-shared/sidebar-contained\";\nimport { PageBody, PageHeader, PageNote, PageSheet } from \"@/blocks/sidebar-shared/sidebar-page\";\nimport { SidebarProvider } from \"@/components/ui/sidebar\";\nconst Page = defineUi<{\n  contained?: boolean;\n}>(\"Page\", [\"contained\"], (_props, {\n  slots: _slots\n}) => {\n  const contained = computed(() => _props[\"contained\"] === undefined ? false : _props[\"contained\"]);\n  const c = computed(() => containedClasses(contained.value));\n  return () => {\n    return <SidebarProvider class={c.value.provider}>\r\n      <AppSidebar class={c.value.sidebar} />\r\n      <PageSheet class={c.value.inset}>\r\n        <PageHeader crumbs={[{\n          label: \"Sketchbook\" as const,\n          href: \"#sketchbook\" as const\n        }, \"Recent\"]} class=\"transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12\" />\r\n        <PageBody title=\"Recent sketches\" kicker=\"Sketchbook\">\r\n          <PageNote title=\"Nothing sketched today\" pose=\"sketch\">\r\n            The button above squeezes the pad down to icons so the page gets all the room. On a phone it opens the pad instead.\r\n          </PageNote>\r\n        </PageBody>\r\n      </PageSheet>\r\n    </SidebarProvider>;\n  };\n});\nexport default Page;\n"
+    }
+  ],
+  "docs": "Installed the \"Sidebar 07\" block into your components directory under blocks/sidebar-07/.\nImport it: import Page from \"<your components alias>/blocks/sidebar-07/page\"",
+  "meta": {
+    "tags": [
+      "sidebar",
+      "icons",
+      "collapsible",
+      "app"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

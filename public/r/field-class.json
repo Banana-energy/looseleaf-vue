@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "field-class",
+  "type": "registry:lib",
+  "title": "Field Class",
+  "description": "Shared Looseleaf helpers: field-class.",
+  "files": [
+    {
+      "path": "src/lib/field-class.ts",
+      "type": "registry:lib",
+      "target": "@lib/field-class.ts",
+      "content": "const CONTROL_VARIANT = /^(?:placeholder|file|selection|autofill|read-only|disabled|enabled|focus|focus-visible|aria-invalid|user-invalid|invalid|required|optional)$/\r\nconst PADDING = /^-?p[xytblrse]?-/\r\nconst CONTROL_UTILITY = /^(?:resize|field-sizing)(?:-|$)/\r\n\r\nfunction parse(token: string): [string[], string] {\r\n  const variants: string[] = []\r\n  let depth = 0\r\n  let start = 0\r\n  for (let i = 0; i < token.length; i++) {\r\n    const c = token[i]\r\n    if (c === \"[\" || c === \"(\") depth++\r\n    else if (c === \"]\" || c === \")\") depth--\r\n    else if (c === \":\" && depth === 0) {\r\n      variants.push(token.slice(start, i))\r\n      start = i + 1\r\n    }\r\n  }\r\n  return [variants, token.slice(start).replace(/^!/, \"\").replace(/!$/, \"\")]\r\n}\r\n\r\nexport function splitFieldClass(className?: string): { frame: string; control: string } {\r\n  const frame: string[] = []\r\n  const control: string[] = []\r\n  for (const token of className?.split(/\\s+/) ?? []) {\r\n    if (!token) continue\r\n    const [variants, utility] = parse(token)\r\n    const own = variants.some((v) => CONTROL_VARIANT.test(v.replace(/[-_]?\\[.*$/, \"\").replace(/\\/.*$/, \"\")))\r\n    ;(own || PADDING.test(utility) || CONTROL_UTILITY.test(utility) ? control : frame).push(token)\r\n  }\r\n  return { frame: frame.join(\" \"), control: control.join(\" \") }\r\n}\r\n"
+    }
+  ],
+  "registryDependencies": [],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

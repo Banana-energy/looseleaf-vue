@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "skeleton",
+  "type": "registry:ui",
+  "title": "Skeleton",
+  "description": "A placeholder someone sketched in pencil: a pale hatch inside a rough ruled outline that boils gently between three redrawn frames. It costs no ink per instance, so a page of hundreds is as cheap as one.",
+  "categories": [
+    "Feedback"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-recipes",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/skeleton.tsx",
+      "type": "registry:ui",
+      "target": "@ui/skeleton.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { useInkSeed } from \"@/lib/ink/vue\";\nimport { hashSeed } from \"@/lib/ink/rng\";\nimport { SKELETON_FRAMES, skeletonCss } from \"@/lib/ink/recipes/skeleton-ink\";\nimport { cn } from \"@/lib/utils\";\nconst Skeleton = defineUi<UI.ComponentProps<\"div\"> & {\n  seed?: string | number;\n}>(\"Skeleton\", [\"class\", \"style\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const style = computed(() => _props[\"style\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"style\", \"seed\"]));\n  const id = useInkSeed(() => seed.value);\n  const phase = computed(() => hashSeed(id.value) % SKELETON_FRAMES);\n  return () => {\n    return <>\r\n      <style>\r\n        {skeletonCss()}\r\n      </style>\r\n      <div data-slot=\"skeleton\" style={cssStyle({\n        \"--ll-sk-phase\": phase.value,\n        ...style.value\n      } as UI.CSSProperties)} class={cn(\"block\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>\r\n    </>;\n  };\n});\nexport { Skeleton };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/skeleton-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/skeleton-ink.ts",
+      "content": "import { EDGE_TH, HATCH, circleTile, edgeTile, hatchTile } from '@/lib/ink/recipes/pencil-tiles-ink'\r\n\r\nexport const SKELETON_FRAMES = 3\r\nexport const SKELETON_BOIL_S = 1.08\r\n\r\nconst tileVar = (kind: 'eh' | 'ev' | 'ha' | 'ci', frame: number): string => `var(--ll-sk-${kind}${frame})`\r\n\r\nlet cache: string | undefined\r\n\r\nconst LAYER_ORDER = '@layer theme,base,components,utilities;'\r\n\r\nexport function skeletonCss(): string {\r\n  return (cache ??= build())\r\n}\r\n\r\nfunction build(): string {\r\n  const frames = Array.from({ length: SKELETON_FRAMES }, (_, f) => ({\r\n    eh: edgeTile(`skeleton|edge-h|${f}`, false),\r\n    ev: edgeTile(`skeleton|edge-v|${f}`, true),\r\n    ha: hatchTile(`skeleton|hatch|${f}`),\r\n    ci: circleTile(`skeleton|circle|${f}`),\r\n  }))\r\n  const vars = frames.map((f, i) => `--ll-sk-eh${i}:${f.eh};--ll-sk-ev${i}:${f.ev};--ll-sk-ha${i}:${f.ha};--ll-sk-ci${i}:${f.ci};`).join('')\r\n  const step = (100 / SKELETON_FRAMES).toFixed(2)\r\n  const outline = (f: number) => `${tileVar('eh', f)},${tileVar('eh', f)},${tileVar('ev', f)},${tileVar('ev', f)}`\r\n  const frameRule = (name: string, prop: string, value: (f: number) => string) =>\r\n    `@keyframes ${name}{${Array.from({ length: SKELETON_FRAMES }, (_, f) => `${f === 0 ? '0%' : `${(f * Number(step)).toFixed(2)}%`}{${prop}:${value(f)};-webkit-${prop}:${value(f)}}`).join('')}100%{${prop}:${value(0)};-webkit-${prop}:${value(0)}}}`\r\n  const dur = `${SKELETON_BOIL_S}s steps(1,end) infinite`\r\n  const end = `${EDGE_TH / 2 - 0.5}px`\r\n  const span = `calc(100% - ${EDGE_TH - 1}px)`\r\n  const edges = `${span} ${EDGE_TH}px,${span} ${EDGE_TH}px,${EDGE_TH}px ${span},${EDGE_TH}px ${span}`\r\n  const at = `${end} 0,${end} 100%,0 ${end},100% ${end}`\r\n  const still = `[data-slot=skeleton]::before,[data-slot=skeleton]::after{animation:none!important}`\r\n  return (\r\n    `${LAYER_ORDER}@layer components{` +\r\n    `[data-slot=skeleton]{${vars}position:relative;isolation:isolate;background-color:color-mix(in srgb,var(--ll-paper-shade) 55%,transparent);animation-delay:calc(var(--ll-sk-phase,0)*-.36s)}` +\r\n    `[data-slot=skeleton]::before,[data-slot=skeleton]::after{content:\"\";position:absolute;pointer-events:none}` +\r\n    `[data-slot=skeleton]::after{inset:0;border-radius:inherit;z-index:-1;background:var(--ll-pencil-mark);opacity:.4;-webkit-mask-image:${tileVar('ha', 0)};mask-image:${tileVar('ha', 0)};-webkit-mask-size:${HATCH}px ${HATCH}px;mask-size:${HATCH}px ${HATCH}px;animation:ll-sk-hatch ${dur}}` +\r\n    `[data-slot=skeleton]::before{inset:-${EDGE_TH / 2}px;z-index:-1;background:var(--ll-pencil);opacity:.78;` +\r\n    `-webkit-mask-image:${outline(0)};mask-image:${outline(0)};` +\r\n    `-webkit-mask-size:${edges};mask-size:${edges};` +\r\n    `-webkit-mask-position:${at};mask-position:${at};-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;animation:ll-sk-outline ${dur}}` +\r\n    `[data-slot=skeleton].rounded-full::before{inset:-3px;-webkit-mask-image:${tileVar('ci', 0)};mask-image:${tileVar('ci', 0)};-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;animation-name:ll-sk-circle}` +\r\n    frameRule('ll-sk-hatch', 'mask-image', (f) => tileVar('ha', f)) +\r\n    frameRule('ll-sk-outline', 'mask-image', outline) +\r\n    frameRule('ll-sk-circle', 'mask-image', (f) => tileVar('ci', f)) +\r\n    `[data-slot=skeleton]::before,[data-slot=skeleton]::after{animation-delay:inherit}` +\r\n    `@media (prefers-reduced-motion:reduce){${still}}[data-motion=reduced] [data-slot=skeleton]::before,[data-motion=reduced] [data-slot=skeleton]::after,[data-density=calm] [data-slot=skeleton]::before,[data-density=calm] [data-slot=skeleton]::after{animation:none!important}` +\r\n    `}` +\r\n    `@media (forced-colors:active){[data-slot=skeleton]{outline:1px dashed GrayText;outline-offset:-1px}[data-slot=skeleton]::before,[data-slot=skeleton]::after{display:none}}`\r\n  )\r\n}\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "skeleton",
+    "related": [
+      "spinner",
+      "card",
+      "progress",
+      "item"
+    ],
+    "a11y": [
+      "A skeleton is an empty element, invisible to assistive tech, as shadcn's. Mark the region that is loading with aria-busy=\"true\" (and a status or a visually hidden \"Loading\" for screen readers), and remove the skeletons when the content arrives.",
+      "Nothing in it is interactive or focusable; the boil is decoration, and a page of skeletons never announces anything.",
+      "Reduced motion (the OS setting or the in-app calm-ink setting) and calm density hold the first frame still.",
+      "In Windows high contrast the drawing is replaced by a dashed system-color outline.",
+      "The masks need CSS mask-image (every current browser); the stylesheet is injected with <style href precedence>, so React 19 hoists it, dedupes it and includes it in server HTML."
+    ],
+    "usage": "import { Skeleton } from \"@/components/ui/skeleton\"\n\nexport function Example() {\n  return (\n    <div class=\"flex items-center gap-4\" aria-busy=\"true\">\n      <Skeleton class=\"size-12 rounded-full\" />\n      <div class=\"flex flex-col gap-2\">\n        <Skeleton class=\"h-4 w-[250px]\" />\n        <Skeleton class=\"h-4 w-[200px]\" />\n      </div>\n    </div>\n  )\n}",
+    "parts": [
+      "Skeleton"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "use-live-motion",
+  "type": "registry:hook",
+  "title": "use-live-motion",
+  "description": "The use-live-motion React hook from Looseleaf.",
+  "registryDependencies": [
+    "ink"
+  ],
+  "files": [
+    {
+      "path": "src/hooks/use-live-motion.ts",
+      "type": "registry:hook",
+      "target": "@hooks/use-live-motion.ts",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, toValue, type MaybeRefOrGetter, shallowRef, type ComputedRef } from \"vue\";\nimport { useInkContext } from \"@/lib/ink/vue\";\nexport function motionIsOff(el?: Element | null, providerReduced = false): boolean {\n  if (providerReduced) return true;\n  if (typeof window === \"undefined\") return false;\n  const node = el ?? document.documentElement;\n  if (node.closest?.('[data-motion=\"reduced\"]')) return true;\n  if (window.getComputedStyle(node).getPropertyValue(\"--ll-motion\").trim() === \"0\") return true;\n  return window.matchMedia?.(\"(prefers-reduced-motion: reduce)\").matches ?? false;\n}\nexport function useReducedMotion(_source0?: MaybeRefOrGetter<UI.RefObject<Element | null>>): ComputedRef<boolean> {\n  const ref = computed(() => toValue(_source0));\n  const _nestedHook0 = useInkContext();\n  const provider = computed(() => _nestedHook0.value.motion === \"reduced\");\n  const off = shallowRef(initialState(false));\n  const setOff = stateSetter(off);\n  watchDependencies(() => {\n    const check = () => setOff(motionIsOff(ref.value?.value, provider.value));\n    check();\n    const mq = window.matchMedia?.(\"(prefers-reduced-motion: reduce)\");\n    mq?.addEventListener?.(\"change\", check);\n    const mo = new MutationObserver(check);\n    mo.observe(document.documentElement, {\n      attributes: true,\n      attributeFilter: [\"data-motion\"]\n    });\n    return () => {\n      mq?.removeEventListener?.(\"change\", check);\n      mo.disconnect();\n    };\n  }, () => [ref.value, provider.value], true);\n  return computed(() => {\n    return off.value;\n  });\n}\n"
+    }
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

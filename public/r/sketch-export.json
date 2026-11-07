@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sketch-export",
+  "type": "registry:lib",
+  "title": "Sketch Export",
+  "description": "Shared Looseleaf helpers: sketch-export.",
+  "files": [
+    {
+      "path": "src/lib/sketch-export.ts",
+      "type": "registry:lib",
+      "target": "@lib/sketch-export.ts",
+      "content": "export function svgToPngDataUrl(svgDataUrl: string, width: number, height: number, scale = 2): Promise<string | null> {\r\n  return new Promise((done) => {\r\n    if (typeof document === \"undefined\" || typeof Image === \"undefined\") return done(null)\r\n    const img = new Image()\r\n    const giveUp = setTimeout(() => done(null), 4000)\r\n    img.onload = () => {\r\n      clearTimeout(giveUp)\r\n      try {\r\n        const canvas = document.createElement(\"canvas\")\r\n        canvas.width = Math.max(1, Math.round(width * scale))\r\n        canvas.height = Math.max(1, Math.round(height * scale))\r\n        const g = canvas.getContext(\"2d\")\r\n        if (!g) return done(null)\r\n        g.drawImage(img, 0, 0, canvas.width, canvas.height)\r\n        done(canvas.toDataURL(\"image/png\"))\r\n      } catch {\r\n        done(null)\r\n      }\r\n    }\r\n    img.onerror = () => {\r\n      clearTimeout(giveUp)\r\n      done(null)\r\n    }\r\n    img.src = svgDataUrl\r\n  })\r\n}\r\n"
+    }
+  ],
+  "registryDependencies": [],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

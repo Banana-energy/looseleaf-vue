@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "boil",
+  "type": "registry:ui",
+  "title": "Boil",
+  "description": "Makes drawn things shiver the way hand-animated line drawings do. About six times a second it moves to the next of a few frames: doodles are redrawn by a new hand, and buttons, cards and fields inside wobble a little differently. It stands still when motion is reduced, off screen and in a hidden tab.",
+  "categories": [
+    "Interactive"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme",
+    "use-live-motion"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/boil.tsx",
+      "type": "registry:ui",
+      "target": "@ui/boil.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, toValue, type MaybeRefOrGetter, type ComputedRef, shallowRef } from \"vue\";\nimport { motionIsOff } from \"@/hooks/use-live-motion\";\nimport { InkContext, useInkContext, useMergedRef } from \"@/lib/ink/vue\";\nimport { BOIL_MAX_FRAMES, boilKnobs, boilSeed } from \"@/lib/ink/recipes/boil-ink\";\nimport { cn } from \"@/lib/utils\";\ninterface BoilContextValue {\n  frame: number;\n  frames: number;\n}\nconst BoilContext = createContext<BoilContextValue | null>(null);\nfunction useBoilFrame(): ComputedRef<number> {\n  const _nestedHook0 = useContext(BoilContext);\n  return computed(() => {\n    return _nestedHook0.value?.frame ?? 0;\n  });\n}\nfunction useBoilSeed(_source0: MaybeRefOrGetter<string | number>): ComputedRef<string> {\n  const seed = computed(() => toValue(_source0));\n  const _nestedHook0 = useBoilFrame();\n  return computed(() => {\n    return boilSeed(seed.value, _nestedHook0.value);\n  });\n}\ntype BoilProps = Omit<UI.ComponentProps<\"span\">, \"children\"> & {\n  fps?: number;\n  frames?: number;\n  strength?: number;\n  active?: boolean;\n  reseed?: boolean;\n  children?: UI.ReactNode | ((frame: {\n    frame: number;\n    seed: (base: string | number) => string;\n  }) => UI.ReactNode);\n};\nconst Boil = defineUi<BoilProps>(\"Boil\", [\"class\", \"fps\", \"frames\", \"strength\", \"active\", \"reseed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const children = computed(() => _slots.default);\n  const ref = computed(() => _props[\"ref\"]);\n  const fps = computed(() => _props[\"fps\"] === undefined ? 6 : _props[\"fps\"]);\n  const frames = computed(() => _props[\"frames\"] === undefined ? 3 : _props[\"frames\"]);\n  const strength = computed(() => _props[\"strength\"] === undefined ? 1 : _props[\"strength\"]);\n  const active = computed(() => _props[\"active\"] === undefined ? true : _props[\"active\"]);\n  const reseed = computed(() => _props[\"reseed\"] === undefined ? true : _props[\"reseed\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"children\", \"ref\", \"fps\", \"frames\", \"strength\", \"active\", \"reseed\"]));\n  const outer = useInkContext();\n  const providerReduced = computed(() => outer.value.motion === \"reduced\" || outer.value.density === \"calm\");\n  const n = computed(() => Math.min(BOIL_MAX_FRAMES, Math.max(2, Math.round(frames.value))));\n  const frame = shallowRef(initialState(0));\n  const setFrame = stateSetter(frame);\n  const onScreen = shallowRef(initialState(true));\n  const setOnScreen = stateSetter(onScreen);\n  const root = shallowRef<HTMLSpanElement | null | null>(null);\n  const hidden = shallowRef(initialState(false));\n  const setHidden = stateSetter(hidden);\n  const still = shallowRef(initialState(false));\n  const setStill = stateSetter(still);\n  watchDependencies(() => {\n    const el = root.value;\n    if (!el || typeof IntersectionObserver === \"undefined\") return;\n    const io = new IntersectionObserver(entries => setOnScreen(entries.some(e => e.isIntersecting)));\n    io.observe(el);\n    return () => io.disconnect();\n  }, () => [], false);\n  watchDependencies(() => {\n    const on = () => setHidden(document.hidden);\n    on();\n    document.addEventListener(\"visibilitychange\", on);\n    return () => document.removeEventListener(\"visibilitychange\", on);\n  }, () => [], false);\n  watchDependencies(() => {\n    const check = () => setStill(motionIsOff(root.value, providerReduced.value));\n    check();\n    const mq = window.matchMedia?.(\"(prefers-reduced-motion: reduce)\");\n    mq?.addEventListener?.(\"change\", check);\n    return () => mq?.removeEventListener?.(\"change\", check);\n  }, () => [providerReduced.value], false);\n  const boiling = computed(() => active.value && onScreen.value && !hidden.value && !still.value);\n  watchDependencies(() => {\n    if (!boiling.value) {\n      setFrame(0);\n      return;\n    }\n    const id = setInterval(() => setFrame(f => (f + 1) % n.value), 1000 / Math.min(12, Math.max(1, fps.value)));\n    return () => clearInterval(id);\n  }, () => [boiling.value, fps.value, n.value], false);\n  const f = computed(() => boiling.value ? frame.value % n.value : 0);\n  const value = computed(() => f.value === 0 ? outer.value : {\n    ...outer.value,\n    knobs: mulKnobs(outer.value.knobs, boilKnobs(f.value, strength.value))\n  });\n  const seedOf = computed(() => (base: string | number) => boilSeed(base, f.value));\n  const body = computed(() => typeof children.value === \"function\" ? children.value({\n    frame: f.value,\n    seed: seedOf.value\n  }) : reseed.value ? Children.map(children.value, (child, i) => {\n    if (f.value === 0 || !isValidElement<{\n      seed?: string | number;\n      name?: string;\n      id?: string;\n    }>(child) || typeof child.type === \"string\") return child;\n    const base = child.props.seed ?? child.props.name ?? child.props.id ?? i;\n    return cloneElement(child, {\n      seed: seedOf.value(base)\n    });\n  }) : children.value);\n  return () => {\n    return <BoilContext.Provider value={{\n      frame: f.value,\n      frames: n.value\n    }}>\r\n      <InkContext.Provider value={value.value}>\r\n        <span data-slot=\"boil\" data-state={boiling.value ? \"boiling\" as const : \"still\" as const} data-frame={f.value} ref={useMergedRef<HTMLSpanElement>(root, ref.value)} class={cn(\"inline-block\", className.value)} {...domProps(props.value)}>\r\n          {body.value}\r\n        </span>\r\n      </InkContext.Provider>\r\n    </BoilContext.Provider>;\n  };\n});\nconst mulKnobs = (a: {\n  wobble: number;\n  misreg: number;\n  bleed: number;\n  width: number;\n}, b: {\n  wobble: number;\n  misreg: number;\n  bleed: number;\n  width: number;\n}) => ({\n  wobble: a.wobble * b.wobble,\n  misreg: a.misreg * b.misreg,\n  bleed: a.bleed * b.bleed,\n  width: a.width * b.width\n});\nexport { Boil, useBoilFrame, useBoilSeed };\nexport type { BoilProps };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/boil-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/boil-ink.ts",
+      "content": "import type { Knobs } from '@/lib/ink/builder'\r\n\r\nconst TABLE: readonly Knobs[] = [\r\n  { wobble: 1, misreg: 1, bleed: 1, width: 1 },\r\n  { wobble: 1.3, misreg: 1.7, bleed: 1.18, width: 0.96 },\r\n  { wobble: 0.78, misreg: 0.5, bleed: 0.86, width: 1.05 },\r\n  { wobble: 1.12, misreg: 1.3, bleed: 1.06, width: 0.98 },\r\n]\r\n\r\nexport const BOIL_MAX_FRAMES = TABLE.length\r\n\r\nexport function boilKnobs(frame: number, strength = 1): Knobs {\r\n  const k = TABLE[((frame % TABLE.length) + TABLE.length) % TABLE.length]\r\n  const s = Math.max(0, strength)\r\n  const at = (v: number) => Math.max(0.05, 1 + (v - 1) * s)\r\n  return { wobble: at(k.wobble), misreg: at(k.misreg), bleed: at(k.bleed), width: at(k.width) }\r\n}\r\n\r\nexport function boilSeed(seed: string | number, frame: number): string {\r\n  return frame === 0 ? String(seed) : `${seed}~${frame}`\r\n}\r\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "reveal",
+      "doodle",
+      "sticker",
+      "mascot",
+      "confetti"
+    ],
+    "a11y": [
+      "Boil changes drawings, never content or layout: the shapes do not move, the lines shiver by a fraction of a pixel to a couple of pixels. Nothing is announced and nothing takes focus.",
+      "Reduced motion (the OS setting, data-motion=\"reduced\", or an InkProvider with motion=\"reduced\") shows the resting drawing and runs no timer. The same happens while the tab is hidden and while the wrapper is scrolled out of view.",
+      "WCAG 2.2.2: a boil that runs for more than five seconds is moving content. It stops for people who ask for reduced motion, but give everyone else a way out where it matters: bind `active` to a pause control or to a preference. Children keep their state, focus and drawn ink across frames (they are re-seeded, never remounted).",
+      "Use it for a few live things (a mascot, a logo doodle, a call to action), not lists: every frame re-renders the children. The timer stops when the component unmounts.",
+      "Hooks for your own drawings: useBoilFrame() and useBoilSeed(seed) return the frame and a frame-suffixed seed inside a Boil, and the plain seed outside one."
+    ],
+    "usage": "import { Boil } from \"@/components/ui/boil\"\nimport { Doodle } from \"@/components/ui/doodle\"\n\nexport function Example() {\n  return (\n    <Boil>\n      <Doodle name=\"sun\" size={96} />\n    </Boil>\n  )\n}",
+    "parts": [
+      "Boil"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

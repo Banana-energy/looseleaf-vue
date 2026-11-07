@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "aspect-ratio",
+  "type": "registry:ui",
+  "title": "Aspect Ratio",
+  "description": "A box that keeps its width-to-height ratio while its width changes. Exactly shadcn's; the hand-made part is what surrounds it: a photograph on a Polaroid, a print taped at its corners, a map pinned to the desk.",
+  "categories": [
+    "Layout"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/aspect-ratio.tsx",
+      "type": "registry:ui",
+      "target": "@ui/aspect-ratio.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { AspectRatio as AspectRatioPrimitive } from \"@/lib/primitives\";\nconst AspectRatio = defineUi<UI.ComponentProps<typeof AspectRatioPrimitive.Root>>(\"AspectRatio\", [], (_props, {\n  slots: _slots\n}) => {\n  const props = computed(() => omitProps(_props, []));\n  return () => {\n    return <AspectRatioPrimitive.Root data-slot=\"aspect-ratio\" {...domProps(props.value)}>{_slots.default?.()}</AspectRatioPrimitive.Root>;\n  };\n});\nexport { AspectRatio };\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "aspect-ratio",
+    "related": [
+      "paper",
+      "tape",
+      "card",
+      "carousel"
+    ],
+    "a11y": [
+      "Layout only: no role, no name, no keyboard behavior. Give the image inside it real alt text, or an empty alt if it is decoration.",
+      "The frames in the examples (a Polaroid's white border, tape, a pin) are decoration and hidden from assistive tech; the caption is real text.",
+      "A ratio box has no minimum height, so it collapses to nothing in a container that has no width: give the parent one."
+    ],
+    "usage": "import { AspectRatio } from \"@/components/ui/aspect-ratio\"\n\nexport function Example() {\n  return (\n    <div class=\"w-72\">\n      <AspectRatio ratio={16 / 9}>\n        <img src=\"/heron.jpg\" alt=\"A heron on one leg\" class=\"h-full w-full object-cover\" />\n      </AspectRatio>\n    </div>\n  )\n}",
+    "parts": [
+      "AspectRatio"
+    ]
+  }
+}

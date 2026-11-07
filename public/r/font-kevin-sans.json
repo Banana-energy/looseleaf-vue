@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "font-kevin-sans",
+  "type": "registry:theme",
+  "title": "Kevin Sans",
+  "description": "Kevin Sans, the hand of every Looseleaf label, title and stamp: one family tuned for three roles (font-hand, font-script, font-type). The ink engine loads it from the Looseleaf site the first time a component draws, unless the page already has it.",
+  "categories": [
+    "fonts"
+  ],
+  "cssVars": {
+    "theme": {
+      "font-hand": "\"Kevin Sans Hand\", \"Kevin Sans\", \"Bradley Hand\", cursive",
+      "font-script": "\"Kevin Sans Script\", \"Kevin Sans\", \"Bradley Hand\", cursive",
+      "font-type": "\"Kevin Sans Type\", \"Kevin Sans\", \"Bradley Hand\", cursive"
+    }
+  },
+  "registryDependencies": [],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "files": []
+}

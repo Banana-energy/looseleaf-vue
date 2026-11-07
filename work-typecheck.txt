@@ -1,0 +1,597 @@
+
+> looseleaf-vue@0.1.0 typecheck D:\Work\looseleaf-vue
+> vue-tsc --noEmit
+
+src/components/ui/accordion.tsx(72,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/accordion.tsx(76,21): error TS2345: Argument of type 'MouseEvent' is not assignable to parameter of type '{ currentTarget: Element; }'.
+  Types of property 'currentTarget' are incompatible.
+    Type 'EventTarget | null' is not assignable to type 'Element'.
+      Type 'null' is not assignable to type 'Element'.
+src/components/ui/arrow.tsx(97,30): error TS2345: Argument of type 'HTMLElement | null' is not assignable to parameter of type 'Element'.
+  Type 'null' is not assignable to type 'Element'.
+src/components/ui/badge.tsx(117,31): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/components/ui/boil.tsx(99,79): error TS2349: This expression is not callable.
+  Type 'never' has no call signatures.
+src/components/ui/boil.tsx(103,42): error TS2558: Expected 0 type arguments, but got 1.
+src/components/ui/boil.tsx(108,18): error TS18047: 'child.props' is possibly 'null'.
+src/components/ui/boil.tsx(108,38): error TS18047: 'child.props' is possibly 'null'.
+src/components/ui/boil.tsx(108,58): error TS18047: 'child.props' is possibly 'null'.
+src/components/ui/boil.tsx(118,19): error TS2339: Property 'Provider' does not exist on type 'InjectionKey<ComputedRef<InkContextValue>>'.
+src/components/ui/boil.tsx(122,20): error TS2339: Property 'Provider' does not exist on type 'InjectionKey<ComputedRef<InkContextValue>>'.
+src/components/ui/bookmark.tsx(34,28): error TS2345: Argument of type '() => { recipe: Recipe<BookmarkParams>; params: { tone: Accent; mode: string; disabled: boolean; }; ref: UI.Ref<HTMLElement>; seed: string | number | undefined; tilt: number | ... 1 more ... | undefined; tiltMax: number; size: readonly [...] | undefined; kind: string; }' is not assignable to parameter of type 'MaybeRefOrGetter<Omit<PaperObjectOptions<BookmarkParams>, "kind" | "enabled"> & { kind?: string | undefined; still?: boolean | undefined; }>'.
+  Type '() => { recipe: Recipe<BookmarkParams>; params: { tone: Accent; mode: string; disabled: boolean; }; ref: UI.Ref<HTMLElement>; seed: string | number | undefined; tilt: number | ... 1 more ... | undefined; tiltMax: number; size: readonly [...] | undefined; kind: string; }' is not assignable to type '() => Omit<PaperObjectOptions<BookmarkParams>, "kind" | "enabled"> & { kind?: string | undefined; still?: boolean | undefined; }'.
+    Type '{ recipe: Recipe<BookmarkParams>; params: { tone: Accent; mode: string; disabled: boolean; }; ref: UI.Ref<HTMLElement>; seed: string | number | undefined; tilt: number | ... 1 more ... | undefined; tiltMax: number; size: readonly [...] | undefined; kind: string; }' is not assignable to type 'Omit<PaperObjectOptions<BookmarkParams>, "kind" | "enabled"> & { kind?: string | undefined; still?: boolean | undefined; }'.
+      Type '{ recipe: Recipe<BookmarkParams>; params: { tone: Accent; mode: string; disabled: boolean; }; ref: UI.Ref<HTMLElement>; seed: string | number | undefined; tilt: number | ... 1 more ... | undefined; tiltMax: number; size: readonly [...] | undefined; kind: string; }' is not assignable to type 'Omit<PaperObjectOptions<BookmarkParams>, "kind" | "enabled">'.
+        The types of 'params.mode' are incompatible between these types.
+          Type 'string' is not assignable to type '"toggle" | "static"'.
+src/components/ui/bookmark.tsx(75,28): error TS2345: Argument of type '() => { recipe: Recipe<BookmarkParams>; params: { tone: Accent; mode: string; disabled: boolean; }; ref: UI.Ref<HTMLElement>; seed: string | number | undefined; tilt: number | ... 1 more ... | undefined; tiltMax: number; size: readonly [...] | undefined; kind: string; }' is not assignable to parameter of type 'MaybeRefOrGetter<Omit<PaperObjectOptions<BookmarkParams>, "kind" | "enabled"> & { kind?: string | undefined; still?: boolean | undefined; }>'.
+  Type '() => { recipe: Recipe<BookmarkParams>; params: { tone: Accent; mode: string; disabled: boolean; }; ref: UI.Ref<HTMLElement>; seed: string | number | undefined; tilt: number | ... 1 more ... | undefined; tiltMax: number; size: readonly [...] | undefined; kind: string; }' is not assignable to type '() => Omit<PaperObjectOptions<BookmarkParams>, "kind" | "enabled"> & { kind?: string | undefined; still?: boolean | undefined; }'.
+    Type '{ recipe: Recipe<BookmarkParams>; params: { tone: Accent; mode: string; disabled: boolean; }; ref: UI.Ref<HTMLElement>; seed: string | number | undefined; tilt: number | ... 1 more ... | undefined; tiltMax: number; size: readonly [...] | undefined; kind: string; }' is not assignable to type 'Omit<PaperObjectOptions<BookmarkParams>, "kind" | "enabled"> & { kind?: string | undefined; still?: boolean | undefined; }'.
+      Type '{ recipe: Recipe<BookmarkParams>; params: { tone: Accent; mode: string; disabled: boolean; }; ref: UI.Ref<HTMLElement>; seed: string | number | undefined; tilt: number | ... 1 more ... | undefined; tiltMax: number; size: readonly [...] | undefined; kind: string; }' is not assignable to type 'Omit<PaperObjectOptions<BookmarkParams>, "kind" | "enabled">'.
+        The types of 'params.mode' are incompatible between these types.
+          Type 'string' is not assignable to type '"toggle" | "static"'.
+src/components/ui/bubble.tsx(10,30): error TS2307: Cannot find module '@/lib/chat-align' or its corresponding type declarations.
+src/components/ui/button.tsx(63,14): error TS2345: Argument of type '() => { recipe: Recipe<ButtonParams>; params: { variant: "link" | "default" | "ghost" | "destructive" | "outline" | "secondary"; size: "default" | "icon" | "xs" | ... 4 more ... | "icon-lg"; disabled: boolean; shape: string; }; kind: string; seed: string | ... 1 more ... | undefined; layers: "all" | undefined; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<ButtonParams>>'.
+  Type '() => { recipe: Recipe<ButtonParams>; params: { variant: "link" | "default" | "ghost" | "destructive" | "outline" | "secondary"; size: "default" | "icon" | "xs" | ... 4 more ... | "icon-lg"; disabled: boolean; shape: string; }; kind: string; seed: string | ... 1 more ... | undefined; layers: "all" | undefined; }' is not assignable to type '() => UseInkOptions<ButtonParams>'.
+    Call signature return types '{ recipe: Recipe<ButtonParams>; params: { variant: "link" | "default" | "ghost" | "destructive" | "outline" | "secondary"; size: "default" | "icon" | "xs" | ... 4 more ... | "icon-lg"; disabled: boolean; shape: string; }; kind: string; seed: string | ... 1 more ... | undefined; layers: "all" | undefined; }' and 'UseInkOptions<ButtonParams>' are incompatible.
+      The types of 'params.shape' are incompatible between these types.
+        Type 'string' is not assignable to type '"default" | "pill" | undefined'.
+src/components/ui/calendar.tsx(7,250): error TS2307: Cannot find module 'react-day-picker' or its corresponding type declarations.
+src/components/ui/calendar.tsx(117,45): error TS2345: Argument of type 'null' is not assignable to parameter of type 'HTMLButtonElement'.
+src/components/ui/calendar.tsx(183,11): error TS7031: Binding element 'value' implicitly has an 'any' type.
+src/components/ui/calendar.tsx(184,11): error TS7031: Binding element 'label' implicitly has an 'any' type.
+src/components/ui/calendar.tsx(185,11): error TS7031: Binding element 'disabled' implicitly has an 'any' type.
+src/components/ui/calendar.tsx(243,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/calendar.tsx(248,33): error TS7006: Parameter 'date' implicitly has an 'any' type.
+src/components/ui/calendar.tsx(248,39): error TS7006: Parameter 'dateLib' implicitly has an 'any' type.
+src/components/ui/carousel.tsx(7,61): error TS2307: Cannot find module 'embla-carousel-react' or its corresponding type declarations.
+src/components/ui/carousel.tsx(62,43): error TS2551: Property 'onKeyDown' does not exist on type 'Omit<HTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & CarouselProps & { ...; }'. Did you mean 'onKeydown'?
+src/components/ui/carousel.tsx(142,12): error TS2322: Type '{ style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; onCut?: ((payload: ClipboardEvent) => void) | undefined; ... 197 more ...; "data-slot": string; }' is not assignable to type 'HTMLAttributes & ReservedProps'.
+  Property 'onKeyDown' does not exist on type 'HTMLAttributes & ReservedProps'. Did you mean 'onKeydown'?
+src/components/ui/carousel.tsx(270,23): error TS18047: 'e.currentTarget' is possibly 'null'.
+src/components/ui/carousel.tsx(270,39): error TS2339: Property 'contains' does not exist on type 'EventTarget'.
+src/components/ui/checkbox.tsx(41,19): error TS2345: Argument of type 'MouseEvent' is not assignable to parameter of type '{ currentTarget: Element; }'.
+  Types of property 'currentTarget' are incompatible.
+    Type 'EventTarget | null' is not assignable to type 'Element'.
+      Type 'null' is not assignable to type 'Element'.
+src/components/ui/code-block.tsx(10,152): error TS2307: Cannot find module '@/lib/code-highlight' or its corresponding type declarations.
+src/components/ui/code-block.tsx(46,43): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/components/ui/code-block.tsx(48,29): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/components/ui/code-block.tsx(48,32): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/components/ui/code-block.tsx(68,24): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/components/ui/code-block.tsx(68,27): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/components/ui/code-block.tsx(117,61): error TS2322: Type '{ d: string; fill: string; stroke: string; strokeWidth: number; strokeLinecap: string; opacity: number; vectorEffect: string; }' is not assignable to type 'SVGAttributes & ReservedProps'.
+  Property 'strokeWidth' does not exist on type 'SVGAttributes & ReservedProps'. Did you mean ''stroke-width''?
+src/components/ui/code-block.tsx(118,61): error TS2322: Type '{ d: string; fill: string; stroke: string; strokeWidth: number; strokeLinecap: string; vectorEffect: string; }' is not assignable to type 'SVGAttributes & ReservedProps'.
+  Property 'strokeWidth' does not exist on type 'SVGAttributes & ReservedProps'. Did you mean ''stroke-width''?
+src/components/ui/code-block.tsx(130,72): error TS2322: Type '{ d: string; fill: string; stroke: string; strokeWidth: number; strokeLinecap: string; strokeLinejoin: string; }' is not assignable to type 'SVGAttributes & ReservedProps'.
+  Property 'strokeWidth' does not exist on type 'SVGAttributes & ReservedProps'. Did you mean ''stroke-width''?
+src/components/ui/code-block.tsx(323,33): error TS2345: Argument of type 'EventTarget | null' is not assignable to parameter of type 'Element'.
+  Type 'null' is not assignable to type 'Element'.
+src/components/ui/collapsible.tsx(23,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/collapsible.tsx(27,21): error TS2345: Argument of type 'MouseEvent' is not assignable to parameter of type '{ currentTarget: Element; }'.
+  Types of property 'currentTarget' are incompatible.
+    Type 'EventTarget | null' is not assignable to type 'Element'.
+      Type 'null' is not assignable to type 'Element'.
+src/components/ui/combobox.tsx(7,77): error TS2307: Cannot find module 'cmdk' or its corresponding type declarations.
+src/components/ui/combobox.tsx(239,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(getter: ComputedGetter<ComboboxContextValue>, debugOptions?: DebuggerOptions | undefined): ComputedRef<ComboboxContextValue>', gave the following error.
+    Type 'boolean | undefined' is not assignable to type 'boolean'.
+      Type 'undefined' is not assignable to type 'boolean'.
+  Overload 2 of 2, '(options: WritableComputedOptions<ComboboxContextValue, ComboboxContextValue>, debugOptions?: DebuggerOptions | undefined): WritableComputedRef<...>', gave the following error.
+    Argument of type '() => { multiple: boolean; value: string[]; select: (v: string) => void; remove: (v: string) => any; clear: () => void; open: boolean | undefined; setOpen: (next: boolean) => void; query: any; setQuery: any; ... 16 more ...; triggerRef: ShallowRef<...>; }' is not assignable to parameter of type 'WritableComputedOptions<ComboboxContextValue, ComboboxContextValue>'.
+src/components/ui/combobox.tsx(267,23): error TS7006: Parameter 'v' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(267,26): error TS7006: Parameter 'search' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(267,34): error TS7006: Parameter 'keywords' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(295,43): error TS2551: Property 'onKeyDown' does not exist on type 'Omit<ButtonHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { seed?: string | ... 1 more ... | undefined; }'. Did you mean 'onKeydown'?
+src/components/ui/combobox.tsx(317,399): error TS2322: Type '{ form?: string | undefined; style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; ... 209 more ...; ref: (value: Element | ... 1 more ... | null) => void; }' is not assignable to type 'ButtonHTMLAttributes & ReservedProps'.
+  Property 'onKeyDown' does not exist on type 'ButtonHTMLAttributes & ReservedProps'. Did you mean 'onKeydown'?
+src/components/ui/combobox.tsx(317,410): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(345,39): error TS2349: This expression is not callable.
+  Type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' has no call signatures.
+src/components/ui/combobox.tsx(364,45): error TS2551: Property 'onMouseDown' does not exist on type 'Omit<Omit<ComponentProps<__VLS_WithSlots$119<DefineComponent<PopoverContentProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, ... 12 more ..., any>, { ...; } & { ...; }>>, keyof PortAttributes> & PortAttributes & Pick<...> & { ...; }, keyof PortAttributes> & PortAttributes & { ...; }'. Did you mean 'onMousedown'?
+src/components/ui/combobox.tsx(371,38): error TS2322: Type '{ virtualRef: RefObject<{ getBoundingClientRect(): DOMRect; }>; }' is not assignable to type 'IntrinsicAttributes & Omit<ComponentProps<__VLS_WithSlots$122<DefineComponent<PopoverAnchorProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, ... 12 more ..., any>, { ...; }>>, keyof PortAttributes> & PortAttributes & {}'.
+  Property 'virtualRef' does not exist on type 'IntrinsicAttributes & Omit<ComponentProps<__VLS_WithSlots$122<DefineComponent<PopoverAnchorProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, ... 12 more ..., any>, { ...; }>>, keyof PortAttributes> & PortAttributes & {}'.
+src/components/ui/combobox.tsx(383,10): error TS2322: Type '{ style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; onCut?: ((payload: ClipboardEvent) => void) | undefined; ... 239 more ...; class: string; }' is not assignable to type 'IntrinsicAttributes & Omit<ComponentProps<__VLS_WithSlots$119<DefineComponent<PopoverContentProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, ... 12 more ..., any>, { ...; } & { ...; }>>, keyof PortAttributes> & PortAttributes & Pick<...> & { ...; } & {}'.
+  Property 'onMouseDown' does not exist on type 'IntrinsicAttributes & Omit<ComponentProps<__VLS_WithSlots$119<DefineComponent<PopoverContentProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, ... 12 more ..., any>, { ...; } & { ...; }>>, keyof PortAttributes> & PortAttributes & Pick<...> & { ...; } & {}'. Did you mean 'onMousedown'?
+src/components/ui/combobox.tsx(383,23): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(411,71): error TS2345: Argument of type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' is not assignable to parameter of type '(value: NormalItem, index: number, array: NormalItem[]) => unknown'.
+  Type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' provides no match for the signature '(value: NormalItem, index: number, array: NormalItem[]): unknown'.
+src/components/ui/combobox.tsx(426,73): error TS2345: Argument of type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' is not assignable to parameter of type '(value: NormalItem, index: number, array: NormalItem[]) => unknown'.
+  Type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' provides no match for the signature '(value: NormalItem, index: number, array: NormalItem[]): unknown'.
+src/components/ui/combobox.tsx(521,49): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(530,51): error TS2349: This expression is not callable.
+  Type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' has no call signatures.
+src/components/ui/combobox.tsx(626,116): error TS7006: Parameter 'v' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(630,173): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(642,12): error TS2322: Type '{ type: "button"; tabindex: number; "aria-label": string; "data-slot": string; disabled: boolean; onClick: (e: PointerEvent) => void; onKeyDown: (e: any) => any; class: string; }' is not assignable to type 'ButtonHTMLAttributes & ReservedProps'.
+  Property 'onKeyDown' does not exist on type 'ButtonHTMLAttributes & ReservedProps'. Did you mean 'onKeydown'?
+src/components/ui/combobox.tsx(642,23): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(654,43): error TS2551: Property 'onKeyDown' does not exist on type 'Omit<Omit<ButtonHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & VariantProps<...> & { ...; }, keyof PortAttributes> & PortAttributes'. Did you mean 'onKeydown'?
+src/components/ui/combobox.tsx(664,8): error TS2322: Type '{ form?: string | undefined; style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; ... 212 more ...; class: string; }' is not assignable to type 'IntrinsicAttributes & Omit<ButtonHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & VariantProps<...> & { ...; } & {}'.
+  Property 'onKeyDown' does not exist on type 'IntrinsicAttributes & Omit<ButtonHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & VariantProps<...> & { ...; } & {}'. Did you mean 'onKeydown'?
+src/components/ui/combobox.tsx(664,19): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(772,10): error TS2322: Type '{ type: "button"; "aria-label": string; "data-slot": string; disabled: boolean; onClick: (e: PointerEvent) => void; onKeyDown: (e: any) => any; class: string; }' is not assignable to type 'ButtonHTMLAttributes & ReservedProps'.
+  Property 'onKeyDown' does not exist on type 'ButtonHTMLAttributes & ReservedProps'. Did you mean 'onKeydown'?
+src/components/ui/combobox.tsx(772,21): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(787,132): error TS7006: Parameter 'v' implicitly has an 'any' type.
+src/components/ui/combobox.tsx(790,127): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/command.tsx(8,62): error TS2307: Cannot find module 'cmdk' or its corresponding type declarations.
+src/components/ui/command.tsx(92,49): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ui/command.tsx(93,48): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ui/command.tsx(102,49): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ui/command.tsx(103,48): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ui/command.tsx(104,48): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ui/command.tsx(105,51): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ui/command.tsx(174,39): error TS2322: Type '(next: HTMLElement | ((previous: HTMLElement | null) => HTMLElement | null) | null) => void' is not assignable to type 'VNodeRef | undefined'.
+  Type '(next: HTMLElement | ((previous: HTMLElement | null) => HTMLElement | null) | null) => void' is not assignable to type '(ref: Element | ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}, {}, {}, string, ComponentProvideOptions>, ... 4 more ..., any> | null, refs: Record<...>) => void'.
+    Types of parameters 'next' and 'ref' are incompatible.
+      Type 'Element | ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}, {}, {}, string, ComponentProvideOptions>, ... 4 more ..., any> | null' is not assignable to type 'HTMLElement | ((previous: HTMLElement | null) => HTMLElement | null) | null'.
+        Type 'Element' is not assignable to type 'HTMLElement | ((previous: HTMLElement | null) => HTMLElement | null) | null'.
+          Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 129 more.
+src/components/ui/context-menu.tsx(13,214): error TS2307: Cannot find module '@/lib/menu-styles' or its corresponding type declarations.
+src/components/ui/context-menu.tsx(212,37): error TS7006: Parameter 'k' implicitly has an 'any' type.
+src/components/ui/context-menu.tsx(212,40): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/components/ui/corkboard.tsx(90,12): error TS18048: 'latest.value' is possibly 'undefined'.
+src/components/ui/corkboard.tsx(121,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(getter: ComputedGetter<CorkboardContextValue>, debugOptions?: DebuggerOptions | undefined): ComputedRef<CorkboardContextValue>', gave the following error.
+    Type 'CorkboardValue | undefined' is not assignable to type 'CorkboardValue'.
+      Type 'undefined' is not assignable to type 'CorkboardValue'.
+  Overload 2 of 2, '(options: WritableComputedOptions<CorkboardContextValue, CorkboardContextValue>, debugOptions?: DebuggerOptions | undefined): WritableComputedRef<...>', gave the following error.
+    Argument of type '() => { positions: CorkboardValue | undefined; update: (id: string, patch: Partial<NotePosition>, message?: string) => void; topZ: () => number; bounds: () => { w: number; h: number; }; onResize: (fn: () => void) => () => undefined; say: (message: string) => void; help: string; disabled: boolean; }' is not assignable to parameter of type 'WritableComputedOptions<CorkboardContextValue, CorkboardContextValue>'.
+src/components/ui/corkboard.tsx(124,46): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(o: { [s: string]: Partial<NotePosition>; } | ArrayLike<Partial<NotePosition>>): Partial<NotePosition>[]', gave the following error.
+    Argument of type 'CorkboardValue | undefined' is not assignable to parameter of type '{ [s: string]: Partial<NotePosition>; } | ArrayLike<Partial<NotePosition>>'.
+      Type 'undefined' is not assignable to type '{ [s: string]: Partial<NotePosition>; } | ArrayLike<Partial<NotePosition>>'.
+  Overload 2 of 2, '(o: {}): any[]', gave the following error.
+    Argument of type 'CorkboardValue | undefined' is not assignable to parameter of type '{}'.
+      Type 'undefined' is not assignable to type '{}'.
+src/components/ui/corkboard.tsx(185,47): error TS2551: Property 'onPointerDown' does not exist on type 'CorkboardNoteProps'. Did you mean 'onPointerdown'?
+src/components/ui/corkboard.tsx(186,47): error TS2551: Property 'onPointerMove' does not exist on type 'CorkboardNoteProps'. Did you mean 'onPointermove'?
+src/components/ui/corkboard.tsx(187,45): error TS2551: Property 'onPointerUp' does not exist on type 'CorkboardNoteProps'. Did you mean 'onPointerup'?
+src/components/ui/corkboard.tsx(188,49): error TS2551: Property 'onPointerCancel' does not exist on type 'CorkboardNoteProps'. Did you mean 'onPointercancel'?
+src/components/ui/corkboard.tsx(189,43): error TS2551: Property 'onKeyDown' does not exist on type 'CorkboardNoteProps'. Did you mean 'onKeydown'?
+src/components/ui/corkboard.tsx(355,415): error TS2322: Type '{ title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; onCut?: ((payload: ClipboardEvent) => void) | undefined; onPaste?: ((payload: ClipboardEvent) => void) | undefined; ... 205 more ...; ref: (value: Element | ... 1 more ... | null) => void; }' is not assignable to type 'HTMLAttributes & ReservedProps'.
+  Property 'onPointerDown' does not exist on type 'HTMLAttributes & ReservedProps'. Did you mean 'onPointerdown'?
+src/components/ui/corkboard.tsx(355,580): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/date-picker.tsx(9,66): error TS2307: Cannot find module 'react-day-picker' or its corresponding type declarations.
+src/components/ui/date-picker.tsx(103,21): error TS2304: Cannot find name 'P'.
+src/components/ui/date-picker.tsx(104,20): error TS2304: Cannot find name 'P'.
+src/components/ui/date-picker.tsx(113,36): error TS7053: Element implicitly has an 'any' type because expression of type '"class"' can't be used to index type '{ presets: readonly P[]; onPick: (preset: P) => void; label?: string | undefined; className?: string | undefined; }'.
+  Property 'class' does not exist on type '{ presets: readonly P[]; onPick: (preset: P) => void; label?: string | undefined; className?: string | undefined; }'.
+src/components/ui/date-picker.tsx(150,36): error TS7053: Element implicitly has an 'any' type because expression of type '"class"' can't be used to index type 'ShellProps'.
+  Property 'class' does not exist on type 'ShellProps'.
+src/components/ui/date-picker.tsx(246,68): error TS2322: Type '{ "aria-label": string | undefined; "aria-labelledby": string | undefined; "aria-describedby": string | undefined; ref: ShallowRef<HTMLInputElement | null, HTMLInputElement | null>; ... 13 more ...; class: string; }' is not assignable to type 'IntrinsicAttributes & Omit<InputHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & {}'.
+  Property 'autoComplete' does not exist on type 'IntrinsicAttributes & Omit<InputHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & {}'. Did you mean 'autocomplete'?
+src/components/ui/date-picker.tsx(250,21): error TS18047: 'e.target' is possibly 'null'.
+src/components/ui/date-picker.tsx(250,30): error TS2339: Property 'value' does not exist on type 'EventTarget'.
+src/components/ui/date-picker.tsx(274,12): error TS2349: This expression is not callable.
+  Type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' has no call signatures.
+src/components/ui/date-picker.tsx(274,12): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/components/ui/date-picker.tsx(341,13): error TS2322: Type '{ text: string; onCommitText: (typed: string) => boolean; onFormReset: any; fallbackPlaceholder: string; hidden: Element | null; presets: ((close: () => void) => Element) | undefined; ... 17 more ...; contentProps?: Partial<...> | undefined; }' is not assignable to type 'IntrinsicAttributes & ShellProps & {}'.
+  Property 'children' is missing in type '{ text: string; onCommitText: (typed: string) => boolean; onFormReset: any; fallbackPlaceholder: string; hidden: Element | null; presets: ((close: () => void) => Element) | undefined; ... 17 more ...; contentProps?: Partial<...> | undefined; }' but required in type 'ShellProps'.
+src/components/ui/date-picker.tsx(341,337): error TS2322: Type 'readonly DatePreset[] | undefined' is not assignable to type 'readonly P[]'.
+  Type 'undefined' is not assignable to type 'readonly P[]'.
+src/components/ui/date-picker.tsx(345,8): error TS7006: Parameter 'close' implicitly has an 'any' type.
+src/components/ui/date-picker.tsx(345,63): error TS2322: Type '(d: any, triggerDate: any) => void' is not assignable to type '(payload: Event) => void'.
+  Target signature provides too few arguments. Expected 2 or more, but got 1.
+src/components/ui/date-picker.tsx(345,74): error TS7006: Parameter 'd' implicitly has an 'any' type.
+src/components/ui/date-picker.tsx(345,77): error TS7006: Parameter 'triggerDate' implicitly has an 'any' type.
+src/components/ui/date-picker.tsx(352,36): error TS2322: Type 'Matcher[] | undefined' is not assignable to type 'boolean | undefined'.
+  Type 'Matcher[]' is not assignable to type 'boolean | undefined'.
+src/components/ui/date-picker.tsx(422,13): error TS2322: Type '{ text: string; onCommitText: (typed: string) => boolean; onFormReset: any; fallbackPlaceholder: string; wide: true; calendarLabel: string; hidden: Element | null; presets: ((close: () => void) => Element) | undefined; ... 16 more ...; contentProps?: Partial<...> | undefined; }' is not assignable to type 'IntrinsicAttributes & ShellProps & {}'.
+  Property 'children' is missing in type '{ text: string; onCommitText: (typed: string) => boolean; onFormReset: any; fallbackPlaceholder: string; wide: true; calendarLabel: string; hidden: Element | null; presets: ((close: () => void) => Element) | undefined; ... 16 more ...; contentProps?: Partial<...> | undefined; }' but required in type 'ShellProps'.
+src/components/ui/date-picker.tsx(425,84): error TS2322: Type 'readonly DateRangePreset[] | undefined' is not assignable to type 'readonly P[]'.
+  Type 'undefined' is not assignable to type 'readonly P[]'.
+src/components/ui/date-picker.tsx(430,8): error TS7006: Parameter 'close' implicitly has an 'any' type.
+src/components/ui/date-picker.tsx(432,39): error TS2339: Property 'from' does not exist on type 'Event'.
+src/components/ui/date-picker.tsx(432,49): error TS2339: Property 'to' does not exist on type 'Event'.
+src/components/ui/date-picker.tsx(432,68): error TS2339: Property 'from' does not exist on type 'Event'.
+src/components/ui/date-picker.tsx(432,76): error TS2339: Property 'to' does not exist on type 'Event'.
+src/components/ui/date-picker.tsx(433,43): error TS2322: Type 'Matcher[] | undefined' is not assignable to type 'boolean | undefined'.
+  Type 'Matcher[]' is not assignable to type 'boolean | undefined'.
+src/components/ui/desk.tsx(42,8): error TS2604: JSX element type 'Comp.value' does not have any construct or call signatures.
+src/components/ui/dialog.tsx(78,36): error TS7053: Element implicitly has an 'any' type because expression of type '"class"' can't be used to index type '{ className?: string | undefined; seed?: string | number | undefined; }'.
+  Property 'class' does not exist on type '{ className?: string | undefined; seed?: string | number | undefined; }'.
+src/components/ui/dialog.tsx(127,8): error TS2322: Type '{}' is not assignable to type 'IntrinsicAttributes & Omit<ComponentProps<__VLS_WithSlots$378<DefineComponent<DialogOverlayProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, ... 12 more ..., any>, { ...; }>>, keyof PortAttributes> & PortAttributes & {} & { ...; }'.
+  Property 'children' is missing in type '{}' but required in type '{ children: VNodeChild; }'.
+src/components/ui/direction.tsx(69,19): error TS2339: Property 'Provider' does not exist on type 'InjectionKey<ComputedRef<InkContextValue>>'.
+src/components/ui/direction.tsx(73,20): error TS2339: Property 'Provider' does not exist on type 'InjectionKey<ComputedRef<InkContextValue>>'.
+src/components/ui/direction.tsx(77,57): error TS2339: Property 'useDirection' does not exist on type '{ DirectionProvider: FunctionalComponent<ComponentProps<__VLS_WithSlots$313<DefineComponent<ConfigProviderProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, ... 12 more ..., any>, { ...; }>>, {}, any, {}>; }'.
+src/components/ui/drawer.tsx(7,43): error TS2307: Cannot find module 'vaul' or its corresponding type declarations.
+src/components/ui/drawer.tsx(94,74): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/drawer.tsx(99,32): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/dropdown-menu.tsx(13,214): error TS2307: Cannot find module '@/lib/menu-styles' or its corresponding type declarations.
+src/components/ui/dropdown-menu.tsx(165,37): error TS7006: Parameter 'k' implicitly has an 'any' type.
+src/components/ui/dropdown-menu.tsx(165,40): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/components/ui/dropzone.tsx(237,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/dropzone.tsx(267,45): error TS2551: Property 'onDragEnter' does not exist on type 'Omit<ComponentProps<"label">, "children"> & { children?: VNodeChild; seed?: string | number | undefined; inputProps?: Omit<ComponentProps<"input">, "ref" | "type"> | undefined; }'. Did you mean 'onDragenter'?
+src/components/ui/dropzone.tsx(268,44): error TS2551: Property 'onDragOver' does not exist on type 'Omit<ComponentProps<"label">, "children"> & { children?: VNodeChild; seed?: string | number | undefined; inputProps?: Omit<ComponentProps<"input">, "ref" | "type"> | undefined; }'. Did you mean 'onDragover'?
+src/components/ui/dropzone.tsx(269,45): error TS2551: Property 'onDragLeave' does not exist on type 'Omit<ComponentProps<"label">, "children"> & { children?: VNodeChild; seed?: string | number | undefined; inputProps?: Omit<ComponentProps<"input">, "ref" | "type"> | undefined; }'. Did you mean 'onDragleave'?
+src/components/ui/dropzone.tsx(291,327): error TS2322: Type '{ form?: string | undefined; style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; ... 207 more ...; ref: (value: Element | ... 1 more ... | null) => void; }' is not assignable to type 'LabelHTMLAttributes & ReservedProps'.
+  Property 'onDragEnter' does not exist on type 'LabelHTMLAttributes & ReservedProps'. Did you mean 'onDragenter'?
+src/components/ui/dropzone.tsx(291,340): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/dropzone.tsx(297,20): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/dropzone.tsx(302,21): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/dropzone.tsx(316,74): error TS2322: Type 'RefObject<HTMLInputElement | null>' is not assignable to type 'VNodeRef | undefined'.
+  Property '[RefSymbol]' is missing in type 'RefObject<HTMLInputElement | null>' but required in type 'Ref<any, any>'.
+src/components/ui/dropzone.tsx(317,23): error TS18047: 'e.target' is possibly 'null'.
+src/components/ui/dropzone.tsx(317,32): error TS2339: Property 'files' does not exist on type 'EventTarget'.
+src/components/ui/dropzone.tsx(318,50): error TS18047: 'e.target' is possibly 'null'.
+src/components/ui/dropzone.tsx(318,59): error TS2339: Property 'value' does not exist on type 'EventTarget'.
+src/components/ui/dropzone.tsx(403,121): error TS2349: This expression is not callable.
+  Type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' has no call signatures.
+src/components/ui/dropzone.tsx(435,14): error TS2345: Argument of type '() => { recipe: Recipe<DropzoneItemParams>; params: { status: string; }; kind: string; seed: string | number | undefined; still: true; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<DropzoneItemParams>>'.
+  Type '() => { recipe: Recipe<DropzoneItemParams>; params: { status: string; }; kind: string; seed: string | number | undefined; still: true; }' is not assignable to type '() => UseInkOptions<DropzoneItemParams>'.
+    Call signature return types '{ recipe: Recipe<DropzoneItemParams>; params: { status: string; }; kind: string; seed: string | number | undefined; still: true; }' and 'UseInkOptions<DropzoneItemParams>' are incompatible.
+      The types of 'params.status' are incompatible between these types.
+        Type 'string' is not assignable to type '"done" | "error" | "idle"'.
+src/components/ui/envelope.tsx(58,48): error TS2551: Property 'onPointerEnter' does not exist on type 'EnvelopeProps'. Did you mean 'onPointerenter'?
+src/components/ui/envelope.tsx(59,48): error TS2551: Property 'onPointerLeave' does not exist on type 'EnvelopeProps'. Did you mean 'onPointerleave'?
+src/components/ui/envelope.tsx(100,60): error TS2322: Type '{ onPointerEnter: (e: any) => void; onPointerLeave: (e: any) => void; class: string; style: CSSProperties; 'data-ink-host'?: "" | undefined; 'data-ink-ready'?: "" | undefined; ref: (value: Element | ... 1 more ... | null) => void; "data-slot": string; }' is not assignable to type 'HTMLAttributes & ReservedProps'.
+  Property 'onPointerEnter' does not exist on type 'HTMLAttributes & ReservedProps'. Did you mean 'onPointerenter'?
+src/components/ui/envelope.tsx(100,76): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/envelope.tsx(106,30): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/field.tsx(89,83): error TS2558: Expected 0 type arguments, but got 1.
+src/components/ui/field.tsx(92,11): error TS18047: 'c.props' is possibly 'null'.
+src/components/ui/flip-card.tsx(71,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/flip-card.tsx(158,259): error TS2322: Type '(e: UI.MouseEvent<HTMLButtonElement>) => void' is not assignable to type '(payload: PointerEvent) => void'.
+  Types of parameters 'e' and 'payload' are incompatible.
+    Type 'PointerEvent' is not assignable to type 'MouseEvent<HTMLButtonElement>'.
+      Type 'PointerEvent' is not assignable to type '{ currentTarget: HTMLButtonElement; target: EventTarget & HTMLButtonElement; }'.
+        Types of property 'currentTarget' are incompatible.
+          Type 'EventTarget | null' is not assignable to type 'HTMLButtonElement'.
+            Type 'null' is not assignable to type 'HTMLButtonElement'.
+src/components/ui/flip-card.tsx(159,23): error TS2345: Argument of type 'MouseEvent<HTMLButtonElement>' is not assignable to parameter of type 'PointerEvent'.
+  Type 'MouseEvent & { currentTarget: HTMLButtonElement; target: EventTarget & HTMLButtonElement; }' is missing the following properties from type 'PointerEvent': altitudeAngle, azimuthAngle, height, isPrimary, and 10 more.
+src/components/ui/handwritten.tsx(36,25): error TS2558: Expected 0 type arguments, but got 1.
+src/components/ui/handwritten.tsx(39,17): error TS18047: 'node.props' is possibly 'null'.
+src/components/ui/handwritten.tsx(41,20): error TS18047: 'node.props' is possibly 'null'.
+src/components/ui/handwritten.tsx(42,31): error TS2345: Argument of type 'undefined' is not assignable to parameter of type 'Record<string, unknown>'.
+src/components/ui/handwritten.tsx(42,50): error TS18047: 'node.props' is possibly 'null'.
+src/components/ui/handwritten.tsx(63,13): error TS2604: JSX element type 'Comp.value' does not have any construct or call signatures.
+src/components/ui/handwritten.tsx(64,29): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/index-card.tsx(32,27): error TS2345: Argument of type '() => { recipe: Recipe<IndexCardParams>; params: { hole: boolean; flag: string; stack: 0 | 1 | 2 | 3; }; kind: string; ref: UI.Ref<HTMLElement> | undefined; ... 4 more ...; enabled: boolean; }' is not assignable to parameter of type 'MaybeRefOrGetter<PaperObjectOptions<IndexCardParams>>'.
+  Type '() => { recipe: Recipe<IndexCardParams>; params: { hole: boolean; flag: string; stack: 0 | 1 | 2 | 3; }; kind: string; ref: UI.Ref<HTMLElement> | undefined; ... 4 more ...; enabled: boolean; }' is not assignable to type '() => PaperObjectOptions<IndexCardParams>'.
+    Call signature return types '{ recipe: Recipe<IndexCardParams>; params: { hole: boolean; flag: string; stack: 0 | 1 | 2 | 3; }; kind: string; ref: Ref<HTMLElement> | undefined; ... 4 more ...; enabled: boolean; }' and 'PaperObjectOptions<IndexCardParams>' are incompatible.
+      The types of 'params.flag' are incompatible between these types.
+        Type 'string' is not assignable to type '"none" | Accent'.
+src/components/ui/input-group.tsx(70,14): error TS2345: Argument of type '() => { recipe: Recipe<{ edge: "top" | "bottom"; }>; params: { edge: string; }; kind: string; still: true; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<{ edge: "top" | "bottom"; }>>'.
+  Type '() => { recipe: Recipe<{ edge: "top" | "bottom"; }>; params: { edge: string; }; kind: string; still: true; }' is not assignable to type '() => UseInkOptions<{ edge: "top" | "bottom"; }>'.
+    Call signature return types '{ recipe: Recipe<{ edge: "top" | "bottom"; }>; params: { edge: string; }; kind: string; still: true; }' and 'UseInkOptions<{ edge: "top" | "bottom"; }>' are incompatible.
+      The types of 'params.edge' are incompatible between these types.
+        Type 'string' is not assignable to type '"top" | "bottom"'.
+src/components/ui/input-group.tsx(87,7): error TS18047: 'e.currentTarget' is possibly 'null'.
+src/components/ui/input-group.tsx(87,23): error TS2339: Property 'parentElement' does not exist on type 'EventTarget'.
+src/components/ui/input-otp.tsx(7,112): error TS2307: Cannot find module 'input-otp' or its corresponding type declarations.
+src/components/ui/input-otp.tsx(45,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/input-otp.tsx(48,402): error TS7006: Parameter 'v' implicitly has an 'any' type.
+src/components/ui/input-otp.tsx(80,55): error TS2339: Property 'slots' does not exist on type '{}'.
+src/components/ui/input-otp.tsx(81,63): error TS2339: Property 'slots' does not exist on type '{}'.
+src/components/ui/input-otp.tsx(82,59): error TS2339: Property 'slots' does not exist on type '{}'.
+src/components/ui/input-otp.tsx(83,66): error TS2339: Property 'slots' does not exist on type '{}'.
+src/components/ui/input.tsx(21,13): error TS2322: Type '{ form?: string | undefined; style?: CSSProperties | undefined; title?: string | undefined; pattern?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; ... 227 more ...; class: string; }' is not assignable to type 'InputHTMLAttributes & ReservedProps'.
+  Type '{ form?: string | undefined; style?: CSSProperties | undefined; title?: string | undefined; pattern?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; ... 227 more ...; class: string; }' is not assignable to type 'InputHTMLAttributes'.
+    Types of property 'checked' are incompatible.
+      Type 'boolean | "indeterminate" | undefined' is not assignable to type 'any[] | Set<any> | Booleanish | undefined'.
+        Type '"indeterminate"' is not assignable to type 'any[] | Set<any> | Booleanish | undefined'.
+src/components/ui/item.tsx(19,19): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/item.tsx(33,13): error TS2604: JSX element type 'InList' does not have any construct or call signatures.
+src/components/ui/item.tsx(49,41): error TS2345: Argument of type 'ComputedRef<string>' is not assignable to parameter of type 'string | number'.
+src/components/ui/item.tsx(90,41): error TS2345: Argument of type 'ComputedRef<string>' is not assignable to parameter of type 'string | number'.
+src/components/ui/item.tsx(97,33): error TS2604: JSX element type 'InList' does not have any construct or call signatures.
+src/components/ui/item.tsx(128,41): error TS2345: Argument of type 'ComputedRef<string>' is not assignable to parameter of type 'string | number'.
+src/components/ui/lettering.tsx(53,13): error TS2604: JSX element type 'Comp.value' does not have any construct or call signatures.
+src/components/ui/marker.tsx(37,14): error TS2345: Argument of type '() => { recipe: Recipe<MarkerRuleParams>; params: { side: MarkerSide; tone: MarkerTone; style: string; }; kind: string; seed: string | undefined; still: true; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<MarkerRuleParams>>'.
+  Type '() => { recipe: Recipe<MarkerRuleParams>; params: { side: MarkerSide; tone: MarkerTone; style: string; }; kind: string; seed: string | undefined; still: true; }' is not assignable to type '() => UseInkOptions<MarkerRuleParams>'.
+    Call signature return types '{ recipe: Recipe<MarkerRuleParams>; params: { side: MarkerSide; tone: MarkerTone; style: string; }; kind: string; seed: string | undefined; still: true; }' and 'UseInkOptions<MarkerRuleParams>' are incompatible.
+      The types of 'params.style' are incompatible between these types.
+        Type 'string' is not assignable to type '"line" | "wavy" | undefined'.
+src/components/ui/marquee.tsx(109,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/marquee.tsx(166,15): error TS18047: 'ctx.value' is possibly 'null'.
+src/components/ui/marquee.tsx(176,32): error TS18047: 'ctx.value' is possibly 'null'.
+src/components/ui/menubar.tsx(14,214): error TS2307: Cannot find module '@/lib/menu-styles' or its corresponding type declarations.
+src/components/ui/menubar.tsx(197,37): error TS7006: Parameter 'k' implicitly has an 'any' type.
+src/components/ui/menubar.tsx(197,40): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/components/ui/message-scroller.tsx(9,141): error TS2307: Cannot find module '@/lib/message-scroller-primitive' or its corresponding type declarations.
+src/components/ui/message.tsx(7,34): error TS2307: Cannot find module '@/lib/chat-align' or its corresponding type declarations.
+src/components/ui/message.tsx(97,47): error TS2345: Argument of type 'string | VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' is not assignable to parameter of type 'string'.
+  Type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' is not assignable to type 'string'.
+src/components/ui/message.tsx(98,61): error TS2339: Property 'split' does not exist on type 'string | VNode<RendererNode, RendererElement, { [key: string]: any; }>[]'.
+  Property 'split' does not exist on type 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]'.
+src/components/ui/message.tsx(102,47): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/components/ui/message.tsx(102,50): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/components/ui/message.tsx(105,20): error TS2540: Cannot assign to 'value' because it is a read-only property.
+src/components/ui/message.tsx(112,93): error TS2540: Cannot assign to 'value' because it is a read-only property.
+src/components/ui/message.tsx(119,45): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/navigation-menu.tsx(85,14): error TS2345: Argument of type '() => { recipe: Recipe<NavTabParams>; params: { role: string; disabled: boolean; }; kind: string; seed: string | number | undefined; still: true; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<NavTabParams>>'.
+  Type '() => { recipe: Recipe<NavTabParams>; params: { role: string; disabled: boolean; }; kind: string; seed: string | number | undefined; still: true; }' is not assignable to type '() => UseInkOptions<NavTabParams>'.
+    Call signature return types '{ recipe: Recipe<NavTabParams>; params: { role: string; disabled: boolean; }; kind: string; seed: string | number | undefined; still: true; }' and 'UseInkOptions<NavTabParams>' are incompatible.
+      The types of 'params.role' are incompatible between these types.
+        Type 'string' is not assignable to type '"link" | "trigger"'.
+src/components/ui/navigation-menu.tsx(111,8): error TS2604: JSX element type 'InPanel' does not have any construct or call signatures.
+src/components/ui/navigation-menu.tsx(166,14): error TS2345: Argument of type '() => { recipe: Recipe<NavTabParams>; params: { role: string; }; kind: string; seed: string | number | undefined; still: true; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<NavTabParams>>'.
+  Type '() => { recipe: Recipe<NavTabParams>; params: { role: string; }; kind: string; seed: string | number | undefined; still: true; }' is not assignable to type '() => UseInkOptions<NavTabParams>'.
+    Call signature return types '{ recipe: Recipe<NavTabParams>; params: { role: string; }; kind: string; seed: string | number | undefined; still: true; }' and 'UseInkOptions<NavTabParams>' are incompatible.
+      The types of 'params.role' are incompatible between these types.
+        Type 'string' is not assignable to type '"link" | "trigger"'.
+src/components/ui/notebook.tsx(137,208): error TS2322: Type '(e: UI.MouseEvent<HTMLButtonElement>) => void' is not assignable to type '(payload: PointerEvent) => void'.
+  Types of parameters 'e' and 'payload' are incompatible.
+    Type 'PointerEvent' is not assignable to type 'MouseEvent<HTMLButtonElement>'.
+      Type 'PointerEvent' is not assignable to type '{ currentTarget: HTMLButtonElement; target: EventTarget & HTMLButtonElement; }'.
+        Types of property 'currentTarget' are incompatible.
+          Type 'EventTarget | null' is not assignable to type 'HTMLButtonElement'.
+            Type 'null' is not assignable to type 'HTMLButtonElement'.
+src/components/ui/notebook.tsx(138,23): error TS2345: Argument of type 'MouseEvent<HTMLButtonElement>' is not assignable to parameter of type 'PointerEvent'.
+  Type 'MouseEvent & { currentTarget: HTMLButtonElement; target: EventTarget & HTMLButtonElement; }' is missing the following properties from type 'PointerEvent': altitudeAngle, azimuthAngle, height, isPrimary, and 10 more.
+src/components/ui/page.tsx(119,14): error TS2345: Argument of type '() => { recipe: Recipe<TitleMarkParams>; params: { kind: "none" | TitleMark; }; kind: string; seed: string | number | undefined; still: true; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<TitleMarkParams>>'.
+  Type '() => { recipe: Recipe<TitleMarkParams>; params: { kind: "none" | TitleMark; }; kind: string; seed: string | number | undefined; still: true; }' is not assignable to type '() => UseInkOptions<TitleMarkParams>'.
+    Call signature return types '{ recipe: Recipe<TitleMarkParams>; params: { kind: "none" | TitleMark; }; kind: string; seed: string | number | undefined; still: true; }' and 'UseInkOptions<TitleMarkParams>' are incompatible.
+      The types of 'params.kind' are incompatible between these types.
+        Type '"none" | TitleMark' is not assignable to type 'TitleMark'.
+          Type '"none"' is not assignable to type 'TitleMark'.
+src/components/ui/page.tsx(130,13): error TS2604: JSX element type 'Comp.value' does not have any construct or call signatures.
+src/components/ui/paper.tsx(118,28): error TS2345: Argument of type '() => { recipe: Recipe<HandRulesParams>; params: { paper: string; }; kind: string; seed: string; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<HandRulesParams>>'.
+  Type '() => { recipe: Recipe<HandRulesParams>; params: { paper: string; }; kind: string; seed: string; }' is not assignable to type '() => UseInkOptions<HandRulesParams>'.
+    Call signature return types '{ recipe: Recipe<HandRulesParams>; params: { paper: string; }; kind: string; seed: string; }' and 'UseInkOptions<HandRulesParams>' are incompatible.
+      The types of 'params.paper' are incompatible between these types.
+        Type 'string' is not assignable to type '"pad" | "ruled" | undefined'.
+src/components/ui/paper.tsx(143,8): error TS2604: JSX element type 'Comp.value' does not have any construct or call signatures.
+src/components/ui/peel-corner.tsx(58,42): error TS2448: Block-scoped variable 'open' used before its declaration.
+src/components/ui/peel-corner.tsx(58,42): error TS2454: Variable 'open' is used before being assigned.
+src/components/ui/peel-corner.tsx(195,186): error TS2322: Type '{ onPointerEnter: () => false | void; onPointerLeave: () => false | void; onPointerDown: (e: PointerEvent<HTMLButtonElement>) => void; onPointerMove: (e: PointerEvent<...>) => void; ... 12 more ...; ref: ElementRef; }' is not assignable to type 'ButtonHTMLAttributes & ReservedProps'.
+  Property 'onPointerEnter' does not exist on type 'ButtonHTMLAttributes & ReservedProps'. Did you mean 'onPointerenter'?
+src/components/ui/popover.tsx(72,43): error TS2344: Type 'ComputedRef<((event: PointerDownOutsideEvent | FocusOutsideEvent) => any) | undefined>' does not satisfy the constraint '(...args: any) => any'.
+  Type 'ComputedRef<((event: PointerDownOutsideEvent | FocusOutsideEvent) => any) | undefined>' provides no match for the signature '(...args: any): any'.
+src/components/ui/popover.tsx(123,8): error TS2322: Type '{ onOpenAutoFocus(event: Event): void; onInteractOutside(event: never): void; onCloseAutoFocus(event: Event): void; style?: CSSProperties | undefined; ... 229 more ...; collisionPadding: number | Partial<...>; }' is not assignable to type 'IntrinsicAttributes & Omit<{ readonly forceMount?: boolean | undefined; readonly memoDependencies?: unknown[] | undefined; readonly side?: "top" | "right" | "bottom" | "left" | undefined; ... 26 more ...; readonly onCloseAutoFocus?: ((event: Event) => any) | undefined; } & VNodeProps & AllowedComponentProps & Compon...'.
+  Type '{ onOpenAutoFocus(event: Event): void; onInteractOutside(event: never): void; onCloseAutoFocus(event: Event): void; style?: CSSProperties | undefined; ... 229 more ...; collisionPadding: number | Partial<...>; }' is not assignable to type 'Omit<{ readonly forceMount?: boolean | undefined; readonly memoDependencies?: unknown[] | undefined; readonly side?: "top" | "right" | "bottom" | "left" | undefined; readonly sideOffset?: number | undefined; ... 25 more ...; readonly onCloseAutoFocus?: ((event: Event) => any) | undefined; } & VNodeProps & AllowedCom...'.
+    Types of property 'onInteractOutside' are incompatible.
+      Type '(event: never) => void' is not assignable to type '(event: PointerDownOutsideEvent | FocusOutsideEvent) => any'.
+        Types of parameters 'event' and 'event' are incompatible.
+          Type 'PointerDownOutsideEvent | FocusOutsideEvent' is not assignable to type 'never'.
+            Type 'PointerDownOutsideEvent' is not assignable to type 'never'.
+src/components/ui/progress.tsx(25,32): error TS7053: Element implicitly has an 'any' type because expression of type '"value"' can't be used to index type 'Omit<ComponentProps<__VLS_WithSlots$114<DefineComponent<ProgressRootProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, { "update:modelValue": (value: string[] | undefined) => any; "update:max": (value: number) => any; }, ... 11 more ..., any>, { ...; }>>, keyof PortAttributes> & PortAttributes & { ...'.
+  Property 'value' does not exist on type 'Omit<ComponentProps<__VLS_WithSlots$114<DefineComponent<ProgressRootProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, { "update:modelValue": (value: string[] | undefined) => any; "update:max": (value: number) => any; }, ... 11 more ..., any>, { ...; }>>, keyof PortAttributes> & PortAttributes & { ...'.
+src/components/ui/progress.tsx(57,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/progress.tsx(60,144): error TS2322: Type '{ style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; onCut?: ((payload: ClipboardEvent) => void) | undefined; ... 214 more ...; ref: (value: Element | ... 1 more ... | null) => void; }' is not assignable to type 'IntrinsicAttributes & Omit<{ readonly modelValue?: number | null | undefined; readonly max?: number | undefined; readonly getValueLabel?: ((value: number | null | undefined, max: number) => string | undefined) | undefined; ... 4 more ...; readonly "onUpdate:max"?: ((value: number) => any) | undefined; } & VNodeProps...'.
+  Property 'value' does not exist on type 'IntrinsicAttributes & Omit<{ readonly modelValue?: number | null | undefined; readonly max?: number | undefined; readonly getValueLabel?: ((value: number | null | undefined, max: number) => string | undefined) | undefined; ... 4 more ...; readonly "onUpdate:max"?: ((value: number) => any) | undefined; } & VNodeProps...'.
+src/components/ui/prompt-input.tsx(146,46): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/ui/prompt-input.tsx(171,20): error TS18048: 'value.value' is possibly 'undefined'.
+src/components/ui/prompt-input.tsx(172,19): error TS18048: 'value.value' is possibly 'undefined'.
+src/components/ui/prompt-input.tsx(187,31): error TS18048: 'value.value' is possibly 'undefined'.
+src/components/ui/prompt-input.tsx(191,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(getter: ComputedGetter<PromptInputContextValue>, debugOptions?: DebuggerOptions | undefined): ComputedRef<PromptInputContextValue>', gave the following error.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+  Overload 2 of 2, '(options: WritableComputedOptions<PromptInputContextValue, PromptInputContextValue>, debugOptions?: DebuggerOptions | undefined): WritableComputedRef<...>', gave the following error.
+    Argument of type '() => { value: string | undefined; setValue: (v: string) => void; status: PromptInputStatus; busy: boolean; disabled: boolean; allowEmpty: boolean; lockWhileStreaming: boolean; ... 15 more ...; composing: ShallowRef<...>; }' is not assignable to parameter of type 'WritableComputedOptions<PromptInputContextValue, PromptInputContextValue>'.
+src/components/ui/prompt-input.tsx(219,31): error TS18048: 'value.value' is possibly 'undefined'.
+src/components/ui/prompt-input.tsx(220,22): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/ui/prompt-input.tsx(228,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/prompt-input.tsx(281,43): error TS2551: Property 'onKeyDown' does not exist on type 'Omit<ComponentProps<"textarea">, "value" | "defaultValue"> & { minRows?: number | undefined; maxRows?: number | undefined; }'. Did you mean 'onKeydown'?
+src/components/ui/prompt-input.tsx(284,52): error TS2551: Property 'onCompositionStart' does not exist on type 'Omit<ComponentProps<"textarea">, "value" | "defaultValue"> & { minRows?: number | undefined; maxRows?: number | undefined; }'. Did you mean 'onCompositionstart'?
+src/components/ui/prompt-input.tsx(285,50): error TS2551: Property 'onCompositionEnd' does not exist on type 'Omit<ComponentProps<"textarea">, "value" | "defaultValue"> & { minRows?: number | undefined; maxRows?: number | undefined; }'. Did you mean 'onCompositionend'?
+src/components/ui/prompt-input.tsx(318,24): error TS18047: 'e.currentTarget' is possibly 'null'.
+src/components/ui/prompt-input.tsx(318,40): error TS2339: Property 'value' does not exist on type 'EventTarget'.
+src/components/ui/prompt-input.tsx(319,24): error TS18047: 'e.currentTarget' is possibly 'null'.
+src/components/ui/prompt-input.tsx(319,40): error TS2339: Property 'selectionStart' does not exist on type 'EventTarget'.
+src/components/ui/prompt-input.tsx(319,58): error TS18047: 'e.currentTarget' is possibly 'null'.
+src/components/ui/prompt-input.tsx(319,74): error TS2339: Property 'value' does not exist on type 'EventTarget'.
+src/components/ui/prompt-input.tsx(322,24): error TS18047: 'e.currentTarget' is possibly 'null'.
+src/components/ui/prompt-input.tsx(322,40): error TS2339: Property 'selectionStart' does not exist on type 'EventTarget'.
+src/components/ui/prompt-input.tsx(324,8): error TS2322: Type '{ form?: string | undefined; style: CSSProperties; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; onCut?: ((payload: ClipboardEvent) => void) | undefined; ... 212 more ...; onKeyDown: (e: any) => undefined; }' is not assignable to type 'IntrinsicAttributes & Omit<TextareaHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & {}'.
+  Property 'onCompositionStart' does not exist on type 'IntrinsicAttributes & Omit<TextareaHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & {}'. Did you mean 'onCompositionstart'?
+src/components/ui/prompt-input.tsx(324,28): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/prompt-input.tsx(327,26): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/prompt-input.tsx(333,19): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/prompt-input.tsx(455,300): error TS2322: Type '{ "data-slot": string; role: string; "aria-label": string; id: string; ref: Ref<HTMLElement>; stock: "slip"; tilt: false; class: string; onMouseDown: (e: MouseEvent<HTMLElement>) => void; }' is not assignable to type 'IntrinsicAttributes & Omit<ComponentProps<"div">, "ref"> & { ref?: Ref<HTMLElement> | undefined; stock?: StockName | undefined; ... 12 more ...; size?: readonly [...] | undefined; } & {}'.
+  Property 'onMouseDown' does not exist on type 'IntrinsicAttributes & Omit<ComponentProps<"div">, "ref"> & { ref?: Ref<HTMLElement> | undefined; stock?: StockName | undefined; ... 12 more ...; size?: readonly [...] | undefined; } & {}'. Did you mean 'onMousedown'?
+src/components/ui/prompt-input.tsx(470,47): error TS2551: Property 'onPointerMove' does not exist on type 'Omit<ComponentProps<"div">, "onSelect"> & { onSelect?: (() => void) | undefined; disabled?: boolean | undefined; }'. Did you mean 'onPointermove'?
+src/components/ui/prompt-input.tsx(477,385): error TS2322: Type '{ style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; onCut?: ((payload: ClipboardEvent) => void) | undefined; ... 196 more ...; onClick: (e: PointerEvent) => void; }' is not assignable to type 'HTMLAttributes & ReservedProps'.
+  Property 'onPointerMove' does not exist on type 'HTMLAttributes & ReservedProps'. Did you mean 'onPointermove'?
+src/components/ui/prompt-input.tsx(477,400): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/radio-group.tsx(61,19): error TS2345: Argument of type 'MouseEvent' is not assignable to parameter of type '{ currentTarget: Element; }'.
+  Types of property 'currentTarget' are incompatible.
+    Type 'EventTarget | null' is not assignable to type 'Element'.
+      Type 'null' is not assignable to type 'Element'.
+src/components/ui/rating.tsx(73,160): error TS2339: Property 'value' does not exist on type 'RatingContextValue'.
+src/components/ui/rating.tsx(73,323): error TS2322: Type '{ key: number; type: "button"; role: string; "data-slot": string; "data-value": number; "aria-checked": boolean; "aria-label": string; tabindex: number; disabled: boolean; onClick: () => void; onPointerEnter: (e: any) => void; class: string; }' is not assignable to type 'ButtonHTMLAttributes & ReservedProps'.
+  Property 'onPointerEnter' does not exist on type 'ButtonHTMLAttributes & ReservedProps'. Did you mean 'onPointerenter'?
+src/components/ui/rating.tsx(73,339): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/rating.tsx(110,71): error TS7006: Parameter 'v' implicitly has an 'any' type.
+src/components/ui/rating.tsx(110,74): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/components/ui/rating.tsx(114,43): error TS2551: Property 'onKeyDown' does not exist on type 'Omit<ComponentProps<"div">, "children" | "defaultValue"> & { value?: number | undefined; defaultValue?: number | undefined; onValueChange?: ((value: number) => void) | undefined; ... 11 more ...; children?: VNodeChild; }'. Did you mean 'onKeydown'?
+src/components/ui/rating.tsx(115,48): error TS2551: Property 'onPointerLeave' does not exist on type 'Omit<ComponentProps<"div">, "children" | "defaultValue"> & { value?: number | undefined; defaultValue?: number | undefined; onValueChange?: ((value: number) => void) | undefined; ... 11 more ...; children?: VNodeChild; }'. Did you mean 'onPointerleave'?
+src/components/ui/rating.tsx(125,45): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/components/ui/rating.tsx(131,46): error TS2345: Argument of type 'null' is not assignable to parameter of type 'HTMLDivElement'.
+src/components/ui/rating.tsx(132,49): error TS2345: Argument of type 'null' is not assignable to parameter of type 'HTMLInputElement'.
+src/components/ui/rating.tsx(178,617): error TS2322: Type '{ style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; onCut?: ((payload: ClipboardEvent) => void) | undefined; ... 198 more ...; onKeyDown: (e: any) => void; }' is not assignable to type 'HTMLAttributes & ReservedProps'.
+  Property 'onPointerLeave' does not exist on type 'HTMLAttributes & ReservedProps'. Did you mean 'onPointerleave'?
+src/components/ui/rating.tsx(178,633): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/rating.tsx(181,21): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/rating.tsx(190,9): error TS2347: Untyped function calls may not accept type arguments.
+src/components/ui/rating.tsx(193,213): error TS2322: Type '{ ref: ShallowRef<HTMLInputElement, HTMLInputElement>; type: "text"; name: string | undefined; value: string | number; required: true; ... 5 more ...; class: string; }' is not assignable to type 'InputHTMLAttributes & ReservedProps'.
+  Property 'autoComplete' does not exist on type 'InputHTMLAttributes & ReservedProps'. Did you mean 'autocomplete'?
+src/components/ui/receipt.tsx(89,14): error TS2345: Argument of type '() => { recipe: Recipe<ReceiptCircleParams>; params: { pen: string; }; kind: string; seed: string | number | undefined; still: true; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<ReceiptCircleParams>>'.
+  Type '() => { recipe: Recipe<ReceiptCircleParams>; params: { pen: string; }; kind: string; seed: string | number | undefined; still: true; }' is not assignable to type '() => UseInkOptions<ReceiptCircleParams>'.
+    Call signature return types '{ recipe: Recipe<ReceiptCircleParams>; params: { pen: string; }; kind: string; seed: string | number | undefined; still: true; }' and 'UseInkOptions<ReceiptCircleParams>' are incompatible.
+      The types of 'params.pen' are incompatible between these types.
+        Type 'string' is not assignable to type '"ink" | "blue" | "redfelt"'.
+src/components/ui/resizable.tsx(7,37): error TS2307: Cannot find module 'react-resizable-panels' or its corresponding type declarations.
+src/components/ui/resizable.tsx(72,14): error TS2345: Argument of type '() => { recipe: Recipe<ResizableParams>; params: { line: string; grip: boolean; disabled: boolean; }; kind: string; seed: any; still: true; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<ResizableParams>>'.
+  Type '() => { recipe: Recipe<ResizableParams>; params: { line: string; grip: boolean; disabled: boolean; }; kind: string; seed: any; still: true; }' is not assignable to type '() => UseInkOptions<ResizableParams>'.
+    Call signature return types '{ recipe: Recipe<ResizableParams>; params: { line: string; grip: boolean; disabled: boolean; }; kind: string; seed: any; still: true; }' and 'UseInkOptions<ResizableParams>' are incompatible.
+      The types of 'params.line' are incompatible between these types.
+        Type 'string' is not assignable to type '"vertical" | "horizontal"'.
+src/components/ui/resizable.tsx(94,60): error TS2307: Cannot find module 'react-resizable-panels' or its corresponding type declarations.
+src/components/ui/resizable.tsx(95,90): error TS2307: Cannot find module 'react-resizable-panels' or its corresponding type declarations.
+src/components/ui/reveal.tsx(145,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/reveal.tsx(148,8): error TS2604: JSX element type 'Comp.value' does not have any construct or call signatures.
+src/components/ui/separator.tsx(62,76): error TS2367: This comparison appears to be unintentional because the types 'VNode<RendererNode, RendererElement, { [key: string]: any; }>[]' and 'boolean' have no overlap.
+src/components/ui/sheet.tsx(98,36): error TS7053: Element implicitly has an 'any' type because expression of type '"class"' can't be used to index type '{ className?: string | undefined; seed?: string | undefined; }'.
+  Property 'class' does not exist on type '{ className?: string | undefined; seed?: string | undefined; }'.
+src/components/ui/sheet.tsx(154,59): error TS2322: Type 'Binding' is not assignable to type 'BindingKind'.
+  Type '"none"' is not assignable to type 'BindingKind'.
+src/components/ui/sheet.tsx(156,53): error TS2322: Type '{ class: string; seed: string; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; seed?: string | undefined; } & {}'.
+  Property 'class' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; seed?: string | undefined; } & {}'. Did you mean 'className'?
+src/components/ui/sidebar.tsx(127,36): error TS7053: Element implicitly has an 'any' type because expression of type '"class"' can't be used to index type '{ seed: string; inside?: boolean | undefined; className?: string | undefined; }'.
+  Property 'class' does not exist on type '{ seed: string; inside?: boolean | undefined; className?: string | undefined; }'.
+src/components/ui/sidebar.tsx(434,15): error TS2540: Cannot assign to 'value' because it is a read-only property.
+src/components/ui/signature-pad.tsx(9,81): error TS2307: Cannot find module '@/components/ui/sketchpad' or its corresponding type declarations.
+src/components/ui/signature-pad.tsx(13,33): error TS2307: Cannot find module '@/lib/sketch-export' or its corresponding type declarations.
+src/components/ui/signature-pad.tsx(149,91): error TS7006: Parameter 'png' implicitly has an 'any' type.
+src/components/ui/signature-pad.tsx(338,26): error TS2322: Type '{ form?: string | undefined; style?: CSSProperties | undefined; title?: string | undefined; pattern?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; ... 229 more ...; class: string; }' is not assignable to type 'IntrinsicAttributes & Omit<InputHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { ...; } & {}'.
+  Property 'autoComplete' does not exist on type 'IntrinsicAttributes & Omit<InputHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { ...; } & {}'. Did you mean 'autocomplete'?
+src/components/ui/signature-pad.tsx(338,171): error TS18047: 'e.target' is possibly 'null'.
+src/components/ui/signature-pad.tsx(338,180): error TS2339: Property 'value' does not exist on type 'EventTarget'.
+src/components/ui/skeleton.tsx(24,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/slider.tsx(73,32): error TS7053: Element implicitly has an 'any' type because expression of type '"value"' can't be used to index type 'Omit<ComponentProps<__VLS_WithSlots$76<DefineComponent<SliderRootProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, { "update:modelValue": (payload: number[] | undefined) => any; valueCommit: (payload: number[]) => any; }, ... 11 more ..., any>, { ...; }>>, keyof PortAttributes> & PortAttributes & ...'.
+  Property 'value' does not exist on type 'Omit<ComponentProps<__VLS_WithSlots$76<DefineComponent<SliderRootProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, { "update:modelValue": (payload: number[] | undefined) => any; valueCommit: (payload: number[]) => any; }, ... 11 more ..., any>, { ...; }>>, keyof PortAttributes> & PortAttributes & ...'.
+src/components/ui/slider.tsx(81,47): error TS2551: Property 'onValueChange' does not exist on type 'Omit<ComponentProps<__VLS_WithSlots$76<DefineComponent<SliderRootProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, { "update:modelValue": (payload: number[] | undefined) => any; valueCommit: (payload: number[]) => any; }, ... 11 more ..., any>, { ...; }>>, keyof PortAttributes> & PortAttributes & ...'. Did you mean 'onVolumechange'?
+src/components/ui/slider.tsx(94,46): error TS2339: Property 'useDirection' does not exist on type '{ DirectionProvider: FunctionalComponent<ComponentProps<__VLS_WithSlots$313<DefineComponent<ConfigProviderProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, ... 12 more ..., any>, { ...; }>>, {}, any, {}>; }'.
+src/components/ui/slider.tsx(143,13): error TS2322: Type '{ title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; onCut?: ((payload: ClipboardEvent) => void) | undefined; onPaste?: ((payload: ClipboardEvent) => void) | undefined; ... 219 more ...; dir: string | undefined; }' is not assignable to type 'IntrinsicAttributes & Omit<{ readonly defaultValue?: number[] | undefined; readonly modelValue?: number[] | null | undefined; readonly disabled?: boolean | undefined; ... 13 more ...; readonly onValueCommit?: ((payload: number[]) => any) | undefined; } & VNodeProps & AllowedComponentProps & ComponentCustomProps, key...'.
+  Property 'onValueChange' does not exist on type 'IntrinsicAttributes & Omit<{ readonly defaultValue?: number[] | undefined; readonly modelValue?: number[] | null | undefined; readonly disabled?: boolean | undefined; ... 13 more ...; readonly onValueCommit?: ((payload: number[]) => any) | undefined; } & VNodeProps & AllowedComponentProps & ComponentCustomProps, key...'. Did you mean 'onVolumechange'?
+src/components/ui/slider.tsx(143,28): error TS7006: Parameter 'v' implicitly has an 'any' type.
+src/components/ui/sonner.tsx(8,72): error TS2307: Cannot find module 'sonner' or its corresponding type declarations.
+src/components/ui/spinner.tsx(84,18): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/stamp-button.tsx(74,22): error TS18048: 'latest.value' is possibly 'undefined'.
+src/components/ui/stamp-button.tsx(88,22): error TS18048: 'latest.value' is possibly 'undefined'.
+src/components/ui/stamp-button.tsx(119,12): error TS18048: 'impressions.value' is possibly 'undefined'.
+src/components/ui/stamp-button.tsx(226,21): error TS2345: Argument of type 'MouseEvent<HTMLButtonElement>' is not assignable to parameter of type 'PointerEvent'.
+  Type 'MouseEvent & { currentTarget: HTMLButtonElement; target: EventTarget & HTMLButtonElement; }' is missing the following properties from type 'PointerEvent': altitudeAngle, azimuthAngle, height, isPrimary, and 10 more.
+src/components/ui/stamp-button.tsx(253,8): error TS2322: Type 'MouseEventHandler<HTMLElement>' is not assignable to type '(payload: PointerEvent) => void'.
+  Types of parameters 'event' and 'payload' are incompatible.
+    Type 'PointerEvent' is not assignable to type 'MouseEvent<HTMLElement>'.
+      Type 'PointerEvent' is not assignable to type '{ currentTarget: HTMLElement; target: EventTarget & HTMLElement; }'.
+        Types of property 'currentTarget' are incompatible.
+          Type 'EventTarget | null' is not assignable to type 'HTMLElement'.
+            Type 'null' is not assignable to type 'HTMLElement'.
+src/components/ui/stamp.tsx(65,109): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/ui/stepper.tsx(244,77): error TS18048: 'value.value' is possibly 'undefined'.
+src/components/ui/stepper.tsx(245,77): error TS18048: 'value.value' is possibly 'undefined'.
+src/components/ui/stepper.tsx(299,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/stepper.tsx(323,47): error TS2551: Property 'onPointerDown' does not exist on type 'Omit<ButtonHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { direction: Direction; }'. Did you mean 'onPointerdown'?
+src/components/ui/stepper.tsx(325,43): error TS2551: Property 'onKeyDown' does not exist on type 'Omit<ButtonHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { direction: Direction; }'. Did you mean 'onKeydown'?
+src/components/ui/stepper.tsx(330,183): error TS2322: Type '{ form?: string | undefined; style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; ... 209 more ...; class: string; }' is not assignable to type 'ButtonHTMLAttributes & ReservedProps'.
+  Property 'onMouseDown' does not exist on type 'ButtonHTMLAttributes & ReservedProps'. Did you mean 'onMousedown'?
+src/components/ui/stepper.tsx(330,196): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/stepper.tsx(330,236): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/stepper.tsx(349,19): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/stepper.tsx(389,43): error TS2551: Property 'onKeyDown' does not exist on type 'Omit<ComponentProps<"input">, "value" | "defaultValue" | "type">'. Did you mean 'onKeydown'?
+src/components/ui/stepper.tsx(448,17): error TS18047: 'e.target' is possibly 'null'.
+src/components/ui/stepper.tsx(448,26): error TS2339: Property 'value' does not exist on type 'EventTarget'.
+src/components/ui/stepper.tsx(454,10): error TS2322: Type '{ form?: string | undefined; title?: string | undefined; pattern?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; onCut?: ((payload: ClipboardEvent) => void) | undefined; ... 232 more ...; ref: (value: Element | ... 1 more ... | null) => void; }' is not assignable to type 'InputHTMLAttributes & ReservedProps'.
+  Property 'onKeyDown' does not exist on type 'InputHTMLAttributes & ReservedProps'. Did you mean 'onKeydown'?
+src/components/ui/stepper.tsx(454,21): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/sticker-board.tsx(228,43): error TS2345: Argument of type 'StickerBoardItem[] | undefined' is not assignable to parameter of type 'readonly StickerBoardItem[]'.
+  Type 'undefined' is not assignable to type 'readonly StickerBoardItem[]'.
+src/components/ui/sticker-board.tsx(265,50): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(getter: ComputedGetter<StickerBoardContextValue>, debugOptions?: DebuggerOptions | undefined): ComputedRef<StickerBoardContextValue>', gave the following error.
+    Argument of type '() => { items: StickerBoardItem[]; selectedId: string | null | undefined; select: (id: string | null) => void; commit: (next: StickerBoardItem[], message?: string | undefined) => void; ... 17 more ...; label: string; }' is not assignable to parameter of type 'ComputedGetter<StickerBoardContextValue>'.
+      Call signature return types '{ items: StickerBoardItem[]; selectedId: string | null | undefined; select: (id: string | null) => void; commit: (next: StickerBoardItem[], message?: string | undefined) => void; ... 17 more ...; label: string; }' and 'StickerBoardContextValue' are incompatible.
+        The types of 'selectedId' are incompatible between these types.
+          Type 'string | null | undefined' is not assignable to type 'string | null'.
+            Type 'undefined' is not assignable to type 'string | null'.
+  Overload 2 of 2, '(options: WritableComputedOptions<StickerBoardContextValue, StickerBoardContextValue>, debugOptions?: DebuggerOptions | undefined): WritableComputedRef<...>', gave the following error.
+    Argument of type '() => { items: StickerBoardItem[]; selectedId: string | null | undefined; select: (id: string | null) => void; commit: (next: StickerBoardItem[], message?: string | undefined) => void; ... 17 more ...; label: string; }' is not assignable to parameter of type 'WritableComputedOptions<StickerBoardContextValue, StickerBoardContextValue>'.
+src/components/ui/sticker-board.tsx(412,112): error TS2322: Type '{ "data-slot": string; tabindex: number; class: string; onPointerDown: (e: any) => void; }' is not assignable to type 'HTMLAttributes & ReservedProps'.
+  Property 'onPointerDown' does not exist on type 'HTMLAttributes & ReservedProps'. Did you mean 'onPointerdown'?
+src/components/ui/sticker-board.tsx(412,127): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/sticker-board.tsx(656,422): error TS2322: Type '{ onPointerDown: (e: PointerEvent<HTMLDivElement>) => void; onPointerMove: (e: PointerEvent<HTMLDivElement>) => void; ... 18 more ...; ref: (value: Element | ... 1 more ... | null) => void; }' is not assignable to type 'HTMLAttributes & ReservedProps'.
+  Property 'onPointerDown' does not exist on type 'HTMLAttributes & ReservedProps'. Did you mean 'onPointerdown'?
+src/components/ui/sticker-board.tsx(706,43): error TS2551: Property 'onKeyDown' does not exist on type 'StickerBoardToolbarProps'. Did you mean 'onKeydown'?
+src/components/ui/sticker-board.tsx(767,142): error TS2322: Type '{ style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; onCut?: ((payload: ClipboardEvent) => void) | undefined; ... 201 more ...; class: string; }' is not assignable to type 'IntrinsicAttributes & Omit<ComponentProps<"div">, "ref"> & { ref?: Ref<HTMLElement> | undefined; stock?: StockName | undefined; ... 12 more ...; size?: readonly [...] | undefined; } & {}'.
+  Property 'onKeyDown' does not exist on type 'IntrinsicAttributes & Omit<ComponentProps<"div">, "ref"> & { ref?: Ref<HTMLElement> | undefined; stock?: StockName | undefined; ... 12 more ...; size?: readonly [...] | undefined; } & {}'. Did you mean 'onKeydown'?
+src/components/ui/sticker-picker.tsx(282,31): error TS2339: Property 'nativeEvent' does not exist on type 'KeyboardEvent<HTMLInputElement>'.
+src/components/ui/sticker-picker.tsx(312,255): error TS2322: Type '{ ref: ShallowRef<HTMLInputElement | null, HTMLInputElement | null>; type: "text"; role: string; "aria-label": string; "aria-expanded": boolean; ... 9 more ...; class: string; }' is not assignable to type 'IntrinsicAttributes & Omit<InputHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { ...; } & {}'.
+  Property 'autoComplete' does not exist on type 'IntrinsicAttributes & Omit<InputHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { ...; } & {}'. Did you mean 'autocomplete'?
+src/components/ui/sticker-picker.tsx(313,18): error TS18047: 'e.target' is possibly 'null'.
+src/components/ui/sticker-picker.tsx(313,27): error TS2339: Property 'value' does not exist on type 'EventTarget'.
+src/components/ui/sticker-picker.tsx(382,233): error TS2322: Type '{ id: string; role: string; "aria-selected": boolean; "aria-label": string; "data-slot": string; "data-active": string | undefined; "data-selected": string | undefined; onPointerMove: () => false | void; onMouseDown: (e: any) => any; onClick: () => void; class: string; style: { ...; }; }' is not assignable to type 'HTMLAttributes & ReservedProps'.
+  Property 'onPointerMove' does not exist on type 'HTMLAttributes & ReservedProps'. Did you mean 'onPointermove'?
+src/components/ui/sticker-picker.tsx(382,304): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/sticker-sheet.tsx(111,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(getter: ComputedGetter<StickerSheetContextValue>, debugOptions?: DebuggerOptions | undefined): ComputedRef<StickerSheetContextValue>', gave the following error.
+    Type 'readonly string[] | undefined' is not assignable to type 'readonly string[]'.
+      Type 'undefined' is not assignable to type 'readonly string[]'.
+  Overload 2 of 2, '(options: WritableComputedOptions<StickerSheetContextValue, StickerSheetContextValue>, debugOptions?: DebuggerOptions | undefined): WritableComputedRef<...>', gave the following error.
+    Argument of type '() => { peeled: readonly string[] | undefined; size: number; restorable: boolean; disabled: boolean; uid: string; peel(item: StickerSheetPeel): void; stick(item: StickerSheetPeel): void; }' is not assignable to parameter of type 'WritableComputedOptions<StickerSheetContextValue, StickerSheetContextValue>'.
+src/components/ui/sticker-sheet.tsx(118,11): error TS18048: 'latest.value' is possibly 'undefined'.
+src/components/ui/sticker-sheet.tsx(119,18): error TS2488: Type 'readonly string[] | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/components/ui/sticker-sheet.tsx(124,12): error TS18048: 'latest.value' is possibly 'undefined'.
+src/components/ui/sticker-sheet.tsx(125,14): error TS18048: 'latest.value' is possibly 'undefined'.
+src/components/ui/sticker-sheet.tsx(145,94): error TS18048: 'peeled.value' is possibly 'undefined'.
+src/components/ui/sticker-sheet.tsx(155,22): error TS2540: Cannot assign to 'value' because it is a read-only property.
+src/components/ui/sticker-sheet.tsx(267,29): error TS18047: 'face.value' is possibly 'null'.
+src/components/ui/sticker-sheet.tsx(267,48): error TS18047: 'face.value' is possibly 'null'.
+src/components/ui/sticker-sheet.tsx(268,29): error TS18047: 'face.value' is possibly 'null'.
+src/components/ui/sticker-sheet.tsx(268,48): error TS18047: 'face.value' is possibly 'null'.
+src/components/ui/sticker-sheet.tsx(273,39): error TS2345: Argument of type 'StickerFace | null' is not assignable to parameter of type 'StickerFace'.
+  Type 'null' is not assignable to type 'StickerFace'.
+src/components/ui/sticker-sheet.tsx(326,364): error TS2322: Type '{ form?: string | undefined; style?: CSSProperties | undefined; title?: string | undefined; onCopy?: ((payload: ClipboardEvent) => void) | undefined; ... 213 more ...; disabled: boolean; }' is not assignable to type 'ButtonHTMLAttributes & ReservedProps'.
+  Property 'onPointerEnter' does not exist on type 'ButtonHTMLAttributes & ReservedProps'. Did you mean 'onPointerenter'?
+src/components/ui/sticker-sheet.tsx(340,12): error TS2322: Type '{ "data-slot": string; class: string; style: { width: number; height: number; left: number; top: number; }; onTransitionEnd: (e: any) => void; }' is not assignable to type 'HTMLAttributes & ReservedProps'.
+  Property 'onTransitionEnd' does not exist on type 'HTMLAttributes & ReservedProps'. Did you mean 'onTransitionend'?
+src/components/ui/sticker-sheet.tsx(340,29): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ui/sticky-note.tsx(58,216): error TS2322: Type '(node: HTMLElement | null) => void' is not assignable to type '(VNodeRef & Ref<HTMLElement>) | undefined'.
+  Type '(node: HTMLElement | null) => void' is not assignable to type '((ref: Element | ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}, {}, {}, string, ComponentProvideOptions>, ... 4 more ..., any> | null, refs: Record<...>) => void) & { ...; }'.
+    Type '(node: HTMLElement | null) => void' is not assignable to type '(ref: Element | ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}, {}, {}, string, ComponentProvideOptions>, ... 4 more ..., any> | null, refs: Record<...>) => void'.
+      Types of parameters 'node' and 'ref' are incompatible.
+        Type 'Element | ComponentPublicInstance<{}, {}, {}, {}, {}, {}, {}, {}, false, ComponentOptionsBase<any, any, any, any, any, any, any, any, any, {}, {}, string, {}, {}, {}, string, ComponentProvideOptions>, ... 4 more ..., any> | null' is not assignable to type 'HTMLElement | null'.
+          Type 'Element' is missing the following properties from type 'HTMLElement': accessKey, accessKeyLabel, autocapitalize, autocorrect, and 129 more.
+src/components/ui/sticky-note.tsx(63,187): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/components/ui/table.tsx(119,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/tear-off.tsx(178,43): error TS2551: Property 'onKeyDown' does not exist on type 'StubProps'. Did you mean 'onKeydown'?
+src/components/ui/tear-off.tsx(212,28): error TS2345: Argument of type '() => { recipe: Recipe<TearHintParams>; params: { toward: string; }; kind: string; size: [number, number]; seed: string | undefined; }' is not assignable to parameter of type 'MaybeRefOrGetter<UseInkOptions<TearHintParams>>'.
+  Type '() => { recipe: Recipe<TearHintParams>; params: { toward: string; }; kind: string; size: [number, number]; seed: string | undefined; }' is not assignable to type '() => UseInkOptions<TearHintParams>'.
+    Call signature return types '{ recipe: Recipe<TearHintParams>; params: { toward: string; }; kind: string; size: [number, number]; seed: string | undefined; }' and 'UseInkOptions<TearHintParams>' are incompatible.
+      The types of 'params.toward' are incompatible between these types.
+        Type 'string' is not assignable to type '"right" | "left" | "down"'.
+src/components/ui/tear-off.tsx(270,372): error TS2322: Type '{ onPointerDown: (e: PointerEvent<HTMLDivElement>) => void; onPointerMove: (e: PointerEvent<HTMLDivElement>) => void; ... 16 more ...; ref: (value: Element | ... 1 more ... | null) => void; }' is not assignable to type 'HTMLAttributes & ReservedProps'.
+  Property 'onPointerDown' does not exist on type 'HTMLAttributes & ReservedProps'. Did you mean 'onPointerdown'?
+src/components/ui/textarea.tsx(72,54): error TS2339: Property 'defaultValue' does not exist on type 'Omit<Omit<TextareaHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { ...; }, "style" | ... 7 more ... | "showCount">'.
+src/components/ui/textarea.tsx(86,22): error TS2551: Property 'maxLength' does not exist on type 'Omit<Omit<TextareaHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { ...; }, "style" | ... 7 more ... | "showCount">'. Did you mean 'maxlength'?
+src/components/ui/textarea.tsx(87,38): error TS2551: Property 'maxLength' does not exist on type 'Omit<Omit<TextareaHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { ...; }, "style" | ... 7 more ... | "showCount">'. Did you mean 'maxlength'?
+src/components/ui/textarea.tsx(87,66): error TS2551: Property 'maxLength' does not exist on type 'Omit<Omit<TextareaHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { ...; }, "style" | ... 7 more ... | "showCount">'. Did you mean 'maxlength'?
+src/components/ui/textarea.tsx(92,39): error TS18047: 'e.currentTarget' is possibly 'null'.
+src/components/ui/textarea.tsx(92,55): error TS2339: Property 'value' does not exist on type 'EventTarget'.
+src/components/ui/textarea.tsx(98,51): error TS2551: Property 'maxLength' does not exist on type 'Omit<Omit<TextareaHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { ...; }, "style" | ... 7 more ... | "showCount">'. Did you mean 'maxlength'?
+src/components/ui/textarea.tsx(98,82): error TS2551: Property 'maxLength' does not exist on type 'Omit<Omit<TextareaHTMLAttributes & ReservedProps, keyof PortAttributes> & PortAttributes & { ...; }, "style" | ... 7 more ... | "showCount">'. Did you mean 'maxlength'?
+src/components/ui/typewriter.tsx(120,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/typing-indicator.tsx(64,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/typography.tsx(21,19): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/components/ui/typography.tsx(265,14): error TS2322: Type '{ href: string; precedence: string; }' is not assignable to type 'StyleHTMLAttributes & ReservedProps'.
+  Property 'href' does not exist on type 'StyleHTMLAttributes & ReservedProps'. Did you mean 'ref'?
+src/hooks/use-live-motion.ts(22,55): error TS2339: Property 'current' does not exist on type 'RefObject<Element | null>'.
+src/lib/vnode.ts(25,83): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type '{ new (): { $props: VNodeProps & TeleportProps; $slots: { default(): VNode<RendererNode, RendererElement, { [key: string]: any; }>[]; }; }; __isTeleport: true; }' is not assignable to parameter of type 'string | Component<{ $props: VNodeProps & TeleportProps; $slots: { default(): VNode<RendererNode, RendererElement, { [key: string]: any; }>[]; }; }, ... 5 more ..., any>'.
+      Type '{ new (): { $props: VNodeProps & TeleportProps; $slots: { default(): VNode<RendererNode, RendererElement, { [key: string]: any; }>[]; }; }; __isTeleport: true; }' is not assignable to type 'ComponentPublicInstanceConstructor<{ $props: VNodeProps & TeleportProps; $slots: { default(): VNode<RendererNode, RendererElement, { [key: string]: any; }>[]; }; }, ... 4 more ..., MethodOptions>'.
+        Types of property '__isTeleport' are incompatible.
+          Type 'true' is not assignable to type 'undefined'.
+ ELIFECYCLE  Command failed with exit code 2.

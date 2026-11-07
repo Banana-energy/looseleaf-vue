@@ -1,0 +1,52 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "direction",
+  "type": "registry:ui",
+  "title": "Direction",
+  "description": "Tells every Reka UI part, every drawing and every logical property which way the page reads. One provider at the root of a right-to-left page (or on an island inside a left-to-right one) turns arrow keys, sub-menus, slider edges, tab shoulders and hand-drawn strokes round together.",
+  "categories": [
+    "Layout"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/direction.tsx",
+      "type": "registry:ui",
+      "target": "@ui/direction.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, shallowRef } from \"vue\";\nimport { Direction, Slot } from \"@/lib/primitives\";\nimport { InkContext, useInkContext, useMergedRef, type InkContextValue, type InkScopeProps } from \"@/lib/ink/vue\";\nimport { cn } from \"@/lib/utils\";\ntype Dir = \"ltr\" | \"rtl\";\ntype DirectionScope = InkScopeProps & {\n  dir: Dir;\n};\nfunction readDirection(from: Element | null): Dir | undefined {\n  for (let el = from; el; el = el.parentElement) {\n    const d = el.getAttribute(\"dir\");\n    if (d === \"rtl\" || d === \"ltr\") return d;\n  }\n  return undefined;\n}\nconst DirectionProvider = defineUi<Omit<UI.ComponentProps<\"div\">, \"dir\"> & {\n  dir?: Dir;\n  direction?: Dir;\n  asChild?: boolean;\n}>(\"DirectionProvider\", [\"dir\", \"direction\", \"asChild\", \"class\"], (_props, {\n  slots: _slots\n}) => {\n  const dir = computed(() => _props[\"dir\"]);\n  const direction = computed(() => _props[\"direction\"]);\n  const asChild = computed(() => _props[\"asChild\"] === undefined ? false : _props[\"asChild\"]);\n  const className = computed(() => _props[\"class\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"dir\", \"direction\", \"asChild\", \"class\", \"children\", \"ref\"]));\n  const explicit = computed(() => direction.value ?? dir.value);\n  const hostRef = shallowRef<HTMLElement | null | null>(null);\n  const inherited = shallowRef<Dir>(initialState(\"ltr\"));\n  const setInherited = stateSetter(inherited);\n  watchDependencies(() => {\n    const host = hostRef.value;\n    if (explicit.value || !host) return;\n    const read = () => setInherited(readDirection(host.parentElement) ?? \"ltr\");\n    read();\n    if (typeof MutationObserver === \"undefined\") return;\n    const mo = new MutationObserver(read);\n    mo.observe(host.ownerDocument.documentElement, {\n      attributes: true,\n      attributeFilter: [\"dir\"],\n      subtree: true\n    });\n    return () => mo.disconnect();\n  }, () => [explicit.value], true);\n  const value = computed<Dir>(() => explicit.value ?? inherited.value);\n  const ink = useInkContext();\n  const inkValue = computed<InkContextValue>(() => {\n    const scope: DirectionScope = {\n      ...ink.value.scope,\n      dir: value.value\n    };\n    return {\n      ...ink.value,\n      dir: value.value,\n      scope\n    };\n  });\n  const Comp = computed(() => jsxTag(asChild.value ? Slot.Root : \"div\" as const));\n  return () => {\n    return <Direction.DirectionProvider dir={value.value}>\r\n      <InkContext.Provider value={inkValue.value}>\r\n        <Comp.value data-slot=\"direction\" ref={useMergedRef(hostRef, ref.value)} dir={explicit.value} class={asChild.value ? className.value : cn(\"contents\", className.value)} {...domProps(props.value)}>\r\n          {readSlot(_slots.default)}\r\n        </Comp.value>\r\n      </InkContext.Provider>\r\n    </Direction.DirectionProvider>;\n  };\n});\nconst useDirection = useLooseleafDirection;\nexport { DirectionProvider, useDirection };\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "direction",
+    "related": [
+      "tabs",
+      "dropdown-menu",
+      "slider",
+      "carousel",
+      "sidebar",
+      "table",
+      "icon"
+    ],
+    "a11y": [
+      "Reka UI reads its direction from this provider only, never from the `dir` attribute. Without it, Tabs, Menubar, Radio Group, Toggle Group, Navigation Menu and the menus keep their left-to-right arrow keys on a right-to-left page, a Scroll Area keeps its scrollbar on the wrong side and a Slider starts at the wrong edge. With it, ArrowLeft moves to the next tab, opens a sub-menu towards the left, and so on.",
+      "The wrapper carries `dir`, so the browser lays out bidirectional text, punctuation and inline order correctly; `lang` is yours to set on the wrapper or the page (`<DirectionProvider direction=\"rtl\" lang=\"ar\">`) so screen readers pick the right voice.",
+      "Direction glyphs (chevrons, arrows, panel, log-in and log-out, undo and redo, send, list and menu icons) flip themselves in a right-to-left context; icons that do not depend on reading order (check, plus, clock, media controls) stay as drawn.",
+      "The drawn layer is aria-hidden and decorative; mirroring it never changes what a screen reader announces.",
+      "Two engines behind Looseleaf parts take the direction as an option of their own and do not read the provider yet: give a Carousel `opts={{ direction: \"rtl\" }}` (Embla) and a Calendar `dir=\"rtl\"` (react-day-picker); a Sonner Toaster follows `<html dir>` or takes its own `dir`. The Direction examples do it.",
+      "Kevin Sans covers Latin only. Arabic and Hebrew text falls back to the system font for each missing glyph, which is correct and readable but not hand-lettered; ship an Arabic or Hebrew face in `--font-hand` for a matching look."
+    ],
+    "usage": "import { DirectionProvider, useDirection } from \"@/components/ui/direction\"\n\nexport function Root({ children }: { children: VNodeChild }) {\n  return <DirectionProvider direction=\"rtl\">{children}</DirectionProvider>\n}\n\nfunction useForwardKey() {\n  const dir = useDirection()\n  return dir === \"rtl\" ? \"ArrowLeft\" : \"ArrowRight\"\n}",
+    "parts": [
+      "DirectionProvider",
+      "useDirection"
+    ]
+  }
+}

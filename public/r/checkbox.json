@@ -1,0 +1,56 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "checkbox",
+  "type": "registry:ui",
+  "title": "Checkbox",
+  "description": "A hand-drawn box you tick. Checking fills it with solid marker and writes a heavy felt tick over it, stroke by stroke; a dash means partly checked. Reka UI behavior, keyboard and form support are untouched.",
+  "categories": [
+    "Forms"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-recipes",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/checkbox.tsx",
+      "type": "registry:ui",
+      "target": "@ui/checkbox.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Checkbox as CheckboxPrimitive } from \"@/lib/primitives\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { checkboxRecipe } from \"@/lib/ink/recipes/checkbox-ink\";\nimport { REVEAL_DASH, REVEAL_WHEN_CHECKED, REVEAL_WHEN_INDETERMINATE, markTouched } from \"@/lib/ink/recipes/draw-on-ink\";\nimport { cn } from \"@/lib/utils\";\nconst Checkbox = defineUi<UI.ComponentProps<typeof CheckboxPrimitive.Root> & {\n  seed?: string | number;\n}>(\"Checkbox\", [\"class\", \"seed\", \"disabled\", \"onClickCapture\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const disabled = computed(() => _props[\"disabled\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const onClickCapture = computed(() => _props[\"onClickCapture\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"seed\", \"disabled\", \"ref\", \"onClickCapture\"]));\n  const invalid = computed(() => props.value[\"aria-invalid\"] === true || props.value[\"aria-invalid\"] === \"true\");\n  const forced = computed(() => \"data-focus-visible\" in props.value);\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: checkboxRecipe,\n    params: {\n      disabled: !!disabled.value,\n      invalid: invalid.value\n    },\n    kind: \"checkbox\" as const,\n    seed: seed.value,\n    layers: forced.value ? \"all\" as const : undefined\n  }));\n  return () => {\n    return <CheckboxPrimitive.Root data-slot=\"checkbox\" ref={useMergedRef<HTMLButtonElement>(hostRef, ref.value)} {...domProps(hostProps.value)} disabled={disabled.value} onClickCapture={e => {\n      markTouched(e);\n      onClickCapture.value?.(e);\n    }} class={cn(\"peer relative isolate size-4 shrink-0 after:absolute after:-inset-1.5 disabled:cursor-not-allowed\", REVEAL_DASH, REVEAL_WHEN_CHECKED, REVEAL_WHEN_INDETERMINATE, \"group-hover/field:[&>svg_[data-layer=hover]]:visible group-hover/field:[&>svg_[data-layer=hover]]:opacity-100\", \"has-[+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:visible has-[+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:opacity-100\", \"has-[+input+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:visible has-[+input+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:opacity-100\", className.value)} {...domProps(props.value)}>\r\n      {node.value}\r\n      <CheckboxPrimitive.Indicator data-slot=\"checkbox-indicator\" class=\"pointer-events-none absolute inset-0 hidden place-content-center leading-none font-bold forced-colors:grid forced-colors:data-[state=checked]:before:content-['✓'] forced-colors:data-[state=indeterminate]:before:content-['–']\" />\r\n    </CheckboxPrimitive.Root>;\n  };\n});\nexport { Checkbox };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/checkbox-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/checkbox-ink.ts",
+      "content": "import { blobFill, wash } from '@/lib/ink/fills'\r\nimport { roundRectPoly } from '@/lib/ink/geom'\r\nimport { clamp } from '@/lib/ink/rng'\r\nimport { checkLines, dashedBox, box, focusRing, RULER, chain } from '@/lib/ink/shapes'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\nimport { reveal, revealId } from '@/lib/ink/recipes/draw-on-ink'\r\nimport type { PenName } from '@/lib/ink/types'\r\n\r\nexport interface CheckboxParams {\r\n  disabled?: boolean\r\n  invalid?: boolean\r\n}\r\n\r\nexport const checkboxRecipe = defineRecipe<CheckboxParams>({\r\n  id: 'checkbox',\r\n  kind: 'checkbox',\r\n  layers: ['rest', 'hover', 'checked', 'indeterminate', 'focus'],\r\n  lazy: ['focus'],\r\n  pad: 12,\r\n  draw(ink, { w, h }, { disabled, invalid }, ctx) {\r\n    const s = Math.min(w, h)\r\n    const r = clamp(s * 0.1, 1.5, 3)\r\n    const body = roundRectPoly(0.5, 0.5, w - 1, h - 1, r)\r\n    const fine = s < 18\r\n    const calm = ctx.calm\r\n\r\n    if (!disabled) ctx.lazy('focus', (fink) => focusRing(fink, 0, 0, w, h, { r }))\r\n    if (ctx.lazyOnly) return\r\n\r\n    const outline = (): void => {\r\n      const pen: PenName = invalid ? (calm || fine ? 'red.fine' : 'red') : calm ? 'pencil.fine' : fine ? 'ink.fine' : 'ink'\r\n      box(ink, 0, 0, w, h, {\r\n        pen, corner: r, opts: invalid ? { width: 1.2 } : undefined,\r\n      })\r\n    }\r\n\r\n    ink.layer('rest', () => {\r\n      if (disabled) {\r\n        wash(ink, body, 'pencil-mark', { alpha: 0.35, material: 'wash' })\r\n        dashedBox(ink, 0, 0, w, h, { r, pen: 'pencil', opts: { color: 'pencil', width: 1.2 } })\r\n        return\r\n      }\r\n      ink.poly('under', body, 'slip', 0.85)\r\n      outline()\r\n    })\r\n\r\n    if (!disabled) {\r\n      ink.layer('hover', () => {\r\n        if (calm) {\r\n          box(ink, 1, 1, w - 2, h - 2, { pen: invalid ? 'red.fine' : 'pencil.fine', corner: r, loose: 0.5, opts: { alpha: 0.75, simple: true } })\r\n          return\r\n        }\r\n        const d = 2 + s / 24\r\n        ink.lines([{ pts: chain([[r + d + 1, h + d], [w + d, h + d], [w + d, r + d + 1]], [0, 0], Math.max(2.5, r), ink.next('drop')), o: RULER }], 'ink.fine', { width: 1.1 })\r\n      })\r\n    }\r\n\r\n    const markPen: PenName = disabled ? 'pencil' : s < 26 ? 'ink' : 'ink.brush'\r\n    const fillColor = disabled ? 'pencil-mark' : 'marker'\r\n    const fillAlpha = disabled ? 0.4 : 0.86\r\n    const fill = (alpha: number) => ink.part('fill', () => blobFill(ink, body, fillColor, { alpha, mis: clamp(s * 0.08, 1, 2) }))\r\n\r\n    const invalidMark = (): void => {\r\n      if (!invalid || disabled) return\r\n      box(ink, 0, 0, w, h, { pen: calm || fine ? 'red.fine' : 'red', corner: r, opts: { width: 1.3 } })\r\n      const a = 4 + s * 0.14\r\n      ink.lines([{ pts: [[w - 1, -a * 0.95], [w + a * 0.3, -a * 0.4], [w + a, 0.4]], o: { start: 'soft', end: 'flick', wobble: 0.3, poly: true } }], 'red.fine', { width: 1.25 })\r\n    }\r\n\r\n    ink.layer('checked', () => {\r\n      fill(fillAlpha)\r\n      invalidMark()\r\n      reveal(ink, { id: revealId(ctx.seed, 'c'), lines: checkLines(ink.next('check'), s * 0.12, -s * 0.1, s * 1.02), pen: markPen, box: { w, h } })\r\n    })\r\n    ink.layer('indeterminate', () => {\r\n      fill(fillAlpha * 0.9)\r\n      invalidMark()\r\n      const y = h * 0.52\r\n      reveal(ink, {\r\n        id: revealId(ctx.seed, 'i'),\r\n        lines: [{ pts: [[w * 0.22, y], [w * 0.78, y]], o: RULER }],\r\n        pen: disabled ? 'pencil' : 'ink',\r\n        box: { w, h },\r\n        width: s < 20 ? 1.1 : 1.35,\r\n      })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "checkbox",
+    "related": [
+      "label",
+      "radio-group",
+      "switch",
+      "toggle",
+      "field"
+    ],
+    "a11y": [
+      "role=\"checkbox\" with aria-checked true, false or mixed; Space toggles, Tab focuses, Enter is left to the form (Reka UI).",
+      "Label it with <Label htmlFor>, wrap it, or use aria-label. A Label next to it is a peer: peer-disabled dims it, and hovering the label (a Field row with group/field, or a label right after the box) lights the box's hover overlay.",
+      "The hit area is 8 px larger than the box on every side (an ::after, so layout never moves): 28 px for the 16 px box.",
+      "Keyboard focus draws a blue felt ring; the drawing is aria-hidden, pointer-events: none and never focusable. Windows high contrast replaces it by a real border.",
+      "The tick is drawn on with a stroke reveal (0.3 s). Reduced motion (the OS setting or data-motion=\"reduced\") shows the finished mark at once.",
+      "Right-to-left layouts need nothing: the box is symmetric and every offset is logical."
+    ],
+    "usage": "import { Checkbox } from \"@/components/ui/checkbox\"\nimport { Label } from \"@/components/ui/label\"\n\nexport function Example() {\n  return (\n    <div class=\"flex items-center gap-2\">\n      <Checkbox id=\"terms\" />\n      <Label htmlFor=\"terms\">Accept the terms</Label>\n    </div>\n  )\n}",
+    "parts": [
+      "Checkbox"
+    ]
+  }
+}

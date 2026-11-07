@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "testimonials-01",
+  "type": "registry:block",
+  "title": "Testimonials wall",
+  "description": "Six quotations on six kinds of paper: sticky notes, a torn page, a polaroid, a napkin and an index card, pinned, taped and clipped, under a star rating. Looks right on paper or on the desk.",
+  "categories": [
+    "marketing"
+  ],
+  "registryDependencies": [
+    "button",
+    "icon",
+    "index-card",
+    "lettering",
+    "looseleaf-theme",
+    "napkin",
+    "paper",
+    "polaroid",
+    "quote",
+    "rating",
+    "sticky-note"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/testimonials-01/components/testimonials-01-wall.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/testimonials-01/components/testimonials-01-wall.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { IndexCard, IndexCardContent, IndexCardFooter, IndexCardHeader, IndexCardTitle } from \"@/components/ui/index-card\";\nimport { Napkin, NapkinContent } from \"@/components/ui/napkin\";\nimport { Paper } from \"@/components/ui/paper\";\nimport { Polaroid, PolaroidCaption, PolaroidImage } from \"@/components/ui/polaroid\";\nimport { Quote, QuoteAttribution, QuoteText } from \"@/components/ui/quote\";\nimport { StickyNote } from \"@/components/ui/sticky-note\";\nconst author = (name: string, role: string) => <>\r\n    <span class=\"font-bold text-ink\">{name}</span>, {role}\r\n  </>;\nconst Testimonials01Wall = defineUi<{}>(\"Testimonials01Wall\", [], (_props, {\n  slots: _slots\n}) => {\n  return () => {\n    return <ul role=\"list\" class=\"grid list-none items-start gap-x-8 gap-y-14 @2xl:grid-cols-2 @4xl:grid-cols-3\" data-slot=\"testimonials-wall\">\r\n      <li>\r\n        <StickyNote as=\"figure\" color=\"yellow\" fastener=\"pin\" seed=\"t-priya\" class=\"mx-auto w-full max-w-64\">\r\n          <blockquote class=\"flex-1 text-2xl leading-[1.15]\">&ldquo;I stopped losing meeting notes. That&rsquo;s it. That&rsquo;s the review.&rdquo;</blockquote>\r\n          <figcaption class=\"pt-2 font-hand text-[15px] leading-snug text-ink-soft\">{author(\"Priya Nair\", \"ops lead at Kiln\")}</figcaption>\r\n        </StickyNote>\r\n      </li>\r\n\r\n      <li class=\"@4xl:mt-10\">\r\n        <Paper stock=\"paper\" edge={{\n          bottom: \"torn\" as const\n        }} tape=\"corner\" tapeKind=\"masking\" seed=\"t-tomas\" class=\"mx-auto w-full max-w-sm px-8 pt-10 pb-9\">\r\n          <Quote>\r\n            <QuoteText size=\"md\">We moved forty people off three different tools in a week. Nobody asked to go back, which has never happened before.</QuoteText>\r\n            <QuoteAttribution>{author(\"Tomas Berg\", \"COO at Northwind Ink\")}</QuoteAttribution>\r\n          </Quote>\r\n        </Paper>\r\n      </li>\r\n\r\n      <li>\r\n        <Polaroid as=\"figure\" tape=\"top\" tapeKind=\"washi-dots\" seed=\"t-lena\" class=\"mx-auto w-full max-w-64\">\r\n          <PolaroidImage scene=\"sea\" seed=\"t-sea\" />\r\n          <PolaroidCaption class=\"flex-col gap-1\">\r\n            <blockquote>&ldquo;finally, a place we all write&rdquo;</blockquote>\r\n            <span class=\"font-hand text-sm leading-tight font-normal text-ink-soft\">{author(\"Lena Fischer\", \"Brindle\")}</span>\r\n          </PolaroidCaption>\r\n        </Polaroid>\r\n      </li>\r\n\r\n      <li>\r\n        <Napkin as=\"figure\" fold=\"quarter\" stain seed=\"t-omar\" class=\"mx-auto w-full max-w-72\">\r\n          <NapkinContent>\r\n            <blockquote>&ldquo;We run the whole caf&eacute; off one page. The tape is a nice touch.&rdquo;</blockquote>\r\n          </NapkinContent>\r\n          <figcaption class=\"font-hand text-[15px] leading-snug text-ink-soft\">{author(\"Omar Haddad\", \"owner, The Tea Room\")}</figcaption>\r\n        </Napkin>\r\n      </li>\r\n\r\n      <li class=\"@4xl:mt-10\">\r\n        <StickyNote as=\"figure\" color=\"pink\" tape=\"top\" tapeKind=\"washi-stripes\" seed=\"t-yuki\" class=\"mx-auto w-full max-w-64\">\r\n          <blockquote class=\"flex-1 text-2xl leading-[1.15]\">&ldquo;It looks like something a person made, and works like something a team built.&rdquo;</blockquote>\r\n          <figcaption class=\"pt-2 font-hand text-[15px] leading-snug text-ink-soft\">{author(\"Yuki Tanaka\", \"designer at Loom & Lantern\")}</figcaption>\r\n        </StickyNote>\r\n      </li>\r\n\r\n      <li>\r\n        <IndexCard as=\"figure\" seed=\"t-kofi\" fastener=\"clip\" class=\"mx-auto min-h-0\">\r\n          <IndexCardHeader>\r\n            <IndexCardTitle>Kofi says</IndexCardTitle>\r\n          </IndexCardHeader>\r\n          <IndexCardContent>\r\n            <blockquote>&ldquo;Search finds the thing I half-remember. It&rsquo;s witchcraft, honestly.&rdquo;</blockquote>\r\n          </IndexCardContent>\r\n          <IndexCardFooter>\r\n            <figcaption>{author(\"Kofi Mensah\", \"founder, Salt Studio\")}</figcaption>\r\n          </IndexCardFooter>\r\n        </IndexCard>\r\n      </li>\r\n    </ul>;\n  };\n});\nexport { Testimonials01Wall };\n"
+    },
+    {
+      "path": "src/blocks/testimonials-01/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/testimonials-01/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, useId } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { Lettering } from \"@/components/ui/lettering\";\nimport { Rating } from \"@/components/ui/rating\";\nimport { Testimonials01Wall } from \"@/blocks/testimonials-01/components/testimonials-01-wall\";\nconst Testimonials01 = defineUi<{}>(\"Testimonials01\", [], (_props, {\n  slots: _slots\n}) => {\n  const titleId = useId();\n  return () => {\n    return <section aria-labelledby={titleId} class=\"@container w-full\">\r\n      <div class=\"px-8 py-14 @xl:py-20\">\r\n        <div class=\"mx-auto max-w-6xl\">\r\n          <header class=\"mx-auto flex max-w-2xl flex-col items-center text-center [--ll-blend:normal]\">\r\n            <Lettering as=\"h2\" id={titleId} size=\"lg\" tone=\"tangerine\" wobble={0.4} seed=\"testimonials-title\">\r\n              Kind words, pinned up\r\n            </Lettering>\r\n            <div class=\"mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1\">\r\n              <Rating readOnly value={5} aria-label=\"Rated 4.9 out of 5\" />\r\n              <p class=\"text-lg text-ink-soft\">\r\n                <span class=\"ll-num font-bold text-ink\">4.9</span> average from 2,300 reviews\r\n              </p>\r\n            </div>\r\n          </header>\r\n\r\n          <div class=\"mt-14 @xl:mt-16\">\r\n            <Testimonials01Wall />\r\n          </div>\r\n\r\n          <p class=\"mt-14 text-center [--ll-blend:normal]\">\r\n            <Button asChild variant=\"outline\">\r\n              <a href=\"#reviews\">\r\n                Read all the reviews\r\n                <Icon name=\"arrow-right\" class=\"rtl:-scale-x-100\" />\r\n              </a>\r\n            </Button>\r\n          </p>\r\n        </div>\r\n      </div>\r\n    </section>;\n  };\n});\nexport default Testimonials01;\n"
+    }
+  ],
+  "docs": "Installed the \"Testimonials wall\" block into your components directory under blocks/testimonials-01/.\nImport it: import Testimonials01 from \"<your components alias>/blocks/testimonials-01/page\"",
+  "meta": {
+    "tags": [
+      "marketing",
+      "testimonials",
+      "social proof"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

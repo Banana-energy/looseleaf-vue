@@ -1,0 +1,41 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sidebar-08",
+  "type": "registry:block",
+  "title": "Sidebar 08",
+  "description": "An inset sidebar with secondary navigation: the pad has a margin round it and the page becomes a sheet of paper set on the desk beside it. Rows fold open from a chevron, projects keep their menus, support and feedback sit at the foot. Mirrors shadcn's sidebar-08. At its best on the desk.",
+  "categories": [
+    "sidebar"
+  ],
+  "registryDependencies": [
+    "looseleaf-theme",
+    "sidebar",
+    "sidebar-shared"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/sidebar-08/components/sidebar-08-app-sidebar.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/sidebar-08/components/sidebar-08-app-sidebar.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { BrandTile, BrandText } from \"@/blocks/sidebar-shared/sidebar-brand\";\nimport { appNav, appProjects, appSecondary, appUser } from \"@/blocks/sidebar-shared/sidebar-data\";\nimport { NavMainFolds, NavProjects, NavSecondary } from \"@/blocks/sidebar-shared/sidebar-nav-app\";\nimport { NavUser } from \"@/blocks/sidebar-shared/sidebar-user-menu\";\nimport { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from \"@/components/ui/sidebar\";\nexport const AppSidebar = defineUi<UI.ComponentProps<typeof Sidebar>>(\"AppSidebar\", [], (_props, {\n  slots: _slots\n}) => {\n  const props = computed(() => omitProps(_props, []));\n  return () => {\n    return <Sidebar variant=\"inset\" role=\"navigation\" aria-label=\"Studio\" {...domProps(props.value)}>\r\n      <SidebarHeader>\r\n        <SidebarMenu>\r\n          <SidebarMenuItem>\r\n            <SidebarMenuButton size=\"lg\" asChild>\r\n              <a href=\"#studio\">\r\n                <BrandTile icon=\"book-open\" />\r\n                <BrandText title=\"Looseleaf Studio\" subtitle=\"Notebook\" />\r\n              </a>\r\n            </SidebarMenuButton>\r\n          </SidebarMenuItem>\r\n        </SidebarMenu>\r\n      </SidebarHeader>\r\n      <SidebarContent class=\"[&_[data-slot=sidebar-menu-button-mark]]:overflow-visible!\">\r\n        <NavMainFolds items={appNav} />\r\n        <NavProjects projects={appProjects} />\r\n        <NavSecondary items={appSecondary} small class=\"mt-auto\" />\r\n      </SidebarContent>\r\n      <SidebarFooter>\r\n        <NavUser user={appUser} />\r\n      </SidebarFooter>\r\n    </Sidebar>;\n  };\n});\n"
+    },
+    {
+      "path": "src/blocks/sidebar-08/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/sidebar-08/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { AppSidebar } from \"@/blocks/sidebar-08/components/sidebar-08-app-sidebar\";\nimport { containedClasses } from \"@/blocks/sidebar-shared/sidebar-contained\";\nimport { PageBody, PageHeader, PageNote, PageSheet } from \"@/blocks/sidebar-shared/sidebar-page\";\nimport { SidebarProvider } from \"@/components/ui/sidebar\";\nconst Page = defineUi<{\n  contained?: boolean;\n}>(\"Page\", [\"contained\"], (_props, {\n  slots: _slots\n}) => {\n  const contained = computed(() => _props[\"contained\"] === undefined ? false : _props[\"contained\"]);\n  const c = computed(() => containedClasses(contained.value));\n  return () => {\n    return <SidebarProvider class={c.value.provider}>\r\n      <AppSidebar class={c.value.sidebar} />\r\n      <PageSheet class={c.value.inset}>\r\n        <PageHeader crumbs={[{\n          label: \"Sketchbook\" as const,\n          href: \"#sketchbook\" as const\n        }, \"Recent\"]} />\r\n        <PageBody title=\"Recent sketches\" kicker=\"Sketchbook\">\r\n          <PageNote title=\"Two sheets on the desk\" pose=\"search\">\r\n            The pad keeps its distance and the page rests beside it; on a phone the pad slides in over it. Fold a row open to look inside.\r\n          </PageNote>\r\n        </PageBody>\r\n      </PageSheet>\r\n    </SidebarProvider>;\n  };\n});\nexport default Page;\n"
+    }
+  ],
+  "docs": "Installed the \"Sidebar 08\" block into your components directory under blocks/sidebar-08/.\nImport it: import Page from \"<your components alias>/blocks/sidebar-08/page\"",
+  "meta": {
+    "tags": [
+      "sidebar",
+      "inset",
+      "app"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

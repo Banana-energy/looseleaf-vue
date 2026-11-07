@@ -1,0 +1,57 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "index-card",
+  "type": "registry:ui",
+  "title": "Index card",
+  "description": "A 3 x 5 card of cream stock with a red header rule and blue lines every 30 px. Header, body and footer parts lay out on the printed rules; the card can have its rod hole punched at the foot, a colored flag stuck over its edge, and a pile of cards behind it.",
+  "categories": [
+    "Paper"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-paper",
+    "looseleaf-theme",
+    "paper",
+    "use-paper-object"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/index-card.tsx",
+      "type": "registry:ui",
+      "target": "@ui/index-card.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Paper, type PaperProps } from \"@/components/ui/paper\";\nimport { usePaperDecor } from \"@/hooks/use-paper-object\";\nimport type { Accent } from \"@/lib/ink/paper/props\";\nimport { indexCardRecipe } from \"@/lib/ink/recipes/index-card-ink\";\nimport { cn } from \"@/lib/utils\";\ntype IndexCardProps = Omit<PaperProps, \"stock\" | \"rules\"> & {\n  hole?: boolean;\n  flag?: Accent | false;\n  stack?: 0 | 1 | 2 | 3;\n};\nconst IndexCard = defineUi<IndexCardProps>(\"IndexCard\", [\"class\", \"hole\", \"flag\", \"stack\", \"as\", \"seed\", \"tilt\", \"size\", \"style\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const ref = computed(() => _props[\"ref\"]);\n  const hole = computed(() => _props[\"hole\"] === undefined ? false : _props[\"hole\"]);\n  const flag = computed(() => _props[\"flag\"] === undefined ? false : _props[\"flag\"]);\n  const stack = computed(() => _props[\"stack\"] === undefined ? 0 : _props[\"stack\"]);\n  const as = computed(() => _props[\"as\"] === undefined ? \"div\" as const : _props[\"as\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const tilt = computed(() => _props[\"tilt\"]);\n  const size = computed(() => _props[\"size\"]);\n  const style = computed(() => _props[\"style\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"children\", \"ref\", \"hole\", \"flag\", \"stack\", \"as\", \"seed\", \"tilt\", \"size\", \"style\"]));\n  const o = usePaperDecor(() => ({\n    recipe: indexCardRecipe,\n    params: {\n      hole: hole.value,\n      flag: flag.value || \"none\",\n      stack: stack.value\n    },\n    kind: \"index-card\" as const,\n    ref: ref.value,\n    seed: seed.value,\n    tilt: tilt.value,\n    tiltMax: 0.5 * 0.45,\n    size: size.value,\n    enabled: hole.value || !!flag.value || stack.value > 0\n  }));\n  return () => {\n    return <Paper data-slot=\"index-card\" as={as.value} stock=\"index-card\" rules=\"index\" size={size.value} {...domProps(o.value.paper)} {...domProps(props.value)} class={cn(o.value.paper.className, \"flex min-h-56 w-full max-w-md flex-col px-5 pb-[25px] text-[17px] leading-[30px] rtl:[&>[data-slot=paper-rules]]:-scale-x-100\", className.value)} style={cssStyle({\n      ...o.value.paper.style,\n      ...style.value\n    })}>\r\n      {o.value.decor}\r\n      {readSlot(_slots.default)}\r\n    </Paper>;\n  };\n});\nconst IndexCardHeader = defineUi<UI.ComponentProps<\"div\">>(\"IndexCardHeader\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"index-card-header\" class={cn(\"flex h-[49px] shrink-0 items-end justify-between gap-3 pb-1.5\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst IndexCardTitle = defineUi<UI.ComponentProps<\"div\">>(\"IndexCardTitle\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"index-card-title\" class={cn(\"min-w-0 truncate pe-[0.2em] -me-[0.2em] pb-[0.2em] -mb-[0.2em] font-script text-[1.65rem] leading-none font-bold\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst IndexCardContent = defineUi<UI.ComponentProps<\"div\">>(\"IndexCardContent\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"index-card-content\" class={cn(\"flex-1\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst IndexCardFooter = defineUi<UI.ComponentProps<\"div\">>(\"IndexCardFooter\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"index-card-footer\" class={cn(\"mt-auto flex items-center justify-between gap-3 text-sm leading-[30px] text-muted-foreground\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nexport { IndexCard, IndexCardHeader, IndexCardTitle, IndexCardContent, IndexCardFooter };\nexport type { IndexCardProps };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/index-card-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/index-card-ink.ts",
+      "content": "import { defineRecipe } from '@/lib/ink/recipes'\r\nimport { holePunch, mirrorX, num, pathTag, stackSvg, tok } from '@/lib/ink/recipes/paper-set-ink'\r\nimport type { Accent } from '@/lib/ink/paper/props'\r\n\r\nexport interface IndexCardParams {\r\n  hole: boolean\r\n  flag: Accent | 'none'\r\n  stack: number\r\n}\r\n\r\nexport const INDEX_CARD = { holeFromFoot: 19, holeR: 6.2, flagAt: 58, flagH: 42, flagOut: 15, flagOver: 9 } as const\r\n\r\nexport const indexCardRecipe = defineRecipe<IndexCardParams>({\r\n  id: 'index-card-decor',\r\n  kind: 'index-card',\r\n  layers: ['rest'],\r\n  pad: 26,\r\n  draw(ink, { w, h }, { hole, flag, stack }, ctx) {\r\n    const id = `ll-ic${ink.seed.toString(36)}`\r\n    ink.layer('rest', () => {\r\n      const r = ink.next('card')\r\n      let s = stackSvg(w, h, stack, r, id, ['card', 'slip'])\r\n      let inner = ''\r\n      if (hole) inner += holePunch(`${id}h`, w / 2 + r.gauss(0, 0.6), h - INDEX_CARD.holeFromFoot + r.gauss(0, 0.5), INDEX_CARD.holeR, r.range(-20, 20))\r\n      if (flag !== 'none') {\r\n        const { flagAt: y, flagH: fh, flagOut: out, flagOver: over } = INDEX_CARD\r\n        const x0 = w - over\r\n        const x1 = w + out\r\n        const body = `M${num(x0)} ${num(y)}H${num(x1 - 3)}L${num(x1)} ${num(y + fh / 2)}L${num(x1 - 3)} ${num(y + fh)}H${num(x0)}z`\r\n        inner += pathTag(body, { fill: tok('ink'), op: 0.18, transform: 'translate(.8 2)' })\r\n        inner += pathTag(body, { fill: tok(flag), op: 0.92 })\r\n        inner += pathTag(`M${num(x0)} ${num(y)}H${num(w)}V${num(y + fh)}H${num(x0)}z`, { fill: tok('photo'), op: 0.18 })\r\n        inner += pathTag(`M${num(w)} ${num(y)}V${num(y + fh)}`, { stroke: tok('ink'), sw: 0.6, op: 0.28 })\r\n        inner += pathTag(`M${num(x0 + 1)} ${num(y + 1)}H${num(x1 - 3)}`, { stroke: tok('photo'), sw: 0.9, op: 0.75 })\r\n        inner += pathTag(body, { stroke: tok('ink'), sw: 0.6, op: 0.28 })\r\n      }\r\n      s += ctx.dir === 'rtl' ? mirrorX(w, inner) : inner\r\n      ink.raw(s, 'top')\r\n      ink.grow([-26, -26, w + 26, h + 26])\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "card",
+      "paper",
+      "sticky-note",
+      "notebook"
+    ],
+    "a11y": [
+      "An index card is a plain `div`; use `as=\"article\"` or `role=\"group\"` with a label when it means more. The hole, flag and pile are aria-hidden decoration; put anything a flag stands for into text.",
+      "Body ink is 14:1 on the card; the muted footer 8:1. The printed rules and the red header line are decoration and mirror for right-to-left text.",
+      "The tilt is zero in calm density; Windows high contrast replaces the drawing with a plain outline."
+    ],
+    "usage": "import { IndexCard, IndexCardContent, IndexCardFooter, IndexCardHeader, IndexCardTitle } from \"@/components/ui/index-card\"\n\n<IndexCard hole flag=\"tomato\" stack={2}>\n  <IndexCardHeader><IndexCardTitle>Sources</IndexCardTitle></IndexCardHeader>\n  <IndexCardContent>sketchbook, dip pen, ink</IndexCardContent>\n  <IndexCardFooter><span>filed under P</span><span>12</span></IndexCardFooter>\n</IndexCard>",
+    "parts": [
+      "IndexCard",
+      "IndexCardHeader",
+      "IndexCardTitle",
+      "IndexCardContent",
+      "IndexCardFooter"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

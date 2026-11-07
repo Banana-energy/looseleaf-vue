@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "utils",
+  "type": "registry:lib",
+  "title": "Utils",
+  "description": "The cn() class-name helper (clsx + tailwind-merge). `shadcn init` already creates this; you only need it if you skipped init.",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge",
+    "vue",
+    "reka-ui"
+  ],
+  "files": [
+    {
+      "path": "src/lib/utils.ts",
+      "type": "registry:lib",
+      "target": "@lib/utils.ts",
+      "content": "import { clsx, type ClassValue } from \"clsx\"\r\nimport { twMerge } from \"tailwind-merge\"\r\n\r\nexport function cn(...inputs: ClassValue[]) {\r\n  return twMerge(clsx(inputs))\r\n}\r\n"
+    }
+  ],
+  "registryDependencies": []
+}

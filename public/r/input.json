@@ -1,0 +1,58 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "input",
+  "type": "registry:ui",
+  "title": "Input",
+  "description": "A one-line text field: a pencil box on paper around a real <input>, with blue felt for what you type. It draws its own hover, focus ring, invalid (red pencil and a !), disabled (dashes) and read-only (printed) states.",
+  "categories": [
+    "Forms"
+  ],
+  "registryDependencies": [
+    "field-class",
+    "ink",
+    "ink-recipes",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/input.tsx",
+      "type": "registry:ui",
+      "target": "@ui/input.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { splitFieldClass } from \"@/lib/field-class\";\nimport { useInk } from \"@/lib/ink/vue\";\nimport { inputRecipe } from \"@/lib/ink/recipes/input-ink\";\nimport { cn } from \"@/lib/utils\";\nconst control = \"h-full w-full min-w-0 flex-1 appearance-none border-0 bg-transparent px-3 py-1 text-[length:inherit] [text-align:inherit] \" + \"file:me-3 file:inline-flex file:h-6 file:items-center file:border-0 file:bg-hi-select file:px-2 file:text-sm file:font-bold file:text-foreground \" + \"disabled:cursor-not-allowed disabled:text-pencil-text aria-invalid:pe-9 forced-colors:aria-invalid:underline forced-colors:aria-invalid:decoration-wavy \" + \"autofill:shadow-[inset_0_0_0_1000px_var(--ll-slip)] autofill:[-webkit-text-fill-color:var(--ll-input-ink)] \" + \"[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-search-cancel-button]:appearance-none [&::-ms-reveal]:hidden \" + \"[&[type=number]]:[appearance:textfield] \" + \"[&[type=password]:not(:placeholder-shown)]:font-mono [&[type=password]:not(:placeholder-shown)]:tracking-wider\";\nconst frame = \"relative isolate flex h-9 w-full min-w-0 items-center font-hand text-base text-(--ll-input-ink) caret-(--ll-caret) compact:h-8 calm:h-7 calm:text-[15px]\";\nconst isTrue = (v: unknown) => v === true || v === \"true\";\nconst InputControl = defineUi<UI.ComponentProps<\"input\">>(\"InputControl\", [\"class\", \"type\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const type = computed(() => _props[\"type\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"type\"]));\n  return () => {\n    return <input type={type.value} data-slot=\"input\" class={cn(control, className.value)} {...domProps(props.value, true)} />;\n  };\n});\nconst Input = defineUi<UI.ComponentProps<\"input\"> & {\n  inputClassName?: string;\n  seed?: string | number;\n}>(\"Input\", [\"class\", \"inputClassName\", \"type\", \"seed\", \"style\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const inputClassName = computed(() => _props[\"inputClassName\"]);\n  const type = computed(() => _props[\"type\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const style = computed(() => _props[\"style\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"inputClassName\", \"type\", \"seed\", \"style\", \"ref\"]));\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: inputRecipe,\n    params: {\n      disabled: !!props.value.disabled,\n      invalid: isTrue(props.value[\"aria-invalid\"]),\n      readOnly: !!props.value.readOnly\n    },\n    kind: \"field\" as const,\n    seed: seed.value,\n    still: true\n  }));\n  return () => {\n    if (type.value === \"hidden\") return <InputControl type=\"hidden\" ref={ref.value} {...domProps(props.value)}>{_slots.default?.()}</InputControl>;\n    const split = splitFieldClass(className.value);\n    return <span data-slot=\"input-frame\" data-ink-focus=\"within\" ref={hostRef} {...domProps(hostProps.value)} style={cssStyle(style.value)} class={cn(frame, split.frame)}>\r\n      {node.value}\r\n      <InputControl type={type.value} ref={ref.value} class={cn(split.control, inputClassName.value)} {...domProps(props.value)}>{_slots.default?.()}</InputControl>\r\n    </span>;\n  };\n});\nexport { Input, InputControl };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/input-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/input-ink.ts",
+      "content": "import { defineRecipe } from '@/lib/ink/recipes'\r\nimport { drawFieldFrame } from '@/lib/ink/recipes/field-frame-ink'\r\n\r\nexport interface InputParams {\r\n  disabled?: boolean\r\n  invalid?: boolean\r\n  readOnly?: boolean\r\n}\r\n\r\nexport const inputRecipe = defineRecipe<InputParams>({\r\n  id: 'input',\r\n  kind: 'field',\r\n  layers: ['rest', 'hover', 'focus', 'invalid', 'disabled'],\r\n  lazy: ['focus', 'hover'],\r\n  pad: 12,\r\n  draw(ink, box, params, ctx) {\r\n    drawFieldFrame(ink, box, params, ctx)\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "input",
+    "related": [
+      "textarea",
+      "label",
+      "input-group",
+      "field",
+      "checkbox"
+    ],
+    "a11y": [
+      "A native <input>: label it with <Label htmlFor>, aria-label or aria-labelledby; type, required, pattern, autocomplete and inputmode work as usual.",
+      "aria-invalid, disabled and readOnly are the real attributes; the drawing follows them. Pair aria-invalid with aria-describedby pointing at the error text.",
+      "Focus draws a blue felt ring (3:1 or better against paper) when the input is focused by keyboard or click (text fields always match :focus-visible). Before the drawing exists and in Windows high contrast the browser's own outline and a real border are used.",
+      "The drawing is aria-hidden, pointer-events: none and never focusable. Typed text is blue felt on paper (7:1), placeholders are graphite (6.8:1), disabled text is graphite on a pale wash.",
+      "16 px text on every screen size, so iOS does not zoom on focus. Number spinners, the search clear button and the password reveal of Edge are removed; the keyboard behavior (arrow keys, Escape) is untouched.",
+      "Reduced motion: no fade, no wobble; the field has no hover tilt at all."
+    ],
+    "usage": "import { Input } from \"@/components/ui/input\"\nimport { Label } from \"@/components/ui/label\"\n\nexport function Example() {\n  return (\n    <div class=\"grid w-full max-w-sm gap-2\">\n      <Label htmlFor=\"email\">Email</Label>\n      <Input id=\"email\" type=\"email\" placeholder=\"you@example.com\" />\n      <Input class=\"pl-9\" aria-label=\"Search\" type=\"search\" />\n    </div>\n  )\n}",
+    "parts": [
+      "Input",
+      "InputControl"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

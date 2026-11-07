@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "message",
+  "type": "registry:ui",
+  "title": "Message",
+  "description": "The row of a chat message: an avatar, a column with a header, the bubbles and a footer, aligned to the start or the end. Also MessageText, which sets a reply word by word so streaming text soaks in like wet ink.",
+  "categories": [
+    "Chat"
+  ],
+  "registryDependencies": [
+    "chat-align",
+    "ink",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/message.tsx",
+      "type": "registry:ui",
+      "target": "@ui/message.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, useId, shallowRef } from \"vue\";\nimport { ChatAlignContext } from \"@/lib/chat-align\";\nimport { makeRng } from \"@/lib/ink/rng\";\nimport { cn } from \"@/lib/utils\";\nconst MessageGroup = defineUi<UI.ComponentProps<\"div\">>(\"MessageGroup\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"message-group\" class={cn(\"flex min-w-0 flex-col gap-2\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst Message = defineUi<UI.ComponentProps<\"div\"> & {\n  align?: \"start\" | \"end\";\n}>(\"Message\", [\"class\", \"align\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const align = computed(() => _props[\"align\"] === undefined ? \"start\" as const : _props[\"align\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"align\"]));\n  return () => {\n    return <ChatAlignContext.Provider value={align.value}>\r\n      <div data-slot=\"message\" data-align={align.value} class={cn(\"group/message relative flex w-full min-w-0 gap-2 text-[15px] data-[align=end]:flex-row-reverse\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>\r\n    </ChatAlignContext.Provider>;\n  };\n});\nconst MessageAvatar = defineUi<UI.ComponentProps<\"div\">>(\"MessageAvatar\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"message-avatar\" class={cn(\"flex w-fit min-w-8 shrink-0 items-center justify-center self-end group-has-data-[slot=message-footer]/message:-translate-y-8\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst MessageContent = defineUi<UI.ComponentProps<\"div\">>(\"MessageContent\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"message-content\" class={cn(\"flex w-full min-w-0 flex-col gap-2.5 wrap-break-word group-data-[align=end]/message:*:data-slot:self-end\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst MessageHeader = defineUi<UI.ComponentProps<\"div\">>(\"MessageHeader\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"message-header\" class={cn(\"flex max-w-full min-w-0 items-center gap-2 px-3 font-hand text-sm font-bold text-muted-foreground group-has-data-[variant=ghost]/message:px-0\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst MessageFooter = defineUi<UI.ComponentProps<\"div\">>(\"MessageFooter\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"message-footer\" class={cn(\"flex max-w-full min-w-0 items-center gap-2 px-3 font-hand text-sm text-muted-foreground group-has-data-[variant=ghost]/message:px-0 group-data-[align=end]/message:justify-end\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nfunction jitterOf(seed: string, index: number): UI.CSSProperties {\n  const r = makeRng(`${seed}:${index}`);\n  return {\n    \"--jy\": `${((r() * 2 - 1) * 0.6).toFixed(2)}px`,\n    \"--jo\": (0.88 + r() * 0.12).toFixed(2)\n  } as UI.CSSProperties;\n}\nconst CSS = `[data-slot=message-text] [style*=\"--jy\"]{position:relative;top:calc(var(--jy,0px)*var(--ll-jitter-k,1));color:color-mix(in srgb,currentColor calc((1 - (1 - var(--jo,1))*var(--ll-jitter-k,1))*100%),transparent)}`;\nconst WORDS = /(\\s+)/;\nconst RTL_SCRIPT = /[\\u0590-\\u08FF\\uFB1D-\\uFDFF\\uFE70-\\uFEFF]/;\nconst CARET = \"after:ms-0.5 after:inline-block after:h-[1.05em] after:w-0.5 after:animate-pulse after:rounded-full after:bg-ink-you after:align-[-0.18em] after:content-['']\";\nconst MessageText = defineUi<Omit<UI.ComponentProps<\"span\">, \"children\"> & {\n  children?: string;\n  streaming?: boolean;\n  jitter?: boolean;\n  seed?: string | number;\n}>(\"MessageText\", [\"streaming\", \"jitter\", \"seed\", \"class\"], (_props, {\n  slots: _slots\n}) => {\n  const children = renderValue(() => readSlot(_slots.default));\n  const streaming = computed(() => _props[\"streaming\"] === undefined ? false : _props[\"streaming\"]);\n  const jitter = computed(() => _props[\"jitter\"] === undefined ? true : _props[\"jitter\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"children\", \"streaming\", \"jitter\", \"seed\", \"class\"]));\n  const id = useId();\n  const text = computed(() => children.value ?? \"\");\n  const s = computed(() => seed.value === undefined ? id : String(seed.value));\n  const bidi = computed(() => RTL_SCRIPT.test(text.value));\n  const parts = computed(() => bidi.value ? [] : text.value.split(WORDS));\n  const last = shallowRef(parts.value.length - 1);\n  const settled = shallowRef<number | null | null>(null);\n  const word = shallowRef(0);\n  const out = renderValue(() => parts.value.map((p, i) => {\n    if (p === \"\") return null;\n    if (i % 2 === 1) return p;\n    const n = word.value++;\n    const fresh = streaming.value && i >= (settled.value ?? 0);\n    return <span key={i} data-word={fresh ? \"fresh\" as const : undefined} class={cn(fresh && \"animate-soak\", streaming.value && i === last.value && CARET) || undefined} style={cssStyle(jitter.value ? jitterOf(s.value, n) : undefined)}>\r\n        {p}\r\n      </span>;\n  }));\n  return () => {\n    while (last.value > 0 && (parts.value[last.value] === \"\" || last.value % 2 === 1)) last.value--;\n    if (settled.value === null) {\n      let end = parts.value.length;\n      while (end > 0 && parts.value[end - 1] === \"\") end--;\n      settled.value = end;\n    }\n    return <span data-slot=\"message-text\" data-streaming={streaming.value ? \"\" as const : undefined} dir={bidi.value ? \"auto\" as const : undefined} class={cn(\"whitespace-pre-wrap\", bidi.value && streaming.value && CARET, className.value)} {...domProps(props.value)}>\r\n      {jitter.value && !bidi.value ? <style>\r\n          {CSS}\r\n        </style> : null}\r\n      {bidi.value ? text.value : out.value}\r\n    </span>;\n  };\n});\nexport { MessageGroup, Message, MessageAvatar, MessageContent, MessageFooter, MessageHeader, MessageText };\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "upstream": "message",
+    "related": [
+      "bubble",
+      "message-scroller",
+      "marker",
+      "typing-indicator",
+      "prompt-input"
+    ],
+    "a11y": [
+      "All parts are plain divs (as upstream). Put the transcript in a `role=\"log\"` region, which MessageScrollerContent does for you.",
+      "MessageText renders one span per word with normal spaces between them, so copy, paste, find-in-page and screen readers read it as ordinary text. The animation is a CSS one that reduced motion turns off; the words and the caret stay.",
+      "Text in a right-to-left script (Hebrew, Arabic...) is not split into words. Such text is one plain span with `dir=\"auto\"`, so the browser orders, joins and shapes it itself (no per-word wobble or soak; the caret stays).",
+      "Header and footer are 14 px muted text (8.9:1 on paper)."
+    ],
+    "usage": "import { Bubble, BubbleContent } from \"@/components/ui/bubble\"\nimport { Message, MessageContent, MessageFooter, MessageHeader, MessageText } from \"@/components/ui/message\"\n\nexport function Example({ reply, streaming }: { reply: string; streaming: boolean }) {\n  return (\n    <Message>\n      <MessageContent>\n        <MessageHeader>Stubby</MessageHeader>\n        <Bubble variant=\"muted\">\n          <BubbleContent>\n            <MessageText streaming={streaming}>{reply}</MessageText>\n          </BubbleContent>\n        </Bubble>\n        <MessageFooter>9:41</MessageFooter>\n      </MessageContent>\n    </Message>\n  )\n}",
+    "parts": [
+      "MessageGroup",
+      "Message",
+      "MessageAvatar",
+      "MessageContent",
+      "MessageHeader",
+      "MessageFooter",
+      "MessageText"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

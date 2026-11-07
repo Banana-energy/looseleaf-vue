@@ -1,0 +1,57 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "alert",
+  "type": "registry:ui",
+  "title": "Alert",
+  "description": "A message on a slip of paper, drawn in felt tip. Default and destructive as upstream, plus info, success, warning and a sticky-note variant. Each tone has its own pattern in the margin as well as its own color, and a 16 px icon put first is circled in the tone's marker.",
+  "categories": [
+    "Feedback"
+  ],
+  "dependencies": [
+    "class-variance-authority",
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme",
+    "paper"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/alert.tsx",
+      "type": "registry:ui",
+      "target": "@ui/alert.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { Paper } from \"@/components/ui/paper\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { alertRecipe, type AlertTone } from \"@/lib/ink/recipes/alert-ink\";\nimport { cn } from \"@/lib/utils\";\nconst alertVariants = cva(\"relative isolate grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 px-4 py-3 text-sm compact:py-2.5 calm:px-3 calm:py-2 has-[>svg:not(.absolute)]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg:not(.absolute)]:gap-x-3 [&>svg:not(.absolute)]:size-4 [&>svg:not(.absolute)]:translate-y-0.5 [&>svg:not(.absolute)]:text-current [&:not(:has(>svg:not(.absolute)))>svg_[data-part=icon-mark]]:hidden\", {\n  variants: {\n    variant: {\n      default: \"text-card-foreground\" as const,\n      destructive: \"text-destructive *:data-[slot=alert-description]:text-destructive [&>svg:not(.absolute)]:text-current\" as const,\n      info: \"text-card-foreground [&>svg:not(.absolute)]:text-ink-you\" as const,\n      success: \"text-card-foreground [&>svg:not(.absolute)]:text-green\" as const,\n      warning: \"text-card-foreground\" as const,\n      note: \"px-5 py-4 text-ink *:data-[slot=alert-description]:text-ink-soft\" as const\n    }\n  },\n  defaultVariants: {\n    variant: \"default\" as const\n  }\n});\nconst Alert = defineUi<UI.ComponentProps<\"div\"> & VariantProps<typeof alertVariants> & {\n  seed?: string | number;\n}>(\"Alert\", [\"class\", \"variant\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const variant = computed(() => _props[\"variant\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"class\", \"variant\", \"seed\", \"ref\", \"children\"]));\n  const tone = computed<AlertTone>(() => variant.value ?? \"default\");\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: alertRecipe,\n    params: {\n      tone: tone.value\n    },\n    kind: \"alert\" as const,\n    seed: seed.value,\n    still: true\n  }));\n  const merged = computed(() => useMergedRef<HTMLDivElement>(hostRef, ref.value));\n  return () => {\n    if (tone.value === \"note\") {\n      return <Paper data-slot=\"alert\" role=\"alert\" stock=\"sticky-yellow\" tape=\"corner\" seed={seed.value} ref={ref.value as UI.Ref<HTMLElement> | undefined} class={cn(alertVariants({\n        variant: variant.value\n      }), className.value)} {...domProps(props.value)}>\r\n        {readSlot(_slots.default)}\r\n      </Paper>;\n    }\n    return <div data-slot=\"alert\" data-variant={tone.value} role=\"alert\" ref={merged.value} {...domProps(hostProps.value)} class={cn(alertVariants({\n      variant: variant.value\n    }), className.value)} {...domProps(props.value)}>\r\n      {node.value}\r\n      {readSlot(_slots.default)}\r\n    </div>;\n  };\n});\nconst AlertTitle = defineUi<UI.ComponentProps<\"div\">>(\"AlertTitle\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"alert-title\" class={cn(\"col-start-2 line-clamp-1 min-h-4 font-bold\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst AlertDescription = defineUi<UI.ComponentProps<\"div\">>(\"AlertDescription\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"alert-description\" class={cn(\"col-start-2 grid justify-items-start gap-1 text-sm text-muted-foreground [&_p]:leading-relaxed\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nexport { Alert, AlertTitle, AlertDescription };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/alert-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/alert-ink.ts",
+      "content": "import { bandFill, blobFill, wash } from '@/lib/ink/fills'\r\nimport { ellipsePoly, roundRectPoly } from '@/lib/ink/geom'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\nimport { box, line, loop } from '@/lib/ink/shapes'\r\nimport type { PaintKey } from '@/lib/ink/paint'\r\nimport type { PenName } from '@/lib/ink/types'\r\n\r\nexport type AlertTone = 'default' | 'destructive' | 'info' | 'success' | 'warning' | 'note'\r\n\r\nexport interface AlertParams {\r\n  tone: AlertTone\r\n}\r\n\r\nconst PEN: Record<AlertTone, PenName> = { default: 'ink', destructive: 'redfelt', info: 'blue', success: 'greenfelt', warning: 'ink', note: 'ink' }\r\nconst HAIR: Record<AlertTone, PenName> = { default: 'pencil.fine', destructive: 'red.fine', info: 'bluepencil.fine', success: 'green.fine', warning: 'pencil.fine', note: 'pencil.fine' }\r\n\r\nconst MARK: Record<AlertTone, PaintKey> = { default: 'pencil-mark', destructive: 'red', info: 'sky', success: 'grass', warning: 'tangerine', note: 'pencil-mark' }\r\n\r\nexport const alertRecipe = defineRecipe<AlertParams>({\r\n  id: 'alert',\r\n  kind: 'alert',\r\n  layers: ['rest'],\r\n  pad: 12,\r\n  draw(ink, { w, h }, { tone }, ctx) {\r\n    if (tone === 'note') return\r\n    const r = 3\r\n    const body = roundRectPoly(1.5, 1.5, w - 3, h - 3, r)\r\n    const calm = ctx.calm\r\n    const rtl = ctx.dir === 'rtl'\r\n    const X = (x: number): number => (rtl ? w - x : x)\r\n    const wide = w > 360\r\n    ink.layer('rest', () => {\r\n      ink.poly('under', body, 'slip', 0.94)\r\n      if (tone === 'warning') ink.part('fill', () => bandFill(ink, body, 'hi', { alpha: calm ? 0.4 : 0.6, passes: 1, ends: 'flag' }))\r\n      if (calm) {\r\n        if (tone !== 'default' && tone !== 'warning') line(ink, X(6.5), 4, X(6.5), h - 4, { pen: HAIR[tone], opts: { alpha: 0.9 } })\r\n      } else if (tone === 'destructive') {\r\n        wash(ink, body, 'red', { alpha: 0.04 })\r\n        ink.part('fill', () => bandFill(ink, roundRectPoly(rtl ? w - 11 : 3, 3.5, 8, h - 7, 2), 'red', { alpha: 0.9, passes: 1, ends: 'square', W: 5 }))\r\n      } else if (tone === 'info') {\r\n        line(ink, X(5.2), 5, X(5.6), h - 5, { pen: 'bluepencil' })\r\n        line(ink, X(10), 5.5, X(10.4), h - 6, { pen: 'bluepencil', opts: { alpha: 0.75 } })\r\n      } else if (tone === 'success') {\r\n        ink.part('fill', () => bandFill(ink, roundRectPoly(rtl ? w - 11 : 3, 3.5, 8, h - 7, 2), 'grass', { alpha: 0.7, passes: 1, ends: 'square', W: 5 }))\r\n      }\r\n      if (!calm) {\r\n        const px = 16\r\n        const py = ctx.density === 'compact' ? 10 : 12\r\n        const cx = X(px + 8), cy = py + 10\r\n        ink.part('icon-mark', () => {\r\n          const off = blobFill(ink, ellipsePoly(cx, cy, 11.5, 11.5, 20), MARK[tone], { alpha: tone === 'default' ? 0.3 : 0.32, mis: 1.6 })\r\n          loop(ink, cx, cy, 12.5, 12.5, { pen: tone === 'default' ? 'pencil.fine' : HAIR[tone], turns: 1.08 })\r\n          return off\r\n        })\r\n      }\r\n      if (calm) box(ink, 0, 0, w, h, { pen: HAIR[tone], corner: r })\r\n      else box(ink, 0, 0, w, h, { pen: PEN[tone], corner: r, opts: wide ? { simple: true } : undefined })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "alert",
+    "related": [
+      "card",
+      "button",
+      "sticker",
+      "paper"
+    ],
+    "a11y": [
+      "`role=\"alert\"`: assertive live region, announced when it appears. For content that is on the page from the start, override with `role=\"status\"` or `role=\"note\"`.",
+      "Tone is told by pattern and icon as well as color: hatching (destructive), a double rule (info), a marker strip (success), a highlighter panel (warning). Destructive text is red on a paper slip with the faintest red wash, 4.6:1 (the description is not dimmed as upstream's is).",
+      "The box, the margin marks and the circle round the icon are aria-hidden and pointer-events: none. The icon is decorative unless you give it a `label`.",
+      "Buttons and links inside an alert are their own hosts with their own focus rings.",
+      "Calm density draws a single pencil loop and one rule in the tone's color; Windows high contrast replaces the drawing with a real border."
+    ],
+    "usage": "import { Alert, AlertDescription, AlertTitle } from \"@/components/ui/alert\"\nimport { Icon } from \"@/components/ui/icon\"\n\nexport function Example() {\n  return (\n    <Alert variant=\"destructive\">\n      <Icon name=\"circle-alert\" />\n      <AlertTitle>Unable to process your payment.</AlertTitle>\n      <AlertDescription>Please verify your billing information and try again.</AlertDescription>\n    </Alert>\n  )\n}",
+    "parts": [
+      "Alert",
+      "AlertTitle",
+      "AlertDescription"
+    ]
+  }
+}

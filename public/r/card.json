@@ -1,0 +1,59 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "card",
+  "type": "registry:ui",
+  "title": "Card",
+  "description": "A card is a sheet of paper: header, title, description, action, content and footer with shadcn's spacing, on any stock and edge. Dividers are drawn pencil rules, and a card can be taped, pinned or clipped to the desk.",
+  "categories": [
+    "Layout"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme",
+    "paper"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/card.tsx",
+      "type": "registry:ui",
+      "target": "@ui/card.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, toValue, type MaybeRefOrGetter } from \"vue\";\nimport { Paper, type PaperProps } from \"@/components/ui/paper\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { cardRuleRecipe, type CardRuleStyle } from \"@/lib/ink/recipes/card-ink\";\nimport { cn } from \"@/lib/utils\";\ntype CardProps = PaperProps;\nconst Card = defineUi<CardProps>(\"Card\", [\"class\", \"stock\", \"rules\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const stock = computed(() => _props[\"stock\"] === undefined ? \"card\" as const : _props[\"stock\"]);\n  const rules = computed(() => _props[\"rules\"] === undefined ? \"none\" as const : _props[\"rules\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"stock\", \"rules\"]));\n  return () => {\n    return <Paper data-slot=\"card\" stock={stock.value} rules={rules.value} class={cn(\"flex flex-col gap-6 py-6 text-card-foreground\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</Paper>;\n  };\n});\ntype RuleProps = {\n  rule?: CardRuleStyle;\n};\nconst hasClass = (className: string | undefined, name: string) => !!className && className.split(/\\s+/).includes(name);\nfunction useDivider(_source0: MaybeRefOrGetter<\"top\" | \"bottom\">, _source1: MaybeRefOrGetter<boolean>, _source2: MaybeRefOrGetter<CardRuleStyle>, _source3: MaybeRefOrGetter<UI.Ref<HTMLElement> | undefined>) {\n  const edge = computed(() => toValue(_source0));\n  const drawn = computed(() => toValue(_source1));\n  const rule = computed(() => toValue(_source2));\n  const ref = computed(() => toValue(_source3));\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: cardRuleRecipe,\n    params: {\n      edge: edge.value,\n      style: rule.value\n    },\n    kind: \"rule\" as const\n  }));\n  const merged = computed(() => useMergedRef<HTMLElement>(drawn.value ? hostRef : undefined, ref.value));\n  return computed(() => {\n    return {\n      ref: merged.value,\n      hostProps: drawn.value && node.value ? hostProps.value : {},\n      node: drawn.value ? node.value : null\n    };\n  });\n}\nconst CardHeader = defineUi<UI.ComponentProps<\"div\"> & RuleProps>(\"CardHeader\", [\"class\", \"rule\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const rule = computed(() => _props[\"rule\"] === undefined ? \"pencil\" as const : _props[\"rule\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"class\", \"rule\", \"ref\", \"children\"]));\n  const d = useDivider(() => \"bottom\", () => hasClass(className.value, \"border-b\"), () => rule.value, () => ref.value as UI.Ref<HTMLElement> | undefined);\n  return () => {\n    return <div data-slot=\"card-header\" ref={d.value.ref as UI.Ref<HTMLDivElement>} {...domProps(d.value.hostProps)} class={cn(\"@container/card-header relative isolate grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:border-transparent [.border-b]:pb-6\", className.value)} {...domProps(props.value)}>\r\n      {d.value.node}\r\n      {readSlot(_slots.default)}\r\n    </div>;\n  };\n});\nconst CardTitle = defineUi<UI.ComponentProps<\"div\">>(\"CardTitle\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"card-title\" class={cn(\"font-script text-[1.7rem] leading-none font-semibold\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst CardDescription = defineUi<UI.ComponentProps<\"div\">>(\"CardDescription\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"card-description\" class={cn(\"text-sm text-muted-foreground\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst CardAction = defineUi<UI.ComponentProps<\"div\">>(\"CardAction\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"card-action\" class={cn(\"col-start-2 row-span-2 row-start-1 self-start justify-self-end\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst CardContent = defineUi<UI.ComponentProps<\"div\">>(\"CardContent\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"card-content\" class={cn(\"px-6\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst CardFooter = defineUi<UI.ComponentProps<\"div\"> & RuleProps>(\"CardFooter\", [\"class\", \"rule\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const rule = computed(() => _props[\"rule\"] === undefined ? \"pencil\" as const : _props[\"rule\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"class\", \"rule\", \"ref\", \"children\"]));\n  const d = useDivider(() => \"top\", () => hasClass(className.value, \"border-t\"), () => rule.value, () => ref.value as UI.Ref<HTMLElement> | undefined);\n  return () => {\n    return <div data-slot=\"card-footer\" ref={d.value.ref as UI.Ref<HTMLDivElement>} {...domProps(d.value.hostProps)} class={cn(\"relative isolate flex items-center px-6 [.border-t]:border-transparent [.border-t]:pt-6\", className.value)} {...domProps(props.value)}>\r\n      {d.value.node}\r\n      {readSlot(_slots.default)}\r\n    </div>;\n  };\n});\nexport { Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent };\nexport type { CardProps };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/card-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/card-ink.ts",
+      "content": "import { line, squiggle } from '@/lib/ink'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\n\r\nexport type CardRuleStyle = 'pencil' | 'dashed' | 'wavy'\r\n\r\nexport interface CardRuleParams {\r\n  edge: 'top' | 'bottom'\r\n  style: CardRuleStyle\r\n}\r\n\r\nexport const cardRuleRecipe = defineRecipe<CardRuleParams>({\r\n  id: 'card-rule',\r\n  kind: 'rule',\r\n  layers: ['rest'],\r\n  pad: 8,\r\n  draw(ink, { w, h }, { edge, style }, ctx) {\r\n    const y = edge === 'bottom' ? h - 1 : 1\r\n    const x0 = Math.min(14, w * 0.05)\r\n    const x1 = w - x0\r\n    ink.layer('rest', () => {\r\n      if (ctx.calm) {\r\n        line(ink, x0, y, x1, y, { pen: 'pencil.fine', opts: { alpha: 0.7, wobble: 0.2 } })\r\n      } else if (style === 'dashed') {\r\n        const r = ink.next('dash')\r\n        const dash = 8\r\n        const gap = 5.5\r\n        for (let x = x0 + r.range(0, 3); x < x1 - dash; x += dash + gap + r.gauss(0, 0.6)) {\r\n          const yy = y + r.gauss(0, 0.45) - ((x - x0) / (x1 - x0)) * 0.9\r\n          ink.stroke([[x, yy], [x + dash * r.range(0.85, 1.1), yy + r.gauss(0, 0.35)]], 'pencil', { simple: true, wobble: 0.3, start: 'soft', end: 'soft', width: 0.9 })\r\n        }\r\n      } else if (style === 'wavy') {\r\n        squiggle(ink, x0, y, x1 - x0, { pen: 'pencil.fine', h: 3, amp: 1.3, wl: 15 })\r\n      } else {\r\n        line(ink, x0, y, x1, y, { pen: 'pencil' })\r\n      }\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "card",
+    "related": [
+      "paper",
+      "tape",
+      "button",
+      "separator"
+    ],
+    "a11y": [
+      "A Card is a plain div, as upstream: give it a role or an element (`as=\"article\"`, `role=\"group\"` with a label) when it means something more.",
+      "The sheet, dividers, tape and fasteners are aria-hidden decoration; nothing in them is focusable or takes pointer events.",
+      "Ink on paper is 14:1; muted descriptions 8.9:1. Text stays upright while the sheet turns, and the tilt is zero in calm density.",
+      "Calm density also draws a plain cut edge with a hairline shadow and hides tape and fasteners."
+    ],
+    "usage": "import { Button } from \"@/components/ui/button\"\nimport { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from \"@/components/ui/card\"\n\nexport function Example() {\n  return (\n    <Card class=\"w-[350px]\">\n      <CardHeader>\n        <CardTitle>Notifications</CardTitle>\n        <CardDescription>Choose what lands in your inbox.</CardDescription>\n        <CardAction><Button variant=\"link\" size=\"sm\">Reset</Button></CardAction>\n      </CardHeader>\n      <CardContent>…</CardContent>\n      <CardFooter class=\"border-t\"><Button>Save</Button></CardFooter>\n    </Card>\n  )\n}\n\n<Card stock=\"index-card\" edge=\"torn\" tape=\"both\">…</Card>",
+    "parts": [
+      "Card",
+      "CardHeader",
+      "CardTitle",
+      "CardDescription",
+      "CardAction",
+      "CardContent",
+      "CardFooter"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

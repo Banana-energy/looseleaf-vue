@@ -1,0 +1,42 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "stamp",
+  "type": "registry:ui",
+  "title": "Stamp",
+  "description": "A rubber stamp: solid ink pressed through a worn pad, double-rule border, typewriter capitals, a slight tilt and sometimes the ghost of a first impression. For APPROVED, PAID, DRAFT and friends.",
+  "categories": [
+    "Stickers & doodles"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-art",
+    "ink-stickers",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/stamp.tsx",
+      "type": "registry:ui",
+      "target": "@ui/stamp.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { cn } from \"@/lib/utils\";\nimport { useEnsureInkDefs } from \"@/lib/ink/vue\";\nimport { stickers } from \"@/lib/ink/art/stickers\";\nimport { memo, stamp } from \"@/lib/ink/art-draw\";\nimport type { StampGen, StickerDef } from \"@/lib/ink/art/types\";\nconst Stamp = defineUi<Omit<UI.ComponentProps<\"svg\">, \"name\" | \"children\" | \"viewBox\"> & {\n  name?: string;\n  text?: string;\n  shape?: StampGen[\"shape\"];\n  ink?: StampGen[\"ink\"];\n  sub?: string;\n  ring?: string;\n  w?: number;\n  h?: number;\n  size?: number;\n  tilt?: number;\n  ghost?: boolean;\n  dashed?: boolean;\n  seed?: string | number;\n  label?: string;\n}>(\"Stamp\", [\"name\", \"text\", \"shape\", \"ink\", \"sub\", \"ring\", \"w\", \"h\", \"size\", \"tilt\", \"ghost\", \"dashed\", \"seed\", \"label\", \"class\", \"style\"], (_props, {\n  slots: _slots\n}) => {\n  const name = computed(() => _props[\"name\"]);\n  const text = computed(() => _props[\"text\"]);\n  const shape = computed(() => _props[\"shape\"]);\n  const ink = computed(() => _props[\"ink\"]);\n  const sub = computed(() => _props[\"sub\"]);\n  const ring = computed(() => _props[\"ring\"]);\n  const w = computed(() => _props[\"w\"]);\n  const h = computed(() => _props[\"h\"]);\n  const size = computed(() => _props[\"size\"]);\n  const tilt = computed(() => _props[\"tilt\"]);\n  const ghost = computed(() => _props[\"ghost\"]);\n  const dashed = computed(() => _props[\"dashed\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const label = computed(() => _props[\"label\"]);\n  const className = computed(() => _props[\"class\"]);\n  const style = computed(() => _props[\"style\"]);\n  const props = computed(() => omitProps(_props, [\"name\", \"text\", \"shape\", \"ink\", \"sub\", \"ring\", \"w\", \"h\", \"size\", \"tilt\", \"ghost\", \"dashed\", \"seed\", \"label\", \"class\", \"style\"]));\n  useEnsureInkDefs();\n  const preset = computed(() => name.value ? (stickers as Record<string, StickerDef>)[name.value] as StampGen | undefined : undefined);\n  const p = computed(() => preset.value && \"gen\" in preset.value && preset.value.gen === \"stamp\" ? preset.value : undefined);\n  const t = computed(() => text.value ?? p.value?.text);\n  return () => {\n    if (!t.value) return null;\n    const sh = shape.value ?? p.value?.shape ?? \"rect\";\n    const opts = {\n      ink: ink.value ?? p.value?.ink,\n      sub: sub.value ?? p.value?.sub,\n      ring: ring.value ?? p.value?.ring,\n      w: size.value ?? w.value ?? p.value?.w,\n      h: size.value ?? h.value ?? p.value?.h,\n      tilt: tilt.value ?? p.value?.tilt,\n      ghost: ghost.value ?? p.value?.ghost,\n      dashed: dashed.value ?? p.value?.dashed,\n      stars: p.value?.stars,\n      wear: p.value?.wear,\n      seed: seed.value ?? name.value ?? t.value\n    };\n    const res = memo(`stamp|${t.value}|${sh}|${JSON.stringify(opts)}`, () => stamp(t.value, sh, opts));\n    return <svg data-slot=\"stamp\" data-ink=\"stamp\" data-stamp={name.value ?? t.value} role=\"img\" aria-label={label.value ?? t.value} focusable=\"false\" viewBox={`0 0 ${res.w} ${res.h}`} width={res.w} height={res.h} style={cssStyle(style.value)} class={cn(\"pointer-events-none shrink-0 overflow-visible\", className.value)} innerHTML={res.svg} {...domProps(props.value)} />;\n  };\n});\nexport { Stamp };\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "sticker",
+      "doodle"
+    ],
+    "a11y": [
+      "The svg is an image named by its text (`role=\"img\"`), so a stamped APPROVED is announced as \"Approved\"."
+    ],
+    "usage": "import { Stamp } from \"@/components/ui/stamp\"\n\nexport function Example() {\n  return <Stamp name=\"stamp-approved\" />\n}",
+    "parts": [
+      "Stamp"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

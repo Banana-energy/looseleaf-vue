@@ -1,0 +1,56 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "marker",
+  "type": "registry:ui",
+  "title": "Marker",
+  "description": "The pencil line between two days of a conversation, the red one where you stopped reading, and the quiet note that someone joined. A separator, a border or a plain line of small print.",
+  "categories": [
+    "Chat"
+  ],
+  "dependencies": [
+    "class-variance-authority",
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/marker.tsx",
+      "type": "registry:ui",
+      "target": "@ui/marker.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { Slot } from \"@/lib/primitives\";\nimport { useInk } from \"@/lib/ink/vue\";\nimport { markerRuleRecipe, type MarkerSide, type MarkerTone } from \"@/lib/ink/recipes/marker-ink\";\nimport { cn } from \"@/lib/utils\";\nconst markerVariants = cva(\"group/marker relative flex min-h-4 w-full items-center gap-2 text-start font-hand text-sm text-muted-foreground [&_svg:not([class*='size-']):not(.absolute)]:size-4 [a]:underline [a]:underline-offset-3 [a]:hover:text-foreground\", {\n  variants: {\n    variant: {\n      default: \"\" as const,\n      separator: \"\" as const,\n      border: \"pb-3\" as const\n    }\n  }\n});\nconst MarkerRule = defineUi<{\n  side: MarkerSide;\n  tone: MarkerTone;\n  seed?: string | number;\n  wavy?: boolean;\n}>(\"MarkerRule\", [\"side\", \"tone\", \"seed\", \"wavy\"], (_props, {\n  slots: _slots\n}) => {\n  const side = computed(() => _props[\"side\"]);\n  const tone = computed(() => _props[\"tone\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const wavy = computed(() => _props[\"wavy\"]);\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: markerRuleRecipe,\n    params: {\n      side: side.value,\n      tone: tone.value,\n      style: wavy.value ? \"wavy\" as const : \"line\" as const\n    },\n    kind: \"rule\" as const,\n    seed: seed.value === undefined ? undefined : `${seed.value}|${side.value}`,\n    still: true\n  }));\n  return () => {\n    return <span data-slot=\"marker-rule\" data-side={side.value} ref={hostRef} {...domProps(hostProps.value)} class={cn(\"relative isolate block h-4 min-w-0 forced-colors:h-2 forced-colors:border-b-2 forced-colors:border-[CanvasText] forced-colors:outline-none!\", side.value === \"full\" ? \"absolute inset-x-0 bottom-0\" as const : \"flex-1\" as const)}>\r\n      {node.value}\r\n    </span>;\n  };\n});\nconst Marker = defineUi<UI.ComponentProps<\"div\"> & VariantProps<typeof markerVariants> & {\n  asChild?: boolean;\n  tone?: \"default\" | \"new\";\n  rule?: \"line\" | \"wavy\";\n  seed?: string | number;\n}>(\"Marker\", [\"class\", \"variant\", \"tone\", \"rule\", \"seed\", \"asChild\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const variant = computed(() => _props[\"variant\"] === undefined ? \"default\" as const : _props[\"variant\"]);\n  const tone = computed(() => _props[\"tone\"] === undefined ? \"default\" as const : _props[\"tone\"]);\n  const rule = computed(() => _props[\"rule\"] === undefined ? \"line\" as const : _props[\"rule\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const asChild = computed(() => _props[\"asChild\"] === undefined ? false : _props[\"asChild\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"class\", \"variant\", \"tone\", \"rule\", \"seed\", \"asChild\", \"children\"]));\n  const Comp = computed(() => jsxTag(asChild.value ? Slot.Root : \"div\" as const));\n  const t = computed<MarkerTone>(() => tone.value ?? \"default\");\n  const v = computed(() => variant.value ?? \"default\");\n  const inner = renderValue(() => asChild.value ? <Slot.Slottable>{children.value}</Slot.Slottable> : children.value);\n  return () => {\n    return <Comp.value data-slot=\"marker\" data-variant={v.value} data-tone={t.value === \"new\" ? \"new\" as const : undefined} class={cn(markerVariants({\n      variant: v.value\n    }), className.value)} {...domProps(props.value)}>\r\n      {v.value === \"separator\" ? <MarkerRule side=\"start\" tone={t.value} seed={seed.value} /> : null}\r\n      {inner.value}\r\n      {v.value === \"separator\" ? <MarkerRule side=\"end\" tone={t.value} seed={seed.value} /> : null}\r\n      {v.value === \"border\" ? <MarkerRule side=\"full\" tone={t.value} seed={seed.value} wavy={rule.value === \"wavy\"} /> : null}\r\n    </Comp.value>;\n  };\n});\nconst MarkerIcon = defineUi<UI.ComponentProps<\"span\">>(\"MarkerIcon\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <span data-slot=\"marker-icon\" aria-hidden=\"true\" class={cn(\"size-4 shrink-0 group-data-[tone=new]/marker:text-red [&_svg:not([class*='size-']):not(.absolute)]:size-4\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</span>;\n  };\n});\nconst MarkerContent = defineUi<UI.ComponentProps<\"span\">>(\"MarkerContent\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <span data-slot=\"marker-content\" class={cn(\"min-w-0 wrap-break-word group-data-[variant=separator]/marker:flex-none group-data-[variant=separator]/marker:text-center group-data-[variant=separator]/marker:font-script group-data-[variant=separator]/marker:text-xl group-data-[variant=separator]/marker:leading-none group-data-[tone=new]/marker:ll-swipe group-data-[tone=new]/marker:px-2 group-data-[tone=new]/marker:font-bold *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</span>;\n  };\n});\nexport { Marker, MarkerIcon, MarkerContent, markerVariants };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/marker-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/marker-ink.ts",
+      "content": "import { line, underline } from '@/lib/ink/shapes'\r\nimport { clamp } from '@/lib/ink/rng'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\n\r\nexport type MarkerSide = 'start' | 'end' | 'full'\r\nexport type MarkerTone = 'default' | 'new'\r\n\r\nexport interface MarkerRuleParams {\r\n  side: MarkerSide\r\n  tone: MarkerTone\r\n  style?: 'line' | 'wavy'\r\n}\r\n\r\nexport const markerRuleRecipe = defineRecipe<MarkerRuleParams>({\r\n  id: 'marker-rule',\r\n  kind: 'rule',\r\n  layers: ['rest'],\r\n  pad: 8,\r\n  draw(ink, { w, h }, { side, tone, style = 'line' }, ctx) {\r\n    const y = h / 2\r\n    const rtl = ctx.dir === 'rtl'\r\n    const towardsWords: 'left' | 'right' | 'none' = side === 'full' ? 'none' : (side === 'start') === !rtl ? 'right' : 'left'\r\n    const gap = clamp(w * 0.02, 1, 4) + 1\r\n    const x1 = towardsWords === 'left' ? gap : 0\r\n    const x2 = towardsWords === 'right' ? w - gap : w\r\n    ink.layer('rest', () => {\r\n      if (ctx.calm) line(ink, x1, y, x2, y, { pen: 'pencil.fine', opts: { alpha: tone === 'new' ? 0.9 : 0.7, simple: true, color: tone === 'new' ? 'red' : undefined } })\r\n      else if (style === 'wavy' && side === 'full') underline(ink, x1, y, x2 - x1, { kind: 'wavy', pen: tone === 'new' ? 'red' : 'pencil' })\r\n      else line(ink, x1, y, x2, y, { pen: tone === 'new' ? 'red' : 'pencil' })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "upstream": "marker",
+    "related": [
+      "message",
+      "bubble",
+      "message-scroller",
+      "separator"
+    ],
+    "a11y": [
+      "Markers are plain divs (as upstream). Inside a `role=\"log\"` transcript a separator is announced as its words: 'Today', 'New messages'.",
+      "Nothing is conveyed by the drawing alone: the unread state is the words, and color is backed by the asterisk and the highlighter swipe.",
+      "Use `asChild` with a `button` to make 'New messages' a control; the drawn focus ring is the button's own.",
+      "Difference from upstream: `markerVariants` gives the layout only. The lines of `separator` and `border` are drawn parts of `Marker` (a pseudo-element cannot hold a drawing), so applying the variants to your own element draws no line.",
+      "Ink lines are 3:1 or more against paper; the words are muted text at 8.9:1 (ink on the highlighter swipe 12:1)."
+    ],
+    "usage": "import { Icon } from \"@/components/ui/icon\"\nimport { Marker, MarkerContent, MarkerIcon } from \"@/components/ui/marker\"\n\nexport function Example() {\n  return (\n    <>\n      <Marker variant=\"separator\">\n        <MarkerContent>Today</MarkerContent>\n      </Marker>\n      <Marker variant=\"separator\" tone=\"new\">\n        <MarkerIcon><Icon name=\"asterisk\" /></MarkerIcon>\n        <MarkerContent>New messages</MarkerContent>\n      </Marker>\n    </>\n  )\n}",
+    "parts": [
+      "Marker",
+      "MarkerIcon",
+      "MarkerContent"
+    ]
+  }
+}

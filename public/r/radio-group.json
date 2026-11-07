@@ -1,0 +1,57 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "radio-group",
+  "type": "registry:ui",
+  "title": "Radio Group",
+  "description": "Pick exactly one. Each choice is a hand-circled ring; picking it colors the dot in with a terracotta blot and writes a felt spiral into it. Reka UI Radio Group underneath: roving focus, arrow keys, form value, orientation and direction.",
+  "categories": [
+    "Forms"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-recipes",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/radio-group.tsx",
+      "type": "registry:ui",
+      "target": "@ui/radio-group.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { RadioGroup as RadioGroupPrimitive } from \"@/lib/primitives\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { REVEAL_DASH, REVEAL_WHEN_CHECKED, markTouched } from \"@/lib/ink/recipes/draw-on-ink\";\nimport { radioRecipe } from \"@/lib/ink/recipes/radio-group-ink\";\nimport { cn } from \"@/lib/utils\";\nconst RadioGroupContext = createContext({\n  invalid: false,\n  disabled: false\n});\nconst RadioGroup = defineUi<UI.ComponentProps<typeof RadioGroupPrimitive.Root>>(\"RadioGroup\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  const invalid = computed(() => props.value[\"aria-invalid\"] === true || props.value[\"aria-invalid\"] === \"true\");\n  const group = computed(() => ({\n    invalid: invalid.value,\n    disabled: !!props.value.disabled\n  }));\n  return () => {\n    return <RadioGroupContext.Provider value={group.value}>\r\n      <RadioGroupPrimitive.Root data-slot=\"radio-group\" class={cn(\"grid gap-3 data-[orientation=horizontal]:flex data-[orientation=horizontal]:flex-wrap data-[orientation=horizontal]:gap-x-6\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</RadioGroupPrimitive.Root>\r\n    </RadioGroupContext.Provider>;\n  };\n});\nconst RadioGroupItem = defineUi<UI.ComponentProps<typeof RadioGroupPrimitive.Item> & {\n  seed?: string | number;\n}>(\"RadioGroupItem\", [\"class\", \"seed\", \"disabled\", \"onClickCapture\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const disabled = computed(() => _props[\"disabled\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const onClickCapture = computed(() => _props[\"onClickCapture\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"seed\", \"disabled\", \"ref\", \"onClickCapture\"]));\n  const group = useContext(RadioGroupContext);\n  const invalid = computed(() => props.value[\"aria-invalid\"] === true || props.value[\"aria-invalid\"] === \"true\" || group.value.invalid && props.value[\"aria-invalid\"] === undefined);\n  const off = computed(() => !!disabled.value || group.value.disabled);\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: radioRecipe,\n    params: {\n      disabled: off.value,\n      invalid: invalid.value\n    },\n    kind: \"radio\" as const,\n    seed: seed.value\n  }));\n  return () => {\n    return <RadioGroupPrimitive.Item data-slot=\"radio-group-item\" ref={useMergedRef<HTMLButtonElement>(hostRef, ref.value)} {...domProps(hostProps.value)} disabled={disabled.value} onClickCapture={e => {\n      markTouched(e);\n      onClickCapture.value?.(e);\n    }} class={cn(\"peer relative isolate aspect-square size-4 shrink-0 after:absolute after:-inset-2 disabled:cursor-not-allowed\", REVEAL_DASH, REVEAL_WHEN_CHECKED, \"group-hover/field:[&>svg_[data-layer=hover]]:visible group-hover/field:[&>svg_[data-layer=hover]]:opacity-100\", \"has-[+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:visible has-[+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:opacity-100\", \"has-[+input+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:visible has-[+input+[data-slot=label]:hover]:[&>svg_[data-layer=hover]]:opacity-100\", className.value)} {...domProps(props.value)}>\r\n      {node.value}\r\n      <RadioGroupPrimitive.Indicator data-slot=\"radio-group-indicator\" class=\"pointer-events-none absolute inset-0 hidden place-content-center leading-none font-bold forced-colors:grid forced-colors:before:content-['●']\" />\r\n    </RadioGroupPrimitive.Item>;\n  };\n});\nexport { RadioGroup, RadioGroupItem };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/radio-group-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/radio-group-ink.ts",
+      "content": "import { blobFill, wash } from '@/lib/ink/fills'\r\nimport { ellipsePoly } from '@/lib/ink/geom'\r\nimport { clamp } from '@/lib/ink/rng'\r\nimport { dashedBox, focusRing, loop, spiralLines } from '@/lib/ink/shapes'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\nimport { reveal, revealId } from '@/lib/ink/recipes/draw-on-ink'\r\nimport type { PenName, Pt } from '@/lib/ink/types'\r\n\r\nexport interface RadioParams {\r\n  disabled?: boolean\r\n  invalid?: boolean\r\n}\r\n\r\nexport const radioRecipe = defineRecipe<RadioParams>({\r\n  id: 'radio-group',\r\n  kind: 'radio',\r\n  layers: ['rest', 'hover', 'checked', 'focus'],\r\n  lazy: ['focus'],\r\n  pad: 12,\r\n  draw(ink, { w, h }, { disabled, invalid }, ctx) {\r\n    const s = Math.min(w, h)\r\n    const cx = w / 2\r\n    const cy = h / 2\r\n    const R = s / 2 - 1\r\n    const fine = s < 18\r\n    const calm = ctx.calm\r\n    const disc = ellipsePoly(cx, cy, R, R, 28)\r\n\r\n    if (!disabled) ctx.lazy('focus', (fink) => focusRing(fink, 0, 0, w, h, { shape: 'ellipse' }))\r\n    if (ctx.lazyOnly) return\r\n\r\n    const ring = (pen: PenName, opts?: { width?: number }): void => loop(ink, cx, cy, R, R, { pen, clean: true, opts })\r\n    const inkPen: PenName = invalid ? (calm || fine ? 'red.fine' : 'red') : calm ? 'pencil.fine' : fine ? 'ink.fine' : 'ink'\r\n\r\n    ink.layer('rest', () => {\r\n      if (disabled) {\r\n        wash(ink, disc, 'pencil-mark', { alpha: 0.35, material: 'wash' })\r\n        dashedBox(ink, 0, 0, w, h, { r: s / 2, pen: 'pencil', opts: { color: 'pencil', width: 1.2 } })\r\n        return\r\n      }\r\n      ink.poly('under', disc, 'slip', 0.85)\r\n      ring(inkPen, invalid ? { width: 1.15 } : s >= 26 ? { width: 1.2 } : undefined)\r\n    })\r\n\r\n    if (!disabled) {\r\n      ink.layer('hover', () => {\r\n        if (calm) {\r\n          loop(ink, cx, cy, R - 1.6, R - 1.6, { pen: invalid ? 'red.fine' : 'pencil.fine', turns: 1.05, opts: { alpha: 0.75, simple: true } })\r\n          return\r\n        }\r\n        const d = 1.8 + s / 24\r\n        const arc = (a0: number, a1: number): Pt[] => {\r\n          const pts: Pt[] = []\r\n          for (let i = 0; i <= 5; i++) {\r\n            const a = a0 + ((a1 - a0) * i) / 5\r\n            pts.push([cx + Math.cos(a) * (R + d), cy + Math.sin(a) * (R + d)])\r\n          }\r\n          return pts\r\n        }\r\n        ink.lines(\r\n          [\r\n            { pts: arc(0.25, 1.05), o: { start: 'soft', end: 'flick' } },\r\n            { pts: arc(1.25, 1.85), o: { start: 'soft', end: 'flick', width: 0.8 } },\r\n          ],\r\n          'ink.fine',\r\n          { width: 1.1 }\r\n        )\r\n      })\r\n    }\r\n\r\n    ink.layer('checked', () => {\r\n      if (disabled) {\r\n        wash(ink, ellipsePoly(cx, cy, R * 0.6, R * 0.6, 20), 'pencil-mark', { alpha: 0.55, material: 'wash' })\r\n        return\r\n      }\r\n      const dotR = clamp(R * 0.68, 2.6, 14)\r\n      ink.part('fill', () => blobFill(ink, ellipsePoly(cx, cy, dotR, dotR, 20), 'marker', { alpha: 0.88, mis: clamp(s * 0.07, 0.8, 2) }))\r\n      if (invalid) ring('red', { width: 1.25 })\r\n      const spiral = spiralLines(ink.next('spiral'), cx, cy, dotR * 0.85, { turns: fine ? 1.8 : 2.2, steps: fine ? 18 : 24, shrink: 0.82 })\r\n      reveal(ink, { id: revealId(ctx.seed, 'd'), lines: spiral, pen: fine ? 'ink.fine' : 'ink', box: { w, h }, width: fine ? 0.9 : 1, revealWidth: Math.max(3, dotR * 0.9) })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "radio-group",
+    "related": [
+      "checkbox",
+      "switch",
+      "toggle-group",
+      "field",
+      "label"
+    ],
+    "a11y": [
+      "role=\"radiogroup\" with role=\"radio\" items and aria-checked. Tab enters the group at the chosen radio (or the first), arrow keys move AND choose, Space chooses the focused radio (Reka UI roving focus). Give the group a name with aria-label or aria-labelledby (a fieldset legend works too).",
+      "Label each radio with <Label htmlFor>, wrap it, or use aria-label. A Label beside it is a peer: peer-disabled dims it, and hovering the row (a `group/field`) or the label right after the radio lights the ring's hover overlay.",
+      "The hit area reaches 8 px past the ring on every side (an ::after, so layout never moves): 32 px for the 16 px ring.",
+      "Keyboard focus draws a blue felt ring; the drawing is aria-hidden, pointer-events: none and never focusable. Windows high contrast replaces it by a real border and the Indicator shows a real dot.",
+      "The chosen state is a filled dot, not only a color: a bold blot with a dark spiral. Reduced motion shows the finished dot at once.",
+      "Right-to-left needs nothing: the ring is symmetric and every offset is logical. Pass `dir=\"rtl\"` to mirror the arrow keys."
+    ],
+    "usage": "import { Label } from \"@/components/ui/label\"\nimport { RadioGroup, RadioGroupItem } from \"@/components/ui/radio-group\"\n\nexport function Example() {\n  return (\n    <RadioGroup defaultValue=\"comfortable\" aria-label=\"Density\">\n      <div class=\"flex items-center gap-3\">\n        <RadioGroupItem value=\"default\" id=\"r1\" />\n        <Label htmlFor=\"r1\">Default</Label>\n      </div>\n      <div class=\"flex items-center gap-3\">\n        <RadioGroupItem value=\"comfortable\" id=\"r2\" />\n        <Label htmlFor=\"r2\">Comfortable</Label>\n      </div>\n    </RadioGroup>\n  )\n}",
+    "parts": [
+      "RadioGroup",
+      "RadioGroupItem"
+    ]
+  }
+}

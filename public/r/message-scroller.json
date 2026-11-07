@@ -1,0 +1,60 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "message-scroller",
+  "type": "registry:ui",
+  "title": "Message scroller",
+  "description": "The scrolling transcript of a chat: it opens on the newest message, sticks to the bottom while a reply streams and lets go the moment you scroll up, pins your new message to the top so the reply grows beneath it, holds your place when older messages are added above, and wakes a \"jump to latest\" button when there is more below. Same parts and hooks as shadcn's message scroller, with the behavior written in, so no extra package.",
+  "categories": [
+    "Chat"
+  ],
+  "registryDependencies": [
+    "button",
+    "icon",
+    "looseleaf-theme",
+    "message-scroller-primitive"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/message-scroller.tsx",
+      "type": "registry:ui",
+      "target": "@ui/message-scroller.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { MessageScroller as MessageScrollerPrimitive, useMessageScroller, useMessageScrollerScrollable, useMessageScrollerVisibility } from \"@/lib/message-scroller-primitive\";\nimport { cn } from \"@/lib/utils\";\nconst MessageScrollerProvider = defineUi<UI.ComponentProps<typeof MessageScrollerPrimitive.Provider>>(\"MessageScrollerProvider\", [], (_props, {\n  slots: _slots\n}) => {\n  const props = _props;\n  return () => {\n    return <MessageScrollerPrimitive.Provider {...domProps(props)}>{_slots.default?.()}</MessageScrollerPrimitive.Provider>;\n  };\n});\nconst MessageScroller = defineUi<UI.ComponentProps<typeof MessageScrollerPrimitive.Root>>(\"MessageScroller\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <MessageScrollerPrimitive.Root data-slot=\"message-scroller\" class={cn(\"group/message-scroller relative flex size-full min-h-0 flex-col\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</MessageScrollerPrimitive.Root>;\n  };\n});\nconst MessageScrollerViewport = defineUi<UI.ComponentProps<typeof MessageScrollerPrimitive.Viewport>>(\"MessageScrollerViewport\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <MessageScrollerPrimitive.Viewport data-slot=\"message-scroller-viewport\" class={cn(\"size-full min-h-0 min-w-0 overflow-y-auto overscroll-contain [--fade-b:0px] [--fade-t:0px] [mask-image:linear-gradient(to_bottom,transparent,black_var(--fade-t),black_calc(100%-var(--fade-b)),transparent)] [scrollbar-gutter:stable] [scrollbar-width:thin] group-data-[scrollable~=end]/message-scroller:[--fade-b:28px] group-data-[scrollable~=start]/message-scroller:[--fade-t:20px] data-autoscrolling:[scrollbar-width:none] focus-visible:-outline-offset-3\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</MessageScrollerPrimitive.Viewport>;\n  };\n});\nconst MessageScrollerContent = defineUi<UI.ComponentProps<typeof MessageScrollerPrimitive.Content>>(\"MessageScrollerContent\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <MessageScrollerPrimitive.Content data-slot=\"message-scroller-content\" class={cn(\"flex h-max min-h-full flex-col gap-5 px-4 py-4\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</MessageScrollerPrimitive.Content>;\n  };\n});\nconst MessageScrollerItem = defineUi<UI.ComponentProps<typeof MessageScrollerPrimitive.Item>>(\"MessageScrollerItem\", [\"class\", \"scrollAnchor\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const scrollAnchor = computed(() => _props[\"scrollAnchor\"] === undefined ? false : _props[\"scrollAnchor\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"scrollAnchor\"]));\n  return () => {\n    return <MessageScrollerPrimitive.Item data-slot=\"message-scroller-item\" scrollAnchor={scrollAnchor.value} class={cn(\"min-w-0 shrink-0\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</MessageScrollerPrimitive.Item>;\n  };\n});\nconst MessageScrollerButton = defineUi<UI.ComponentProps<typeof MessageScrollerPrimitive.Button> & Pick<UI.ComponentProps<typeof Button>, \"variant\" | \"size\">>(\"MessageScrollerButton\", [\"direction\", \"class\", \"render\", \"variant\", \"size\"], (_props, {\n  slots: _slots\n}) => {\n  const direction = computed(() => _props[\"direction\"] === undefined ? \"end\" as const : _props[\"direction\"]);\n  const className = computed(() => _props[\"class\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const render = computed(() => _props[\"render\"]);\n  const variant = computed(() => _props[\"variant\"] === undefined ? \"secondary\" as const : _props[\"variant\"]);\n  const size = computed(() => _props[\"size\"] === undefined ? \"icon-sm\" as const : _props[\"size\"]);\n  const props = computed(() => omitProps(_props, [\"direction\", \"class\", \"children\", \"render\", \"variant\", \"size\"]));\n  return () => {\n    return <MessageScrollerPrimitive.Button data-slot=\"message-scroller-button\" data-direction={direction.value} data-variant={variant.value} data-size={size.value} direction={direction.value} class={cn(\"absolute inset-s-1/2 z-(--ll-z-raised) -translate-x-1/2 transition-[translate,scale,opacity] duration-(--ll-dur-sheet) ease-settle data-[active=false]:pointer-events-none data-[active=false]:scale-95 data-[active=false]:opacity-0 data-[active=true]:translate-y-0 data-[active=true]:scale-100 data-[active=true]:opacity-100 data-[direction=end]:bottom-4 data-[direction=end]:data-[active=false]:translate-y-full data-[direction=start]:top-4 data-[direction=start]:data-[active=false]:-translate-y-full rtl:translate-x-1/2 data-[direction=start]:[&_svg]:rotate-180\", className.value)} render={render.value ?? <Button variant={variant.value} size={size.value} />} {...domProps(props.value)}>\r\n      {readSlot(_slots.default) ?? <>\r\n          <Icon name=\"arrow-down\" />\r\n          <span class=\"sr-only\">{direction.value === \"end\" ? \"Scroll to end\" as const : \"Scroll to start\" as const}</span>\r\n        </>}\r\n    </MessageScrollerPrimitive.Button>;\n  };\n});\nexport { MessageScrollerProvider, MessageScroller, MessageScrollerViewport, MessageScrollerContent, MessageScrollerItem, MessageScrollerButton, useMessageScroller, useMessageScrollerScrollable, useMessageScrollerVisibility };\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "upstream": "message-scroller",
+    "related": [
+      "message",
+      "bubble",
+      "prompt-input",
+      "marker",
+      "scroll-area"
+    ],
+    "a11y": [
+      "The viewport is a labeled `region` and a tab stop, so a keyboard user can scroll with the arrows, Page keys, Home and End; the transcript inside it is a `role=\"log\"`, which announces additions politely.",
+      "Taking over is detected from wheel, touch and scroll keys going toward the start, and from a dragged scrollbar (a scroll the scroller did not make itself; a press on the container, not on a message, while your message is pinned): following and pinning stop immediately and never fight the reader. Scrolling toward the end while you are already there changes nothing, so a stream keeps being followed.",
+      "The jump button is `inert` (not focusable, not clickable) while there is nowhere to jump, and has a visually hidden label. Pressing it hands the keyboard to the transcript, so the arrows and Page keys carry on from there instead of restarting at the top of the page.",
+      "Every word a streaming reply adds is an addition to the `log`, and a screen reader would read the reply piece by piece. While it streams pass `aria-live=\"off\"` to `MessageScrollerContent` and announce the finished reply once from a separate `role=\"status\"` (the examples do); the `TypingIndicator` covers \"someone is writing\".",
+      "Smooth scrolling and the button's slide are decoration: with `prefers-reduced-motion` (or a `data-motion=\"reduced\"` ancestor) the durations collapse and the jump button scrolls instantly, even though it asks for `smooth`.",
+      "The focus ring of the viewport (it is a tab stop) is drawn just inside its edge, because the fade mask would cut a ring drawn outside it.",
+      "The page fades at an edge only while there is more to scroll there; the fade is a CSS mask, not a color."
+    ],
+    "usage": "import {\n  MessageScroller,\n  MessageScrollerButton,\n  MessageScrollerContent,\n  MessageScrollerItem,\n  MessageScrollerProvider,\n  MessageScrollerViewport,\n} from \"@/components/ui/message-scroller\"\n\nexport function Transcript({ messages }: { messages: Array<{ id: string; mine: boolean; text: string }> }) {\n  return (\n    <MessageScrollerProvider autoScroll>\n      <MessageScroller class=\"h-[480px]\">\n        <MessageScrollerViewport>\n          <MessageScrollerContent>\n            {messages.map((m) => (\n              <MessageScrollerItem key={m.id} messageId={m.id} scrollAnchor={m.mine}>\n                {m.text}\n              </MessageScrollerItem>\n            ))}\n          </MessageScrollerContent>\n        </MessageScrollerViewport>\n        <MessageScrollerButton />\n      </MessageScroller>\n    </MessageScrollerProvider>\n  )\n}",
+    "parts": [
+      "MessageScrollerProvider",
+      "MessageScroller",
+      "MessageScrollerViewport",
+      "MessageScrollerContent",
+      "MessageScrollerItem",
+      "MessageScrollerButton",
+      "useMessageScroller",
+      "useMessageScrollerScrollable",
+      "useMessageScrollerVisibility"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "logos-01",
+  "type": "registry:block",
+  "title": "Logo tickers on washi tape",
+  "description": "Two strips of washi tape with customer names in their own type, running in opposite directions, one pause button for both; a plain wrapped list replaces them for reduced motion. Looks right on paper or on the desk.",
+  "categories": [
+    "marketing"
+  ],
+  "registryDependencies": [
+    "looseleaf-theme",
+    "marquee"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/logos-01/components/logos-01-names.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/logos-01/components/logos-01-names.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { cn } from \"@/lib/utils\";\nconst LOGOS = [{\n  name: \"Oatmeal & Co.\" as const,\n  className: \"font-script text-3xl font-bold\" as const\n}, {\n  name: \"Kiln\" as const,\n  className: \"font-type text-xl tracking-[0.35em]\" as const\n}, {\n  name: \"paperwork bros\" as const,\n  className: \"font-hand text-xl font-bold lowercase\" as const\n}, {\n  name: \"Northwind Ink\" as const,\n  className: \"font-script text-3xl font-bold italic\" as const\n}, {\n  name: \"The Tea Room\" as const,\n  className: \"font-type text-lg tracking-wide\" as const\n}, {\n  name: \"Brindle\" as const,\n  className: \"font-script text-3xl font-normal\" as const\n}, {\n  name: \"Loom & Lantern\" as const,\n  className: \"font-mono text-sm font-semibold tracking-[0.25em]\" as const\n}, {\n  name: \"salt studio\" as const,\n  className: \"font-hand text-xl font-normal lowercase\" as const\n}] as const;\ntype Logo = typeof LOGOS[number];\nconst Logos01Name = defineUi<{\n  logo: Logo;\n  className?: string;\n}>(\"Logos01Name\", [\"logo\", \"class\"], (_props, {\n  slots: _slots\n}) => {\n  const logo = computed(() => _props[\"logo\"]);\n  const className = computed(() => _props[\"class\"]);\n  return () => {\n    return <span class={cn(\"whitespace-nowrap\", logo.value.className, className.value)}>{logo.value.name}</span>;\n  };\n});\nexport { LOGOS, Logos01Name };\nexport type { Logo };\n"
+    },
+    {
+      "path": "src/blocks/logos-01/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/logos-01/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, useId, shallowRef } from \"vue\";\nimport { Marquee, MarqueeItem } from \"@/components/ui/marquee\";\nimport { LOGOS, Logos01Name } from \"@/blocks/logos-01/components/logos-01-names\";\nconst ROW_A = LOGOS.slice(0, 4);\nconst ROW_B = LOGOS.slice(4);\nconst Logos01 = defineUi<{}>(\"Logos01\", [], (_props, {\n  slots: _slots\n}) => {\n  const titleId = useId();\n  const paused = shallowRef(initialState(false));\n  const setPaused = stateSetter(paused);\n  return () => {\n    return <section aria-labelledby={titleId} class=\"@container w-full\">\r\n      <div class=\"px-4 py-14 @xl:px-8 @xl:py-20\">\r\n        <div class=\"mx-auto max-w-5xl\">\r\n          <h2 id={titleId} class=\"text-center font-type text-sm text-ink-soft\">\r\n            Kept on desks at\r\n          </h2>\r\n\r\n          <div class=\"mt-8 grid gap-3 motion-reduce:hidden [[data-motion=reduced]_&]:hidden\">\r\n            <Marquee label=\"Teams that use Penmark\" tape=\"washi-stripes\" color=\"tangerine\" speed={46} paused={paused.value} onPausedChange={setPaused} seed=\"logos-a\">\r\n              {ROW_A.map(logo => <MarqueeItem key={logo.name}>\r\n                  <Logos01Name logo={logo} />\r\n                </MarqueeItem>)}\r\n            </Marquee>\r\n            <Marquee label=\"More teams that use Penmark\" tape=\"washi-gingham\" color=\"sky\" direction=\"end\" speed={38} paused={paused.value} controls={false} seed=\"logos-b\">\r\n              {ROW_B.map(logo => <MarqueeItem key={logo.name}>\r\n                  <Logos01Name logo={logo} />\r\n                </MarqueeItem>)}\r\n            </Marquee>\r\n          </div>\r\n\r\n          <ul aria-label=\"Teams that use Penmark\" class=\"mt-8 hidden list-none flex-wrap items-center justify-center gap-x-10 gap-y-4 text-ink motion-reduce:flex [[data-motion=reduced]_&]:flex\">\r\n            {LOGOS.map(logo => <li key={logo.name}>\r\n                <Logos01Name logo={logo} />\r\n              </li>)}\r\n          </ul>\r\n        </div>\r\n      </div>\r\n    </section>;\n  };\n});\nexport default Logos01;\n"
+    }
+  ],
+  "docs": "Installed the \"Logo tickers on washi tape\" block into your components directory under blocks/logos-01/.\nImport it: import Logos01 from \"<your components alias>/blocks/logos-01/page\"",
+  "meta": {
+    "tags": [
+      "marketing",
+      "logos",
+      "social proof",
+      "marquee"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

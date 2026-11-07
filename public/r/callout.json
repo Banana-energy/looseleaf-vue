@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "callout",
+  "type": "registry:ui",
+  "title": "Callout",
+  "description": "A note in the margin: a few handwritten words and a hand arrow pointing at the thing they are about. It is an ordinary box, so put it where it belongs with a class: float it into the margin, absolutely position it, or drop it in a grid cell.",
+  "categories": [
+    "Marks"
+  ],
+  "registryDependencies": [
+    "arrow",
+    "handwritten",
+    "ink",
+    "ink-recipes",
+    "looseleaf-theme",
+    "use-mark-ink"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/callout.tsx",
+      "type": "registry:ui",
+      "target": "@ui/callout.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Arrow } from \"@/components/ui/arrow\";\nimport { Handwritten } from \"@/components/ui/handwritten\";\nimport { useMarkPhase } from \"@/hooks/use-mark-ink\";\nimport { useMergedRef } from \"@/lib/ink/vue\";\nimport type { ArrowCurve, ArrowDirection, ArrowHead } from \"@/lib/ink/recipes/arrow-ink\";\nimport type { MarkPen, MarkWeight } from \"@/lib/ink/recipes/text-marks-ink\";\nimport { cn } from \"@/lib/utils\";\nconst LAYOUT: Record<ArrowDirection, string> = {\n  right: \"flex-row items-center\" as const,\n  left: \"flex-row-reverse items-center\" as const,\n  down: \"flex-col items-center\" as const,\n  up: \"flex-col-reverse items-center\" as const,\n  \"down-right\": \"flex-row items-start\" as const,\n  \"down-left\": \"flex-row-reverse items-start\" as const,\n  \"up-right\": \"flex-row items-end\" as const,\n  \"up-left\": \"flex-row-reverse items-end\" as const\n};\nconst Callout = defineUi<UI.ComponentProps<\"span\"> & {\n  direction?: ArrowDirection;\n  curve?: ArrowCurve;\n  head?: ArrowHead;\n  tone?: MarkPen;\n  weight?: MarkWeight;\n  bend?: \"up\" | \"down\";\n  arrow?: boolean;\n  arrowClassName?: string;\n  animate?: boolean;\n  show?: boolean;\n  delay?: number;\n  seed?: string | number;\n}>(\"Callout\", [\"direction\", \"curve\", \"head\", \"tone\", \"weight\", \"bend\", \"arrow\", \"arrowClassName\", \"animate\", \"show\", \"delay\", \"seed\", \"class\"], (_props, {\n  slots: _slots\n}) => {\n  const direction = computed(() => _props[\"direction\"] === undefined ? \"left\" as const : _props[\"direction\"]);\n  const curve = computed(() => _props[\"curve\"] === undefined ? \"curved\" as const : _props[\"curve\"]);\n  const head = computed(() => _props[\"head\"] === undefined ? \"v\" as const : _props[\"head\"]);\n  const tone = computed(() => _props[\"tone\"] === undefined ? \"blue\" as const : _props[\"tone\"]);\n  const weight = computed(() => _props[\"weight\"] === undefined ? \"regular\" as const : _props[\"weight\"]);\n  const bend = computed(() => _props[\"bend\"] === undefined ? \"up\" as const : _props[\"bend\"]);\n  const arrow = computed(() => _props[\"arrow\"] === undefined ? true : _props[\"arrow\"]);\n  const arrowClassName = computed(() => _props[\"arrowClassName\"]);\n  const animate = computed(() => _props[\"animate\"] === undefined ? false : _props[\"animate\"]);\n  const show = computed(() => _props[\"show\"] === undefined ? true : _props[\"show\"]);\n  const delay = computed(() => _props[\"delay\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const className = computed(() => _props[\"class\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"direction\", \"curve\", \"head\", \"tone\", \"weight\", \"bend\", \"arrow\", \"arrowClassName\", \"animate\", \"show\", \"delay\", \"seed\", \"class\", \"children\", \"ref\"]));\n  const _hook16 = useMarkPhase(() => ({\n    animate: animate.value,\n    show: show.value\n  }));\n  const phaseRef = computed(() => _hook16.value.phaseRef);\n  const phaseProps = computed(() => _hook16.value.phaseProps);\n  const arrowEl = renderValue(() => arrow.value ? <Arrow aria-hidden direction={direction.value} curve={curve.value} head={head.value} tone={tone.value} weight={weight.value} bend={bend.value} animate={animate.value} show={show.value} delay={(delay.value ?? 0) + 250} seed={seed.value === undefined ? undefined : `${seed.value}:arrow`} class={cn(\"h-10 w-14\", arrowClassName.value)} /> : null);\n  const vertical = computed(() => direction.value === \"up\" || direction.value === \"down\");\n  return () => {\n    return <span data-slot=\"callout\" role=\"note\" ref={useMergedRef<HTMLElement>(phaseRef.value, ref.value as UI.Ref<HTMLElement> | undefined)} {...domProps(phaseProps.value)} class={cn(\"group/callout inline-flex gap-1.5 data-[mark=off]:hidden\", LAYOUT[direction.value], vertical.value && \"gap-0.5\", className.value)} {...domProps(props.value)}>\r\n      <Handwritten as=\"span\" seed={seed.value} data-slot=\"callout-text\" style={cssStyle(animate.value && delay.value ? {\n        transitionDelay: `${delay.value}ms`\n      } as UI.CSSProperties : undefined)} class={cn(\"max-w-[16ch] font-script text-[22px] leading-[1.05] text-ink-you\", animate.value && \"transition-opacity duration-(--ll-dur-sheet) ease-out group-data-[mark=idle]/callout:opacity-0\", vertical.value && \"max-w-[22ch] text-center\")}>\r\n        {readSlot(_slots.default)}\r\n      </Handwritten>\r\n      {arrowEl.value}\r\n    </span>;\n  };\n});\nexport { Callout };\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "arrow",
+      "annotate",
+      "handwritten",
+      "bracket"
+    ],
+    "a11y": [
+      "role=\"note\": announced as a note. The words are real text; the arrow is aria-hidden.",
+      "A margin note should add to the page, not carry it: keep the essential information in the main text.",
+      "The margin pattern (`float-end clear-end -me-56 w-48`) needs room in the page's padding; below the md breakpoint hide it (`max-md:hidden`) or let it flow.",
+      "Per-word jitter is switched off by calm density and reduced motion; the arrow draws on with the same rules as Arrow."
+    ],
+    "usage": "import { Callout } from \"@/components/ui/callout\"\n\nexport function Example() {\n  return (\n    <p class=\"pe-56\">\n      The good bits get a swipe of yellow.\n      <Callout class=\"float-end clear-end -me-56 w-48\">the best line</Callout>\n    </p>\n  )\n}",
+    "parts": [
+      "Callout"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

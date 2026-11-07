@@ -1,0 +1,45 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "handwritten",
+  "type": "registry:ui",
+  "title": "Handwritten",
+  "description": "Text that looks written, not typeset: every word sits a hair off the baseline and a touch lighter, by a seeded amount. The words stay real inline text; code, links and forms inside are left exactly as typed.",
+  "categories": [
+    "Typography"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/handwritten.tsx",
+      "type": "registry:ui",
+      "target": "@ui/handwritten.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, Fragment } from \"vue\";\nimport { makeRng } from \"@/lib/ink/rng\";\nimport { useDensity, useInkSeed } from \"@/lib/ink/vue\";\nimport { cn } from \"@/lib/utils\";\nconst SKIP = new Set([\"code\", \"pre\", \"kbd\", \"samp\", \"var\", \"a\", \"svg\", \"math\", \"textarea\", \"input\", \"select\", \"button\", \"script\", \"style\", \"img\", \"video\", \"audio\", \"canvas\", \"iframe\"]);\nconst CSS = `[data-written] .ll-w{display:inline;position:relative;translate:none;rotate:none;opacity:1;padding-inline-end:0;margin-inline-end:0;top:calc(var(--jy,0px)*var(--ll-jitter-k,1));color:color-mix(in srgb,currentColor calc((1 - (1 - var(--jo,1))*var(--ll-jitter-k,1))*100%),transparent)}`;\ninterface Walk {\n  n: number;\n  seed: string;\n  k: number;\n}\nfunction word(text: string, w: Walk): UI.ReactNode {\n  const r = makeRng(w.seed).fork(w.n);\n  const i = w.n++;\n  const clamp = (v: number, m: number) => Math.max(-m, Math.min(m, v));\n  const style = {\n    \"--jy\": `${clamp(r.gauss(0, 0.55) * 1.5 * w.k, 1.6).toFixed(2)}px`,\n    \"--jr\": `${clamp(r.gauss(0, 0.6) * 1.4 * w.k, 1.7).toFixed(2)}deg`,\n    \"--jo\": (1 - r.range(0, 0.12) * w.k).toFixed(2)\n  } as UI.CSSProperties;\n  return <span key={i} class=\"ll-w [text-decoration:inherit]\" style={cssStyle(style)}>\r\n      {text}\r\n    </span>;\n}\nfunction walk(children: UI.ReactNode, w: Walk): UI.ReactNode[] {\n  return Children.toArray(children).map((node, at) => {\n    if (typeof node === \"string\" || typeof node === \"number\") {\n      const words = String(node).split(/(\\s+)/).map(part => part === \"\" ? null : /^\\s+$/.test(part) ? part : word(part, w));\n      return <Fragment key={`t${at}`}>{words}</Fragment>;\n    }\n    if (!isValidElement<{\n      children?: UI.ReactNode;\n      \"data-handwritten\"?: string;\n    }>(node) || node.props[\"data-handwritten\"] === \"off\") return node;\n    const walked = node.type === Fragment || typeof node.type === \"string\" && !SKIP.has(node.type);\n    if (!walked || node.props.children == null) return node;\n    return cloneElement(node, undefined, ...walk(node.props.children, w));\n  });\n}\nconst Handwritten = defineUi<Omit<UI.ComponentProps<\"span\">, \"ref\"> & {\n  as?: UI.ElementType;\n  strength?: number;\n  seed?: string | number;\n  ref?: UI.Ref<HTMLElement>;\n}>(\"Handwritten\", [\"as\", \"strength\", \"seed\", \"class\"], (_props, {\n  slots: _slots\n}) => {\n  const Comp = computed(() => jsxTag(_props[\"as\"] === undefined ? \"span\" as const : _props[\"as\"]));\n  const strength = computed(() => _props[\"strength\"] === undefined ? 1 : _props[\"strength\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const className = computed(() => _props[\"class\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"as\", \"strength\", \"seed\", \"class\", \"children\"]));\n  const id = useInkSeed(() => seed.value);\n  const density = useDensity();\n  const k = computed(() => Math.max(0, strength.value) * (density.value === \"compact\" ? 0.7 : 1));\n  return () => {\n    return <Comp.value data-slot=\"handwritten\" data-written={k.value > 0 ? \"\" as const : undefined} class={cn(k.value > 0 && \"ll-hand-jitter\", className.value)} {...domProps(props.value)}>\r\n      {k.value > 0 ? <style>\r\n          {CSS}\r\n        </style> : null}\r\n      {k.value > 0 ? walk(readSlot(_slots.default), {\n        n: 0,\n        seed: `hw|${id.value}`,\n        k: k.value\n      }) : readSlot(_slots.default)}\r\n    </Comp.value>;\n  };\n});\nexport { Handwritten };\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "lettering",
+      "callout",
+      "signature",
+      "typography"
+    ],
+    "a11y": [
+      "The text is unchanged: words are inline spans with real spaces between them, so it wraps, selects, copies and is read as ordinary text.",
+      "Elements that must stay exact are skipped: code, pre, kbd, samp, var, links, buttons, inputs, media. Add data-handwritten=\"off\" to any element to opt it (and everything in it) out.",
+      "A text-decoration on the element (underline, line-through) is passed on to every word. For a drawn line use Underline or Strike around the text instead: they follow the words when they wrap.",
+      "Calm density and reduced motion switch the effect off in CSS (--ll-jitter-k = 0); compact writes it lighter. Never apply it to long reading text: it is for notes, captions, labels and titles."
+    ],
+    "usage": "import { Handwritten } from \"@/components/ui/handwritten\"\n\nexport function Example() {\n  return (\n    <Handwritten as=\"p\" class=\"font-script text-2xl\">\n      ask sam about the pond, and bring the big umbrella!\n    </Handwritten>\n  )\n}",
+    "parts": [
+      "Handwritten"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

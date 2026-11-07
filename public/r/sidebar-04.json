@@ -1,0 +1,41 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sidebar-04",
+  "type": "registry:block",
+  "title": "Sidebar 04",
+  "description": "A floating sidebar with submenus: the pad is set down on the desk with a margin all round and turned a little, 19rem wide, and the page beside it is a second sheet. Mirrors shadcn's sidebar-04. At its best on the desk; on plain paper it still reads as two sheets.",
+  "categories": [
+    "sidebar"
+  ],
+  "registryDependencies": [
+    "looseleaf-theme",
+    "sidebar",
+    "sidebar-shared"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/sidebar-04/components/sidebar-04-app-sidebar.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/sidebar-04/components/sidebar-04-app-sidebar.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { SidebarBrand } from \"@/blocks/sidebar-shared/sidebar-brand\";\nimport { docsNav } from \"@/blocks/sidebar-shared/sidebar-data\";\nimport { Sidebar, SidebarContent, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from \"@/components/ui/sidebar\";\nexport const AppSidebar = defineUi<UI.ComponentProps<typeof Sidebar>>(\"AppSidebar\", [], (_props, {\n  slots: _slots\n}) => {\n  const props = computed(() => omitProps(_props, []));\n  return () => {\n    return <Sidebar variant=\"floating\" role=\"navigation\" aria-label=\"Field guide\" {...domProps(props.value)}>\r\n      <SidebarHeader>\r\n        <SidebarBrand title=\"Field guide\" subtitle=\"v1.0.0\" icon=\"book-open\" />\r\n      </SidebarHeader>\r\n      <SidebarContent>\r\n        <SidebarGroup>\r\n          <SidebarMenu class=\"gap-2\">\r\n            {docsNav.map(section => <SidebarMenuItem key={section.title}>\r\n                <SidebarMenuButton asChild>\r\n                  <a href={section.url} class=\"font-bold\">\r\n                    {section.title}\r\n                  </a>\r\n                </SidebarMenuButton>\r\n                {section.items.length ? <SidebarMenuSub>\r\n                    {section.items.map(item => <SidebarMenuSubItem key={item.title}>\r\n                        <SidebarMenuSubButton asChild isActive={item.isActive}>\r\n                          <a href={item.url}>{item.title}</a>\r\n                        </SidebarMenuSubButton>\r\n                      </SidebarMenuSubItem>)}\r\n                  </SidebarMenuSub> : null}\r\n              </SidebarMenuItem>)}\r\n          </SidebarMenu>\r\n        </SidebarGroup>\r\n      </SidebarContent>\r\n    </Sidebar>;\n  };\n});\n"
+    },
+    {
+      "path": "src/blocks/sidebar-04/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/sidebar-04/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { AppSidebar } from \"@/blocks/sidebar-04/components/sidebar-04-app-sidebar\";\nimport { containedClasses } from \"@/blocks/sidebar-shared/sidebar-contained\";\nimport { docsTrail } from \"@/blocks/sidebar-shared/sidebar-data\";\nimport { PageBody, PageHeader, PageNote, PageSheet } from \"@/blocks/sidebar-shared/sidebar-page\";\nimport { SidebarProvider } from \"@/components/ui/sidebar\";\nconst Page = defineUi<{\n  contained?: boolean;\n}>(\"Page\", [\"contained\"], (_props, {\n  slots: _slots\n}) => {\n  const contained = computed(() => _props[\"contained\"] === undefined ? false : _props[\"contained\"]);\n  const c = computed(() => containedClasses(contained.value));\n  return () => {\n    return <SidebarProvider class={c.value.provider} style={cssStyle({\n      \"--sidebar-width\": \"19rem\" as const\n    } as UI.CSSProperties)}>\r\n      <AppSidebar class={c.value.sidebar} />\r\n      <PageSheet class={c.value.inset}>\r\n        <PageHeader crumbs={docsTrail} />\r\n        <PageBody title=\"Margins\" kicker=\"Writing on paper\">\r\n          <PageNote title=\"Two sheets on one desk\" pose=\"sketch\">\r\n            The pad floats, the page rests. Nothing is stuck down. On a phone the pad slides in over the page instead.\r\n          </PageNote>\r\n        </PageBody>\r\n      </PageSheet>\r\n    </SidebarProvider>;\n  };\n});\nexport default Page;\n"
+    }
+  ],
+  "docs": "Installed the \"Sidebar 04\" block into your components directory under blocks/sidebar-04/.\nImport it: import Page from \"<your components alias>/blocks/sidebar-04/page\"",
+  "meta": {
+    "tags": [
+      "sidebar",
+      "floating",
+      "submenu"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

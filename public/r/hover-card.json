@@ -1,0 +1,57 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "hover-card",
+  "type": "registry:ui",
+  "title": "Hover Card",
+  "description": "A small polaroid that appears when you rest the pointer on a link or move keyboard focus to it: photo stock with a thick lower margin for handwriting, a degree or two of tilt, and tape if you like. A preview for sighted pointer users, never the only home of anything.",
+  "categories": [
+    "Overlays"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme",
+    "paper"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/hover-card.tsx",
+      "type": "registry:ui",
+      "target": "@ui/hover-card.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { HoverCard as HoverCardPrimitive } from \"@/lib/primitives\";\nimport { Paper, type PaperProps } from \"@/components/ui/paper\";\nimport { useInk, useInkScope, useInkSeed, useMergedRef } from \"@/lib/ink/vue\";\nimport { hoverCardMediaRecipe } from \"@/lib/ink/recipes/hover-card-ink\";\nimport { cn } from \"@/lib/utils\";\nconst HoverCard = defineUi<UI.ComponentProps<typeof HoverCardPrimitive.Root>>(\"HoverCard\", [], (_props, {\n  slots: _slots\n}) => {\n  const props = computed(() => omitProps(_props, []));\n  return () => {\n    return <HoverCardPrimitive.Root data-slot=\"hover-card\" {...domProps(props.value)}>{_slots.default?.()}</HoverCardPrimitive.Root>;\n  };\n});\nconst HoverCardTrigger = defineUi<UI.ComponentProps<typeof HoverCardPrimitive.Trigger>>(\"HoverCardTrigger\", [], (_props, {\n  slots: _slots\n}) => {\n  const props = computed(() => omitProps(_props, []));\n  return () => {\n    return <HoverCardPrimitive.Trigger data-slot=\"hover-card-trigger\" {...domProps(props.value)}>{_slots.default?.()}</HoverCardPrimitive.Trigger>;\n  };\n});\nconst HoverCardContent = defineUi<UI.ComponentProps<typeof HoverCardPrimitive.Content> & Pick<PaperProps, \"stock\" | \"edge\" | \"tilt\" | \"tape\" | \"seed\">>(\"HoverCardContent\", [\"class\", \"align\", \"sideOffset\", \"collisionPadding\", \"stock\", \"edge\", \"tilt\", \"tape\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const align = computed(() => _props[\"align\"] === undefined ? \"center\" as const : _props[\"align\"]);\n  const sideOffset = computed(() => _props[\"sideOffset\"] === undefined ? 8 : _props[\"sideOffset\"]);\n  const collisionPadding = computed(() => _props[\"collisionPadding\"] === undefined ? 8 : _props[\"collisionPadding\"]);\n  const stock = computed(() => _props[\"stock\"] === undefined ? \"photo\" as const : _props[\"stock\"]);\n  const edge = computed(() => _props[\"edge\"]);\n  const tilt = computed(() => _props[\"tilt\"] === undefined ? true : _props[\"tilt\"]);\n  const tape = computed(() => _props[\"tape\"] === undefined ? false : _props[\"tape\"]);\n  const seedProp = computed(() => _props[\"seed\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"class\", \"align\", \"sideOffset\", \"collisionPadding\", \"stock\", \"edge\", \"tilt\", \"tape\", \"seed\", \"children\"]));\n  const scope = useInkScope();\n  const seed = useInkSeed(() => seedProp.value);\n  return () => {\n    return <HoverCardPrimitive.Portal data-slot=\"hover-card-portal\">\r\n      <HoverCardPrimitive.Content asChild align={align.value} sideOffset={sideOffset.value} collisionPadding={collisionPadding.value} {...domProps(props.value)}>\r\n        <Paper data-slot=\"hover-card-content\" stock={stock.value} edge={edge.value} tilt={tilt.value} tape={tape.value} rules=\"none\" seed={seed.value} {...domProps(scope.value)} class={cn(\"z-(--ll-z-popover) w-64 max-w-[calc(100vw-1rem)] origin-(--reka-hover-card-content-transform-origin) p-2.5 pb-4 text-popover-foreground outline-hidden compact:p-2 calm:p-2\", \"duration-(--ll-dur-pop) data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2\", \"data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95\", className.value)}>\r\n          {readSlot(_slots.default)}\r\n        </Paper>\r\n      </HoverCardPrimitive.Content>\r\n    </HoverCardPrimitive.Portal>;\n  };\n});\nconst HoverCardMedia = defineUi<UI.ComponentProps<\"div\"> & {\n  seed?: string | number;\n}>(\"HoverCardMedia\", [\"class\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const seedProp = computed(() => _props[\"seed\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"seed\", \"children\", \"ref\"]));\n  const seed = useInkSeed(() => seedProp.value);\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: hoverCardMediaRecipe,\n    params: {},\n    kind: \"frame\" as const,\n    seed: seed.value\n  }));\n  return () => {\n    return <div data-slot=\"hover-card-media\" ref={useMergedRef<HTMLElement>(hostRef, ref.value as UI.Ref<HTMLElement> | undefined)} {...domProps(hostProps.value)} class={cn(\"relative isolate grid h-28 place-items-center bg-paper-shade/60 p-2 *:[img]:size-full *:[img]:object-cover\", className.value)} {...domProps(props.value)}>\r\n      {node.value}\r\n      {readSlot(_slots.default)}\r\n    </div>;\n  };\n});\nconst HoverCardCaption = defineUi<UI.ComponentProps<\"div\">>(\"HoverCardCaption\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"hover-card-caption\" class={cn(\"mt-2.5 px-1 font-script text-[1.4rem] leading-tight text-foreground\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nexport { HoverCard, HoverCardTrigger, HoverCardContent, HoverCardMedia, HoverCardCaption };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/hover-card-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/hover-card-ink.ts",
+      "content": "import { defineRecipe } from '@/lib/ink/recipes'\r\nimport { box } from '@/lib/ink/shapes'\r\n\r\nexport const hoverCardMediaRecipe = defineRecipe<Record<string, never>>({\r\n  id: 'hover-card-media',\r\n  kind: 'frame',\r\n  layers: ['rest'],\r\n  pad: 6,\r\n  draw(ink, { w, h }, _params, ctx) {\r\n    ink.layer('rest', () => {\r\n      box(ink, 1, 1, w - 2, h - 2, { pen: ctx.calm ? 'pencil.fine' : 'pencil', corner: 2 })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "hover-card",
+    "related": [
+      "popover",
+      "tooltip",
+      "card",
+      "paper"
+    ],
+    "a11y": [
+      "Reka UI HoverCard opens on pointer hover and on keyboard focus of the trigger, closes on blur and on Escape, and lets the pointer travel from the trigger into the card. It is not announced to screen readers as a dialog: treat it as a preview of information that is also available by following the link.",
+      "Touch: hover cards never open on a tap (Reka UI ignores touch pointers). The trigger must work on its own as a link; use a Popover when the content needs to be reachable on a phone.",
+      "The recess frame and tape are aria-hidden decoration. Give the media an accessible name if it carries meaning.",
+      "Portalled content repeats the InkProvider's `data-density`, `data-motion` and `data-theme`; with reduced motion it appears without the zoom."
+    ],
+    "usage": "import { HoverCard, HoverCardCaption, HoverCardContent, HoverCardMedia, HoverCardTrigger } from \"@/components/ui/hover-card\"\nimport { Button } from \"@/components/ui/button\"\nimport { Doodle } from \"@/components/ui/doodle\"\n\nexport function Example() {\n  return (\n    <HoverCard>\n      <HoverCardTrigger asChild>\n        <Button variant=\"link\" asChild>\n          <a href=\"https://kevintngo.github.io/looseleaf\">@looseleaf</a>\n        </Button>\n      </HoverCardTrigger>\n      <HoverCardContent tape=\"top\">\n        <HoverCardMedia>\n          <Doodle name=\"flower\" size={88} />\n        </HoverCardMedia>\n        <HoverCardCaption>@looseleaf</HoverCardCaption>\n        <p class=\"px-1 text-sm text-muted-foreground\">shadcn/ui, drawn by hand.</p>\n      </HoverCardContent>\n    </HoverCard>\n  )\n}",
+    "parts": [
+      "HoverCard",
+      "HoverCardTrigger",
+      "HoverCardContent",
+      "HoverCardMedia",
+      "HoverCardCaption"
+    ]
+  }
+}

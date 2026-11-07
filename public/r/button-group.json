@@ -1,0 +1,58 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "button-group",
+  "type": "registry:ui",
+  "title": "Button Group",
+  "description": "Buttons, fields and printed cells joined into one row (or column) that share their seams: the edge two neighbors have in common is drawn once, by the one before, or by a pencil separator you put between them.",
+  "categories": [
+    "Actions"
+  ],
+  "dependencies": [
+    "class-variance-authority",
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme",
+    "separator"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/button-group.tsx",
+      "type": "registry:ui",
+      "target": "@ui/button-group.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { Slot } from \"@/lib/primitives\";\nimport { Separator } from \"@/components/ui/separator\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { buttonGroupTextRecipe } from \"@/lib/ink/recipes/button-group-ink\";\nimport { cn } from \"@/lib/utils\";\nconst buttonGroupVariants = cva(\"flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1 [&>[data-slot=input-frame]]:flex-1 [&>*:has(+[data-slot=button-group-separator])]:[--cl-e:15px] [&>*:not([data-slot=button-group-separator]):not(:first-child)]:[--cl-s:15px]\", {\n  variants: {\n    orientation: {\n      horizontal: \"[&>*:not([data-slot=button-group-separator]):not(:focus-visible):not(:has(:focus-visible))>svg.absolute]:[clip-path:inset(-14px_var(--cl-e,-14px)_-14px_var(--cl-s,-14px))] rtl:[&>*:not([data-slot=button-group-separator]):not(:focus-visible):not(:has(:focus-visible))>svg.absolute]:[clip-path:inset(-14px_var(--cl-s,-14px)_-14px_var(--cl-e,-14px))]\" as const,\n      vertical: \"flex-col [&>*:not([data-slot=button-group-separator]):not(:focus-visible):not(:has(:focus-visible))>svg.absolute]:[clip-path:inset(var(--cl-s,-14px)_-14px_var(--cl-e,-14px)_-14px)]\" as const\n    }\n  },\n  defaultVariants: {\n    orientation: \"horizontal\" as const\n  }\n});\nconst ButtonGroup = defineUi<UI.ComponentProps<\"div\"> & VariantProps<typeof buttonGroupVariants>>(\"ButtonGroup\", [\"class\", \"orientation\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const orientation = computed(() => _props[\"orientation\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"orientation\"]));\n  return () => {\n    return <div role=\"group\" data-slot=\"button-group\" data-orientation={orientation.value ?? \"horizontal\"} class={cn(buttonGroupVariants({\n      orientation: orientation.value\n    }), className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst ButtonGroupText = defineUi<UI.ComponentProps<\"div\"> & {\n  asChild?: boolean;\n  seed?: string | number;\n}>(\"ButtonGroupText\", [\"class\", \"asChild\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const asChild = computed(() => _props[\"asChild\"] === undefined ? false : _props[\"asChild\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"asChild\", \"seed\", \"children\", \"ref\"]));\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: buttonGroupTextRecipe,\n    params: {},\n    kind: \"cell\" as const,\n    seed: seed.value\n  }));\n  const shared = computed(() => ({\n    ref: useMergedRef<HTMLElement>(hostRef, ref.value as UI.Ref<HTMLElement> | undefined),\n    ...hostProps.value,\n    class: cn(\"relative isolate flex min-h-9 items-center gap-2 px-4 font-hand text-base compact:min-h-8 calm:min-h-7 [&_svg]:pointer-events-none [&_svg:not(.absolute):not([class*='size-'])]:size-4\", className.value),\n    ...props.value\n  }));\n  return () => {\n    if (asChild.value) {\n      return <Slot.Root data-slot=\"button-group-text\" {...domProps(shared.value)}>\r\n        <Slot.Slottable>{readSlot(_slots.default)}</Slot.Slottable>\r\n        {node.value}\r\n      </Slot.Root>;\n    }\n    return <div data-slot=\"button-group-text\" {...domProps(shared.value)}>\r\n      {node.value}\r\n      {readSlot(_slots.default)}\r\n    </div>;\n  };\n});\nconst ButtonGroupSeparator = defineUi<UI.ComponentProps<typeof Separator>>(\"ButtonGroupSeparator\", [\"class\", \"orientation\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const orientation = computed(() => _props[\"orientation\"] === undefined ? \"vertical\" as const : _props[\"orientation\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"orientation\"]));\n  return () => {\n    return <Separator data-slot=\"button-group-separator\" orientation={orientation.value} class={cn(\"relative m-0! self-stretch data-[orientation=vertical]:h-auto\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</Separator>;\n  };\n});\nexport { ButtonGroup, ButtonGroupSeparator, ButtonGroupText, buttonGroupVariants };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/button-group-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/button-group-ink.ts",
+      "content": "import { wash } from '@/lib/ink/fills'\r\nimport { roundRectPoly } from '@/lib/ink/geom'\r\nimport { clamp } from '@/lib/ink/rng'\r\nimport { box } from '@/lib/ink/shapes'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\n\r\nexport const buttonGroupTextRecipe = defineRecipe<Record<string, never>>({\r\n  id: 'button-group-text',\r\n  kind: 'cell',\r\n  layers: ['rest'],\r\n  pad: 12,\r\n  draw(ink, { w, h }, _p, ctx) {\r\n    const r = clamp(h * 0.09, 2.5, 4.4)\r\n    const inset = clamp(h * 0.06, 1.6, 3)\r\n    ink.layer('rest', () => {\r\n      wash(ink, roundRectPoly(inset, inset, w - 2 * inset, h - 2 * inset, r), 'paper-shade', { alpha: 0.95, material: 'wash' })\r\n      if (ctx.calm) box(ink, 0, 0, w, h, { pen: 'pencil.fine', corner: r, opts: { simple: w > 360 || undefined } })\r\n      else box(ink, 0, 0, w, h, { pen: 'ink', corner: r, opts: w > 360 ? { simple: true } : undefined })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "button-group",
+    "related": [
+      "button",
+      "toggle-group",
+      "input-group",
+      "separator",
+      "dropdown-menu"
+    ],
+    "a11y": [
+      "The group is role=group: give it an aria-label when the buttons alone do not say what they belong to. It adds no keyboard behavior of its own; Tab visits each control in order (use ToggleGroup for one tab stop with arrow keys).",
+      "A separator between buttons is decorative (role=none); the buttons keep their own names and states.",
+      "A focused child is lifted above its neighbors and keeps its whole blue felt ring; in Windows high contrast the drawing is replaced by each control's real border.",
+      "ButtonGroupText is plain text: give an input it labels a real label (use asChild with <label htmlFor>) or an aria-label."
+    ],
+    "usage": "import { Button } from \"@/components/ui/button\"\nimport { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from \"@/components/ui/button-group\"\nimport { Input } from \"@/components/ui/input\"\n\nexport function Example() {\n  return (\n    <div class=\"flex flex-col gap-4\">\n      <ButtonGroup aria-label=\"Range\">\n        <Button variant=\"outline\">Years</Button>\n        <Button variant=\"outline\">Months</Button>\n        <Button variant=\"outline\">Days</Button>\n      </ButtonGroup>\n      <ButtonGroup>\n        <Button variant=\"secondary\">Copy</Button>\n        <ButtonGroupSeparator />\n        <Button variant=\"secondary\">Paste</Button>\n      </ButtonGroup>\n      <ButtonGroup>\n        <ButtonGroupText>https://</ButtonGroupText>\n        <Input aria-label=\"Host\" placeholder=\"example.com\" />\n        <Button>Go</Button>\n      </ButtonGroup>\n    </div>\n  )\n}",
+    "parts": [
+      "ButtonGroup",
+      "ButtonGroupText",
+      "ButtonGroupSeparator",
+      "buttonGroupVariants"
+    ]
+  }
+}

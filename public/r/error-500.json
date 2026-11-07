@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "error-500",
+  "type": "registry:block",
+  "title": "500, server error",
+  "description": "Stubby says oops and a pink sticky note says sorry, over an incident slip with the request, the time and a circled reference with a barcode and a copy button; try again, go home, check the status. Looks right on paper or on the desk.",
+  "categories": [
+    "feedback"
+  ],
+  "registryDependencies": [
+    "button",
+    "doodle",
+    "icon",
+    "lettering",
+    "looseleaf-theme",
+    "mascot",
+    "paper",
+    "receipt",
+    "sticky-note"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/error-500/components/error-500-scene.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/error-500/components/error-500-scene.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Doodle } from \"@/components/ui/doodle\";\nimport { Mascot } from \"@/components/ui/mascot\";\nimport { StickyNote, StickyNoteContent, StickyNoteTitle } from \"@/components/ui/sticky-note\";\nconst Error500Scene = defineUi<{}>(\"Error500Scene\", [], (_props, {\n  slots: _slots\n}) => {\n  return () => {\n    return <div data-slot=\"error-scene\" aria-hidden=\"true\" class=\"relative flex flex-wrap items-end justify-center gap-x-8 gap-y-8 pt-6\">\r\n      <div class=\"relative\">\r\n        <Doodle name=\"exclaim-burst\" size={52} seed=\"e500-burst\" class=\"absolute -start-9 -top-3\" />\r\n        <Mascot pose=\"oops\" size={196} class=\"h-[196px] w-auto\" />\r\n      </div>\r\n      <div class=\"relative\">\r\n        <Doodle name=\"lightning\" size={72} seed=\"e500-bolt\" class=\"absolute -top-14 -end-4\" />\r\n        <StickyNote color=\"pink\" tape=\"top\" tapeKind=\"masking\" seed=\"e500-note\" class=\"w-44\">\r\n          <StickyNoteTitle>sorry!</StickyNoteTitle>\r\n          <StickyNoteContent class=\"text-xl\">that one is on us</StickyNoteContent>\r\n        </StickyNote>\r\n      </div>\r\n    </div>;\n  };\n});\nexport { Error500Scene };\n"
+    },
+    {
+      "path": "src/blocks/error-500/components/error-500-slip.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/error-500/components/error-500-slip.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, shallowRef } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { Receipt, ReceiptBarcode, ReceiptFooter, ReceiptHeader, ReceiptLine, ReceiptLines, ReceiptTotal } from \"@/components/ui/receipt\";\ntype Error500SlipProps = {\n  reference: string;\n  request: string;\n  time: string;\n};\ntype CopyState = \"idle\" | \"copied\" | \"failed\";\nconst Error500Slip = defineUi<Error500SlipProps>(\"Error500Slip\", [\"reference\", \"request\", \"time\"], (_props, {\n  slots: _slots\n}) => {\n  const reference = computed(() => _props[\"reference\"]);\n  const request = computed(() => _props[\"request\"]);\n  const time = computed(() => _props[\"time\"]);\n  const copy = shallowRef<CopyState>(initialState(\"idle\"));\n  const setCopy = stateSetter(copy);\n  watchDependencies(() => {\n    if (copy.value === \"idle\") return;\n    const t = setTimeout(() => setCopy(\"idle\"), 2600);\n    return () => clearTimeout(t);\n  }, () => [copy.value], false);\n  const copyReference = computed(() => async () => {\n    try {\n      await navigator.clipboard.writeText(reference.value);\n      setCopy(\"copied\");\n    } catch {\n      setCopy(\"failed\");\n    }\n  });\n  return () => {\n    return <div class=\"flex flex-col items-center gap-3\">\r\n      <Receipt role=\"group\" aria-label=\"Details for support\" seed=\"error-500-slip\" class=\"w-72 max-w-full text-start text-sm\">\r\n        <ReceiptHeader>\r\n          <p>Incident slip</p>\r\n          <p>keep this for support</p>\r\n        </ReceiptHeader>\r\n        <ReceiptLines>\r\n          <ReceiptLine price=\"500\">Status</ReceiptLine>\r\n          <ReceiptLine price={time.value}>Time</ReceiptLine>\r\n          <ReceiptLine price={request.value}>Asked for</ReceiptLine>\r\n        </ReceiptLines>\r\n        <ReceiptTotal label=\"Ref\" circled seed=\"error-500-ref\">\r\n          {reference.value}\r\n        </ReceiptTotal>\r\n        <ReceiptBarcode value={reference.value.replace(/[^0-9a-z]/gi, \"\").toUpperCase()} />\r\n        <ReceiptFooter>We are on it.</ReceiptFooter>\r\n      </Receipt>\r\n      <Button type=\"button\" variant=\"outline\" size=\"sm\" onClick={copyReference.value}>\r\n        <Icon name={copy.value === \"copied\" ? \"check\" as const : \"copy\" as const} />\r\n        {copy.value === \"copied\" ? \"Copied\" as const : \"Copy reference\" as const}\r\n      </Button>\r\n      <p role=\"status\" class=\"min-h-5 text-sm text-ink-muted\">\r\n        {copy.value === \"copied\" ? `Reference ${reference.value} copied.` : copy.value === \"failed\" ? \"Could not copy. Select the reference on the slip instead.\" as const : \"\" as const}\r\n      </p>\r\n    </div>;\n  };\n});\nexport { Error500Slip };\n"
+    },
+    {
+      "path": "src/blocks/error-500/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/error-500/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, useId } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { Lettering } from \"@/components/ui/lettering\";\nimport { Paper } from \"@/components/ui/paper\";\nimport { Error500Scene } from \"@/blocks/error-500/components/error-500-scene\";\nimport { Error500Slip } from \"@/blocks/error-500/components/error-500-slip\";\ntype Error500Props = {\n  reference?: string;\n  request?: string;\n  time?: string;\n  onRetry?: () => void;\n};\nconst Error500 = defineUi<Error500Props>(\"Error500\", [\"reference\", \"request\", \"time\", \"onRetry\"], (_props, {\n  slots: _slots\n}) => {\n  const reference = computed(() => _props[\"reference\"] === undefined ? \"7F3A-91C2\" as const : _props[\"reference\"]);\n  const request = computed(() => _props[\"request\"] === undefined ? \"/notebooks/48\" as const : _props[\"request\"]);\n  const time = computed(() => _props[\"time\"] === undefined ? \"09:41 UTC\" as const : _props[\"time\"]);\n  const onRetry = computed(() => _props[\"onRetry\"] === undefined ? () => window.location.reload() : _props[\"onRetry\"]);\n  const titleId = useId();\n  return () => {\n    return <section aria-labelledby={titleId} class=\"@container w-full\">\r\n      <div class=\"px-8 py-10 @xl:py-14\">\r\n        <Paper stock=\"paper\" tilt={false} tape=\"both\" tapeKind=\"washi-stripes\" seed=\"error-500\" class=\"mx-auto max-w-3xl px-6 py-12 text-center @xl:px-12\">\r\n          <Error500Scene />\r\n\r\n          <p class=\"mt-10 font-type text-sm text-pencil-text\">Error 500 &middot; Server error</p>\r\n          <Lettering as=\"h1\" id={titleId} size=\"md\" tone=\"tomato\" wobble={0.4} seed=\"error-500-title\" class=\"mt-3\">\r\n            Something broke on our side\r\n          </Lettering>\r\n          <p class=\"mx-auto mt-4 max-w-md text-lg/7 text-ink-soft\">It is not you, and nothing you wrote is lost. We have been told, and somebody is already sharpening a pencil.</p>\r\n\r\n          <div class=\"mt-8\">\r\n            <Error500Slip reference={reference.value} request={request.value} time={time.value} />\r\n          </div>\r\n\r\n          <div class=\"mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-3\">\r\n            <Button type=\"button\" size=\"lg\" onClick={onRetry.value}>\r\n              <Icon name=\"rotate-cw\" />\r\n              Try again\r\n            </Button>\r\n            <Button asChild size=\"lg\" variant=\"outline\">\r\n              <a href=\"#home\">Go home</a>\r\n            </Button>\r\n            <Button asChild size=\"lg\" variant=\"link\">\r\n              <a href=\"#status\">\r\n                Check the status page\r\n                <Icon name=\"arrow-up-right\" class=\"rtl:-scale-x-100\" />\r\n              </a>\r\n            </Button>\r\n          </div>\r\n        </Paper>\r\n      </div>\r\n    </section>;\n  };\n});\nexport default Error500;\nexport type { Error500Props };\n"
+    }
+  ],
+  "docs": "Installed the \"500, server error\" block into your components directory under blocks/error-500/.\nImport it: import Error500 from \"<your components alias>/blocks/error-500/page\"",
+  "meta": {
+    "tags": [
+      "marketing",
+      "error",
+      "500",
+      "stubby"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

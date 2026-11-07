@@ -1,0 +1,52 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "tally",
+  "type": "registry:ui",
+  "title": "Tally",
+  "description": "A count as tally marks, 1 to 99: bundles of four struck through by a fifth. The number is the accessible name, the box is exactly as big as the marks, and it is drawn on the server.",
+  "categories": [
+    "Marks"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-recipes",
+    "looseleaf-theme",
+    "use-mark-ink"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/tally.tsx",
+      "type": "registry:ui",
+      "target": "@ui/tally.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { BlockSvg, MARK_WIPE, useMarkPhase } from \"@/hooks/use-mark-ink\";\nimport { useInkContext, useInkCore, useMergedRef } from \"@/lib/ink/vue\";\nimport type { MarkPen, MarkWeight } from \"@/lib/ink/recipes/text-marks-ink\";\nimport { tallyBox, tallyRecipe } from \"@/lib/ink/recipes/tally-ink\";\nimport { cn } from \"@/lib/utils\";\nconst SIZES = {\n  sm: 14,\n  md: 22,\n  lg: 34\n} as const;\nconst Tally = defineUi<Omit<UI.ComponentProps<\"span\">, \"children\"> & {\n  count: number;\n  size?: keyof typeof SIZES | number;\n  tone?: MarkPen;\n  weight?: MarkWeight;\n  label?: string;\n  animate?: boolean;\n  show?: boolean;\n  delay?: number;\n  seed?: string | number;\n}>(\"Tally\", [\"count\", \"size\", \"tone\", \"weight\", \"label\", \"animate\", \"show\", \"delay\", \"seed\", \"class\", \"style\"], (_props, {\n  slots: _slots\n}) => {\n  const count = computed(() => _props[\"count\"]);\n  const size = computed(() => _props[\"size\"] === undefined ? \"md\" as const : _props[\"size\"]);\n  const tone = computed(() => _props[\"tone\"] === undefined ? \"ink\" as const : _props[\"tone\"]);\n  const weight = computed(() => _props[\"weight\"] === undefined ? \"regular\" as const : _props[\"weight\"]);\n  const label = computed(() => _props[\"label\"]);\n  const animate = computed(() => _props[\"animate\"] === undefined ? false : _props[\"animate\"]);\n  const show = computed(() => _props[\"show\"] === undefined ? true : _props[\"show\"]);\n  const delay = computed(() => _props[\"delay\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const className = computed(() => _props[\"class\"]);\n  const style = computed(() => _props[\"style\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"count\", \"size\", \"tone\", \"weight\", \"label\", \"animate\", \"show\", \"delay\", \"seed\", \"class\", \"style\", \"ref\"]));\n  const n = computed(() => Math.max(0, Math.min(99, Math.floor(Number.isFinite(count.value) ? count.value : 0))));\n  const gh = computed(() => typeof size.value === \"number\" ? size.value : SIZES[size.value]);\n  const box = computed(() => tallyBox(n.value, gh.value));\n  const _inkContext16 = useInkContext();\n  const dir = computed(() => _inkContext16.value.dir);\n  const {\n    hostRef,\n    hostProps,\n    frame\n  } = useInkCore(() => ({\n    recipe: tallyRecipe,\n    params: {\n      count: n.value,\n      gh: gh.value,\n      tone: tone.value,\n      weight: weight.value,\n      rtl: dir.value === \"rtl\"\n    },\n    size: [Math.max(4, box.value.w), box.value.h],\n    seed: seed.value\n  }));\n  const _hook19 = useMarkPhase(() => ({\n    animate: animate.value,\n    show: show.value\n  }));\n  const phaseRef = computed(() => _hook19.value.phaseRef);\n  const phaseProps = computed(() => _hook19.value.phaseProps);\n  return () => {\n    return <span data-slot=\"tally\" data-count={n.value} role=\"img\" aria-label={label.value ?? String(n.value)} ref={useMergedRef<HTMLElement>(hostRef, phaseRef.value, ref.value as UI.Ref<HTMLElement> | undefined)} {...domProps(show.value ? hostProps.value : {})} {...domProps(phaseProps.value)} style={cssStyle({\n      width: box.value.w,\n      height: box.value.h,\n      ...(animate.value ? {\n        \"--ll-draw-delay\": `${delay.value ?? 0}ms`\n      } as UI.CSSProperties : undefined),\n      ...style.value\n    })} class={cn(\"relative isolate inline-block shrink-0 align-middle outline-none\", animate.value && MARK_WIPE, className.value)} {...domProps(props.value)}>\r\n      {show.value && frame.value ? <BlockSvg kind=\"tally\" frame={frame.value} keep /> : null}\r\n    </span>;\n  };\n});\nexport { Tally };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/tally-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/tally-ink.ts",
+      "content": "import { defineRecipe } from '@/lib/ink/recipes'\r\nimport { markPen, type MarkPen, type MarkWeight } from '@/lib/ink/recipes/text-marks-ink'\r\nimport { tallyLines } from '@/lib/ink/shapes'\r\n\r\nexport interface TallyParams {\r\n  count: number\r\n  gh: number\r\n  tone: MarkPen\r\n  weight: MarkWeight\r\n  rtl?: boolean\r\n}\r\n\r\nexport function tallyBox(count: number, gh: number): { w: number; h: number } {\r\n  const n = Math.max(0, Math.min(99, Math.floor(count)))\r\n  const step = 0.26 * gh\r\n  const gw = 1.05 * gh + 6\r\n  const full = Math.floor(n / 5)\r\n  const rem = n % 5\r\n  const x0 = Math.ceil(0.6 * step) + 1\r\n  let w: number\r\n  if (n === 0) w = 0\r\n  else if (rem === 0) w = x0 + (full - 1) * gw + 3.6 * step + 2\r\n  else w = x0 + full * gw + (rem - 1) * step + 3\r\n  return { w: Math.ceil(w), h: Math.ceil(gh + 4) }\r\n}\r\n\r\nexport const tallyRecipe = defineRecipe<TallyParams>({\r\n  id: 'tally',\r\n  kind: 'tally',\r\n  layers: ['rest'],\r\n  pad: 8,\r\n  draw(ink, { w }, p, ctx) {\r\n    const n = Math.max(0, Math.min(99, Math.floor(p.count)))\r\n    if (n === 0) return\r\n    const { pen, width } = markPen(p.tone, p.weight, Math.max(14, p.gh * 0.9))\r\n    const x0 = Math.ceil(0.6 * 0.26 * p.gh) + 1\r\n    const { lines } = tallyLines(ink.next('tally'), x0, 2, n, p.gh)\r\n    const mirror = p.rtl ?? ctx.dir === 'rtl'\r\n    ink.layer('rest', () => {\r\n      if (mirror) ink.group({ transform: `translate(${w} 0) scale(-1 1)` }, () => ink.lines(lines, pen, { width }))\r\n      else ink.lines(lines, pen, { width })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "badge",
+      "annotate",
+      "asterisk"
+    ],
+    "a11y": [
+      "role=\"img\" with aria-label set to the number (or your label): a screen reader hears \"7\", not seven strokes. Add the counted thing in visible text nearby.",
+      "The marks are the only place the number is shown as a drawing, so the svg is kept in Windows high contrast (as system colors).",
+      "Right-to-left pages start the first bundle on the right.",
+      "Reduced motion zeroes the wipe."
+    ],
+    "usage": "import { Tally } from \"@/components/ui/tally\"\n\nexport function Example() {\n  return (\n    <p>\n      Votes for tea: <Tally count={12} label=\"12 votes for tea\" />\n    </p>\n  )\n}",
+    "parts": [
+      "Tally"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

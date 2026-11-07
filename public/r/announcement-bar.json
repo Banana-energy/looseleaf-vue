@@ -1,0 +1,51 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "announcement-bar",
+  "type": "registry:block",
+  "title": "Announcement bar",
+  "description": "A strip of kraft paper taped across the top of the page: a New ribbon, one sentence, a link and a dismiss button. Looks right on paper or on the desk.",
+  "categories": [
+    "marketing"
+  ],
+  "registryDependencies": [
+    "button",
+    "icon",
+    "looseleaf-theme",
+    "mascot",
+    "paper",
+    "ribbon",
+    "tape"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/announcement-bar/components/announcement-bar-header.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/announcement-bar/components/announcement-bar-header.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Mascot } from \"@/components/ui/mascot\";\nconst links = [\"Product\", \"Pricing\", \"Notes\", \"Sign in\"];\nconst AnnouncementBarHeader = defineUi<{}>(\"AnnouncementBarHeader\", [], (_props, {\n  slots: _slots\n}) => {\n  return () => {\n    return <header class=\"flex items-center justify-between gap-4 px-6 py-5 [--ll-blend:normal]\">\r\n      <a href=\"#top\" class=\"flex items-center gap-2 font-script text-3xl leading-none font-bold text-ink\">\r\n        <Mascot pose=\"idle\" size={32} />\r\n        penmark\r\n      </a>\r\n      <nav aria-label=\"Main\" class=\"hidden items-center gap-6 text-base text-ink @lg:flex\">\r\n        {links.map(l => <a key={l} href={`#${l.toLowerCase().replace(/\\s+/g, \"-\")}`} class=\"underline-offset-4 hover:underline\">\r\n            {l}\r\n          </a>)}\r\n      </nav>\r\n      <Button size=\"sm\">Start free</Button>\r\n    </header>;\n  };\n});\nexport { AnnouncementBarHeader };\n"
+    },
+    {
+      "path": "src/blocks/announcement-bar/components/announcement-bar-strip.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/announcement-bar/components/announcement-bar-strip.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { Paper } from \"@/components/ui/paper\";\nimport { Ribbon } from \"@/components/ui/ribbon\";\nimport { Tape } from \"@/components/ui/tape\";\nimport { cn } from \"@/lib/utils\";\ntype AnnouncementBarStripProps = Omit<UI.ComponentProps<\"section\">, \"children\"> & {\n  label?: string;\n  message: UI.ReactNode;\n  linkLabel?: string;\n  href?: string;\n  onDismiss?: () => void;\n};\nconst AnnouncementBarStrip = defineUi<AnnouncementBarStripProps>(\"AnnouncementBarStrip\", [\"class\", \"label\", \"message\", \"linkLabel\", \"href\", \"onDismiss\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const label = computed(() => _props[\"label\"] === undefined ? \"New\" as const : _props[\"label\"]);\n  const message = computed(() => _props[\"message\"]);\n  const linkLabel = computed(() => _props[\"linkLabel\"] === undefined ? \"Read the notes\" as const : _props[\"linkLabel\"]);\n  const href = computed(() => _props[\"href\"] === undefined ? \"#announcement\" as const : _props[\"href\"]);\n  const onDismiss = computed(() => _props[\"onDismiss\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"label\", \"message\", \"linkLabel\", \"href\", \"onDismiss\"]));\n  return () => {\n    return <div class=\"px-4 pt-6\">\r\n      <Paper as=\"section\" stock=\"kraft\" tilt={false} shadow=\"slip\" aria-label=\"Announcement\" data-slot=\"announcement-bar\" class={cn(\"px-12 py-2.5\", className.value)} {...domProps(props.value)}>\r\n        <Tape kind=\"washi-stripes\" color=\"tangerine\" length={52} height={18} angle={-32} class=\"absolute -top-2.5 -start-3 rtl:rotate-[32deg]!\" />\r\n        <Tape kind=\"washi-stripes\" color=\"tangerine\" length={52} height={18} angle={32} class=\"absolute -top-2.5 -end-3 rtl:rotate-[-32deg]!\" />\r\n        <div class=\"relative z-(--ll-z-raised) flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-[15px] leading-6 text-ink\">\r\n          <Ribbon variant=\"flag\" tone=\"hi\" size=\"sm\">\r\n            {label.value}\r\n          </Ribbon>\r\n          <p class=\"text-balance\">{message.value}</p>\r\n          <Button asChild variant=\"link\" size=\"sm\" class=\"text-link-hover hover:text-ink\">\r\n            <a href={href.value}>\r\n              {linkLabel.value}\r\n              <Icon name=\"arrow-right\" class=\"rtl:-scale-x-100\" />\r\n            </a>\r\n          </Button>\r\n        </div>\r\n        {onDismiss.value ? <Button type=\"button\" variant=\"ghost\" size=\"icon-sm\" aria-label=\"Dismiss announcement\" onClick={onDismiss.value} class=\"absolute inset-y-0 end-2 z-(--ll-z-raised) my-auto\">\r\n            <Icon name=\"x\" />\r\n          </Button> : null}\r\n      </Paper>\r\n    </div>;\n  };\n});\nexport { AnnouncementBarStrip };\nexport type { AnnouncementBarStripProps };\n"
+    },
+    {
+      "path": "src/blocks/announcement-bar/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/announcement-bar/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, shallowRef } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { AnnouncementBarHeader } from \"@/blocks/announcement-bar/components/announcement-bar-header\";\nimport { AnnouncementBarStrip } from \"@/blocks/announcement-bar/components/announcement-bar-strip\";\nconst AnnouncementBarBlock = defineUi<{}>(\"AnnouncementBarBlock\", [], (_props, {\n  slots: _slots\n}) => {\n  const open = shallowRef(initialState(true));\n  const setOpen = stateSetter(open);\n  const strip = shallowRef<HTMLElement | null>(null);\n  const bringBack = shallowRef<HTMLButtonElement | null>(null);\n  const handOver = shallowRef(false);\n  watchDependencies(() => {\n    if (!handOver.value) return;\n    handOver.value = false;\n    if (open.value) strip.value?.focus();else bringBack.value?.focus();\n  }, () => [open.value], false);\n  const toggle = computed(() => (next: boolean) => {\n    handOver.value = true;\n    setOpen(next);\n  });\n  return () => {\n    return <div class=\"@container w-full\">\r\n      {open.value ? <AnnouncementBarStrip ref={strip} tabindex={-1} message=\"Penmark 2.0 is here: tape you can peel, and pages that turn.\" linkLabel=\"Read the notes\" href=\"#notes\" onDismiss={() => toggle.value(false)} class=\"outline-none\" /> : <div class=\"flex justify-center px-3 pt-3\">\r\n          <Button ref={bringBack} type=\"button\" variant=\"link\" size=\"sm\" onClick={() => toggle.value(true)}>\r\n            Bring the announcement back\r\n          </Button>\r\n        </div>}\r\n      <AnnouncementBarHeader />\r\n    </div>;\n  };\n});\nexport default AnnouncementBarBlock;\n"
+    }
+  ],
+  "docs": "Installed the \"Announcement bar\" block into your components directory under blocks/announcement-bar/.\nImport it: import AnnouncementBarBlock from \"<your components alias>/blocks/announcement-bar/page\"",
+  "meta": {
+    "tags": [
+      "marketing",
+      "banner",
+      "ribbon"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

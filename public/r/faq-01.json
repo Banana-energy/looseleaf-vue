@@ -1,0 +1,52 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "faq-01",
+  "type": "registry:block",
+  "title": "FAQ on ruled paper",
+  "description": "An accordion written on ruled notebook paper, every line on the printed rules, with a flagged \"still stuck?\" index card and Stubby beside it. Looks right on paper or on the desk.",
+  "categories": [
+    "marketing"
+  ],
+  "registryDependencies": [
+    "accordion",
+    "button",
+    "icon",
+    "index-card",
+    "lettering",
+    "looseleaf-theme",
+    "mascot",
+    "paper"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/faq-01/components/faq-01-help.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/faq-01/components/faq-01-help.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { IndexCard, IndexCardContent, IndexCardFooter, IndexCardHeader, IndexCardTitle } from \"@/components/ui/index-card\";\nimport { Mascot } from \"@/components/ui/mascot\";\nconst Faq01Help = defineUi<{}>(\"Faq01Help\", [], (_props, {\n  slots: _slots\n}) => {\n  return () => {\n    return <IndexCard flag=\"tangerine\" seed=\"faq-help\" class=\"min-h-0 max-w-none\">\r\n      <IndexCardHeader>\r\n        <IndexCardTitle>\r\n          <h3 class=\"inline\">Still stuck?</h3>\r\n        </IndexCardTitle>\r\n        <Mascot pose=\"think\" size={44} class=\"-mb-0.5 me-7\" />\r\n      </IndexCardHeader>\r\n      <IndexCardContent>A real person answers, usually before lunch.</IndexCardContent>\r\n      <IndexCardFooter>\r\n        <Button asChild variant=\"link\" size=\"sm\" class=\"-ms-3\">\r\n          <a href=\"mailto:hello@penmark.example\">\r\n            <Icon name=\"mail\" />\r\n            Write to us\r\n          </a>\r\n        </Button>\r\n      </IndexCardFooter>\r\n    </IndexCard>;\n  };\n});\nexport { Faq01Help };\n"
+    },
+    {
+      "path": "src/blocks/faq-01/components/faq-01-sheet.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/faq-01/components/faq-01-sheet.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from \"@/components/ui/accordion\";\nimport { Paper } from \"@/components/ui/paper\";\nconst QUESTIONS = [{\n  id: \"free\" as const,\n  q: \"Is there a free plan?\" as const,\n  a: \"Yes. Teams of up to five can use everything, free, for as long as they like. Past five it is $6 a person a month. No card to start.\" as const\n}, {\n  id: \"import\" as const,\n  q: \"Can I bring my notes from other apps?\" as const,\n  a: \"Drag in a folder of Markdown, or a Notion or Evernote export, and your pages and links come across, pictures too. A hundred pages takes about a minute.\" as const\n}, {\n  id: \"offline\" as const,\n  q: \"Does it work offline?\" as const,\n  a: \"It does. Keep writing on the train and everything syncs when you are back. If two people changed the same line, you get both versions side by side.\" as const\n}, {\n  id: \"privacy\" as const,\n  q: \"Who can see my notebooks?\" as const,\n  a: \"Only the people you invite. A page is private until you share it, and a shared link can be switched off whenever you like.\" as const\n}, {\n  id: \"backups\" as const,\n  q: \"How are my pages backed up?\" as const,\n  a: \"Every change is saved and every version is kept for a year. We also take nightly backups in two places, and you can download everything as plain files.\" as const\n}, {\n  id: \"cancel\" as const,\n  q: \"Can I cancel any time?\" as const,\n  a: \"In two clicks. Your notebooks stay readable and downloadable afterwards.\" as const\n}];\nconst Faq01Sheet = defineUi<{}>(\"Faq01Sheet\", [], (_props, {\n  slots: _slots\n}) => {\n  return () => {\n    return <Paper stock=\"paper\" rules=\"ruled\" tape=\"corner\" tapeKind=\"masking\" seed=\"faq-sheet\" class=\"pt-4 pe-5 pb-7 ps-14 text-[17px] leading-7 rtl:[&>[data-slot=paper-rules]]:-scale-x-100\">\r\n      <p class=\"font-type text-sm leading-7 text-pencil-text\">Frequently asked</p>\r\n      <Accordion type=\"single\" collapsible defaultValue=\"free\" class=\"w-full\">\r\n        {QUESTIONS.map(item => <AccordionItem key={item.id} value={item.id} class=\"pb-0 [&>[data-slot=accordion-rule]]:hidden\">\r\n            <AccordionTrigger class=\"min-h-14 items-end pt-7 pb-0 text-[17px] leading-7 [&:not(:focus-visible)]:outline-transparent [&>[data-chevron]]:mt-0 [&>[data-chevron]]:mb-1.5\">{item.q}</AccordionTrigger>\r\n            <AccordionContent class=\"pb-0 text-[17px] leading-7\">\r\n              <p>{item.a}</p>\r\n            </AccordionContent>\r\n          </AccordionItem>)}\r\n      </Accordion>\r\n    </Paper>;\n  };\n});\nexport { Faq01Sheet, QUESTIONS };\n"
+    },
+    {
+      "path": "src/blocks/faq-01/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/faq-01/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, useId } from \"vue\";\nimport { Lettering } from \"@/components/ui/lettering\";\nimport { Faq01Help } from \"@/blocks/faq-01/components/faq-01-help\";\nimport { Faq01Sheet } from \"@/blocks/faq-01/components/faq-01-sheet\";\nconst Faq01 = defineUi<{}>(\"Faq01\", [], (_props, {\n  slots: _slots\n}) => {\n  const titleId = useId();\n  return () => {\n    return <section aria-labelledby={titleId} class=\"@container w-full\">\r\n      <div class=\"px-8 py-14 @xl:py-20\">\r\n        <div class=\"mx-auto grid max-w-5xl gap-x-12 gap-y-10 @3xl:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] @3xl:items-start\">\r\n          <header class=\"@3xl:col-start-1 @3xl:row-start-1\">\r\n            <Lettering as=\"h2\" id={titleId} size=\"lg\" tone=\"grass\" wobble={0.4} seed=\"faq-title\">\r\n              Questions, answered\r\n            </Lettering>\r\n            <p class=\"mt-4 text-xl/8 text-ink-soft\">The ones we get every week, in our own words.</p>\r\n          </header>\r\n          <div class=\"@3xl:col-start-2 @3xl:row-span-2 @3xl:row-start-1\">\r\n            <Faq01Sheet />\r\n          </div>\r\n          <div class=\"@3xl:col-start-1 @3xl:row-start-2\">\r\n            <Faq01Help />\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </section>;\n  };\n});\nexport default Faq01;\n"
+    }
+  ],
+  "docs": "Installed the \"FAQ on ruled paper\" block into your components directory under blocks/faq-01/.\nImport it: import Faq01 from \"<your components alias>/blocks/faq-01/page\"",
+  "meta": {
+    "tags": [
+      "marketing",
+      "faq",
+      "accordion"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

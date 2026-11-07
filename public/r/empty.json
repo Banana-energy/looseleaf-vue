@@ -1,0 +1,61 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "empty",
+  "type": "registry:ui",
+  "title": "Empty",
+  "description": "What a page says when there is nothing on it yet: media, a title in the script font, a line of explanation and an action. The media can be an icon on a slip of paper, Stubby the pencil stub in one of his poses, or a doodle; a `border` draws the sketched, dashed placeholder frame.",
+  "categories": [
+    "Feedback"
+  ],
+  "dependencies": [
+    "class-variance-authority",
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "doodle",
+    "ink",
+    "looseleaf-theme",
+    "mascot"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/empty.tsx",
+      "type": "registry:ui",
+      "target": "@ui/empty.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { cva, type VariantProps } from \"class-variance-authority\";\nimport { Doodle } from \"@/components/ui/doodle\";\nimport { Mascot, type MascotPose } from \"@/components/ui/mascot\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { emptyFrameRecipe, emptyMediaRecipe } from \"@/lib/ink/recipes/empty-ink\";\nimport { cn } from \"@/lib/utils\";\nconst hasClass = (className: string | undefined, name: string) => !!className && className.split(/\\s+/).includes(name);\nconst Empty = defineUi<UI.ComponentProps<\"div\"> & {\n  seed?: string | number;\n}>(\"Empty\", [\"class\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"class\", \"seed\", \"ref\", \"children\"]));\n  const framed = computed(() => hasClass(className.value, \"border\"));\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: emptyFrameRecipe,\n    params: {},\n    kind: \"frame\" as const,\n    seed: seed.value,\n    still: true\n  }));\n  return () => {\n    return <div data-slot=\"empty\" ref={useMergedRef<HTMLDivElement>(framed.value ? hostRef : undefined, ref.value)} {...domProps(framed.value && node.value ? hostProps.value : {})} class={cn(\"relative isolate flex min-w-0 flex-1 flex-col items-center justify-center gap-6 p-6 text-center text-balance md:p-12 [.border]:border-transparent\", className.value)} {...domProps(props.value)}>\r\n      {framed.value ? node.value : null}\r\n      {readSlot(_slots.default)}\r\n    </div>;\n  };\n});\nconst EmptyHeader = defineUi<UI.ComponentProps<\"div\">>(\"EmptyHeader\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"empty-header\" class={cn(\"flex max-w-sm flex-col items-center gap-2 text-center\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst emptyMediaVariants = cva(\"mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0\", {\n  variants: {\n    variant: {\n      default: \"bg-transparent\" as const,\n      icon: \"relative isolate flex size-11 shrink-0 items-center justify-center text-foreground [&_svg:not(.absolute):not([class*='size-'])]:size-6\" as const\n    }\n  },\n  defaultVariants: {\n    variant: \"default\" as const\n  }\n});\nconst EmptyMedia = defineUi<UI.ComponentProps<\"div\"> & VariantProps<typeof emptyMediaVariants> & {\n  pose?: MascotPose;\n  doodle?: string;\n  size?: number;\n  seed?: string | number;\n}>(\"EmptyMedia\", [\"class\", \"variant\", \"pose\", \"doodle\", \"size\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const variant = computed(() => _props[\"variant\"] === undefined ? \"default\" as const : _props[\"variant\"]);\n  const pose = computed(() => _props[\"pose\"]);\n  const doodle = computed(() => _props[\"doodle\"]);\n  const size = computed(() => _props[\"size\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"class\", \"variant\", \"pose\", \"doodle\", \"size\", \"seed\", \"ref\", \"children\"]));\n  const tile = computed(() => variant.value === \"icon\");\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: emptyMediaRecipe,\n    params: {},\n    kind: \"tile\" as const,\n    seed: seed.value,\n    still: true\n  }));\n  return () => {\n    return <div data-slot=\"empty-icon\" data-variant={variant.value} ref={useMergedRef<HTMLDivElement>(tile.value ? hostRef : undefined, ref.value)} {...domProps(tile.value && node.value ? hostProps.value : {})} class={cn(emptyMediaVariants({\n      variant: variant.value\n    }), className.value)} {...domProps(props.value)}>\r\n      {tile.value ? node.value : null}\r\n      {pose.value ? <Mascot pose={pose.value} size={size.value ?? 96} seed={seed.value} /> : null}\r\n      {doodle.value ? <Doodle name={doodle.value} size={size.value ?? 80} seed={seed.value} /> : null}\r\n      {readSlot(_slots.default)}\r\n    </div>;\n  };\n});\nconst EmptyTitle = defineUi<UI.ComponentProps<\"div\">>(\"EmptyTitle\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"empty-title\" class={cn(\"font-script text-[1.65rem] leading-none font-semibold\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst EmptyDescription = defineUi<UI.ComponentProps<\"p\">>(\"EmptyDescription\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"empty-description\" class={cn(\"text-sm/relaxed text-muted-foreground [&>a]:text-link [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-link-hover\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst EmptyContent = defineUi<UI.ComponentProps<\"div\">>(\"EmptyContent\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"empty-content\" class={cn(\"flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nexport { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent, EmptyMedia };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/empty-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/empty-ink.ts",
+      "content": "import { edgeBand, wash } from '@/lib/ink/fills'\r\nimport { roundRectPoly, seg } from '@/lib/ink/geom'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\nimport { box, dashedBox } from '@/lib/ink/shapes'\r\nimport type { Line } from '@/lib/ink/types'\r\n\r\nexport const emptyFrameRecipe = defineRecipe<Record<string, never>>({\r\n  id: 'empty-frame',\r\n  kind: 'frame',\r\n  layers: ['rest'],\r\n  pad: 8,\r\n  draw(ink, { w, h }, _p, ctx) {\r\n    ink.layer('rest', () => {\r\n      const r = Math.min(12, Math.min(w, h) / 4)\r\n      dashedBox(ink, 1, 1, w - 2, h - 2, { r, pen: ctx.calm ? 'pencil.fine' : 'pencil', dash: 9, gap: 6.5 })\r\n      if (ctx.calm) return\r\n      const t = 7\r\n      const ticks: Line[] = [\r\n        { pts: seg(-2, r + 2, -2, r + 2 - t, 0, 2), o: { start: 'soft', end: 'flick', simple: true } },\r\n        { pts: seg(r + 2, -2, r + 2 - t, -2, 0, 2), o: { start: 'soft', end: 'flick', simple: true } },\r\n        { pts: seg(w + 2, h - r - 2, w + 2, h - r - 2 + t, 0, 2), o: { start: 'soft', end: 'flick', simple: true } },\r\n        { pts: seg(w - r - 2, h + 2, w - r - 2 + t, h + 2, 0, 2), o: { start: 'soft', end: 'flick', simple: true } },\r\n      ]\r\n      ink.lines(ticks, 'pencil.fine', { alpha: 0.7 })\r\n    })\r\n  },\r\n})\r\n\r\nexport const emptyMediaRecipe = defineRecipe<Record<string, never>>({\r\n  id: 'empty-media',\r\n  kind: 'tile',\r\n  layers: ['rest'],\r\n  pad: 8,\r\n  draw(ink, { w, h }, _p, ctx) {\r\n    const body = roundRectPoly(1.5, 1.5, w - 3, h - 3, 6)\r\n    ink.layer('rest', () => {\r\n      ink.poly('under', body, 'slip', 0.98)\r\n      wash(ink, body, 'hi', { alpha: ctx.calm ? 0.25 : 0.35 })\r\n      box(ink, 0, 0, w, h, { pen: ctx.calm ? 'pencil.fine' : 'ink.fine', corner: 6 })\r\n      if (!ctx.calm) {\r\n        edgeBand(ink, 0, 0, w, h, 'b', { thick: 4 })\r\n        edgeBand(ink, 0, 0, w, h, 'r', { thick: 4 })\r\n      }\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "empty",
+    "related": [
+      "mascot",
+      "doodle",
+      "card",
+      "button"
+    ],
+    "a11y": [
+      "Empty is a plain group of divs, as upstream; the title is not a heading unless you make it one (put an `<h2>` inside `EmptyTitle`, or give the Empty a role and a name).",
+      "Stubby, doodles and the icon tile are decoration (aria-hidden): the title and description carry the meaning. If the state is announced dynamically (search results going to none), put `role=\"status\"` on the Empty.",
+      "Ink on paper is 14:1, the muted description 8.9:1. The dashed frame is decoration and carries no information.",
+      "Buttons and links in EmptyContent are ordinary controls with their own focus rings.",
+      "The frame and the tile are hairline in calm density, and hidden in Windows high contrast in favour of a plain outline."
+    ],
+    "usage": "import { Button } from \"@/components/ui/button\"\nimport { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from \"@/components/ui/empty\"\n\nexport function Example() {\n  return (\n    <Empty class=\"border\">\n      <EmptyHeader>\n        <EmptyMedia pose=\"search\" />\n        <EmptyTitle>No results</EmptyTitle>\n        <EmptyDescription>Nothing matches your search. Try a shorter word.</EmptyDescription>\n      </EmptyHeader>\n      <EmptyContent>\n        <Button>Clear search</Button>\n      </EmptyContent>\n    </Empty>\n  )\n}",
+    "parts": [
+      "Empty",
+      "EmptyHeader",
+      "EmptyMedia",
+      "EmptyTitle",
+      "EmptyDescription",
+      "EmptyContent"
+    ]
+  }
+}

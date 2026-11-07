@@ -1,0 +1,53 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "kbd",
+  "type": "registry:ui",
+  "title": "Kbd",
+  "description": "A keyboard key, drawn in pencil as a little keycap with a shaded thickness that presses flat under your finger. Used inline, in groups, in tooltips and in menus.",
+  "categories": [
+    "Typography"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/kbd.tsx",
+      "type": "registry:ui",
+      "target": "@ui/kbd.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { IconSizeProvider, useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { kbdRecipe } from \"@/lib/ink/recipes/kbd-ink\";\nimport { cn } from \"@/lib/utils\";\nconst Kbd = defineUi<UI.ComponentProps<\"kbd\"> & {\n  seed?: string | number;\n}>(\"Kbd\", [\"class\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"seed\", \"ref\"]));\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: kbdRecipe,\n    params: {},\n    kind: \"keycap\" as const,\n    seed: seed.value,\n    still: true\n  }));\n  const children = renderValue(() => readSlot(_slots.default));\n  const rest = computed(() => omitProps(props.value, [\"children\"]));\n  return () => {\n    return <IconSizeProvider value={14}>\r\n      <kbd data-slot=\"kbd\" data-ink-sink=\"self\" ref={useMergedRef<HTMLElement>(hostRef, ref.value)} {...domProps(hostProps.value)} class={cn(\"relative isolate inline-flex h-6 w-fit min-w-6 items-center justify-center gap-1 pr-[6.4px] pl-1 pb-[2.4px] font-hand text-sm leading-none font-normal whitespace-nowrap text-muted-foreground select-none\", \"transition-[translate] duration-(--ll-dur-press) ease-out active:translate-y-[1.6px] [&[data-pressed]:not([data-pressed=false])]:translate-y-[1.6px]\", \"[&_svg]:pointer-events-none [&_svg:not(.absolute):not([class*='size-'])]:size-3.5\", \"calm:h-5 calm:pr-1 calm:pb-0\", \"[[data-slot=tooltip-content]_&]:text-inherit\", className.value)} {...domProps(rest.value)}>\r\n        {node.value}\r\n        {readSlot(_slots.default)}\r\n      </kbd>\r\n    </IconSizeProvider>;\n  };\n});\nconst KbdGroup = defineUi<UI.ComponentProps<\"kbd\">>(\"KbdGroup\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <kbd data-slot=\"kbd-group\" class={cn(\"inline-flex items-center gap-1\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</kbd>;\n  };\n});\nexport { Kbd, KbdGroup };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/kbd-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/kbd-ink.ts",
+      "content": "import { wash } from '@/lib/ink/fills'\r\nimport { roundRectPoly } from '@/lib/ink/geom'\r\nimport { clamp } from '@/lib/ink/rng'\r\nimport { box } from '@/lib/ink/shapes'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\n\r\nexport const KEY_DEPTH = 2.4\r\n\r\nexport const kbdRecipe = defineRecipe<Record<string, never>>({\r\n  id: 'kbd',\r\n  kind: 'keycap',\r\n  layers: ['rest'],\r\n  pad: 12,\r\n  draw(ink, { w, h }, _p, ctx) {\r\n    const calm = ctx.calm\r\n    const d = calm ? 0 : KEY_DEPTH\r\n    const fw = w - d\r\n    const fh = h - d\r\n    const r = clamp(Math.min(fw, fh) * 0.16, 2, 3.4)\r\n    ink.layer('rest', () => {\r\n      if (!calm) ink.group({ part: 'depth', hideOn: 'pressed' }, () => ink.poly('wash', roundRectPoly(d, d, fw, fh, r), 'current', 0.3), 'under')\r\n      ink.poly('under', roundRectPoly(0.5, 0.5, fw - 1, fh - 1, r), 'slip', 1)\r\n      wash(ink, roundRectPoly(1.4, 1.4, fw - 2.8, fh - 2.8, r), 'current', { alpha: 0.09, material: 'wash' })\r\n      box(ink, 0, 0, fw, fh, { pen: 'pencil', corner: r, loose: 0.6, opts: { color: 'current', width: 1, alpha: 0.85, simple: true } })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "kbd",
+    "related": [
+      "tooltip",
+      "command",
+      "dropdown-menu",
+      "badge"
+    ],
+    "a11y": [
+      "Kbd is the semantic <kbd> element: screen readers read the text as it is written. Write words for modifier keys when the symbol would be read unhelpfully (\"Ctrl\" rather than an icon), or give an icon-only key an Icon with a label (aria-label is not allowed on a bare <kbd>).",
+      "Decorative by nature: it is not focusable and has no role. The press animation is pointer feedback only; nothing depends on it.",
+      "Muted graphite on paper is 8.9:1. Inside a Tooltip or a menu the label and the drawing take that surface's text color.",
+      "Calm density draws a plain pencil box without the thickness; reduced motion removes the press transition."
+    ],
+    "usage": "import { Kbd, KbdGroup } from \"@/components/ui/kbd\"\n\nexport function Example() {\n  return (\n    <div class=\"flex flex-col items-start gap-3\">\n      <p>\n        Press <Kbd>Esc</Kbd> to close.\n      </p>\n      <KbdGroup>\n        <Kbd>Ctrl</Kbd>\n        <span>+</span>\n        <Kbd>K</Kbd>\n      </KbdGroup>\n    </div>\n  )\n}",
+    "parts": [
+      "Kbd",
+      "KbdGroup"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sonner",
+  "type": "registry:ui",
+  "title": "Sonner",
+  "description": "Toasts as slips of paper tossed onto the desk. A guest check for success, a pink sticky for errors, yellow for warnings, blue for news; stacked, swipeable, with drawn icons, action buttons, promise toasts and tape or a pin to hold them down. Built on the sonner package: you keep its `toast()` API.",
+  "categories": [
+    "Feedback"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "icon",
+    "ink",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/sonner.tsx",
+      "type": "registry:ui",
+      "target": "@ui/sonner.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, shallowRef } from \"vue\";\nimport { createPortal } from \"@/lib/vnode\";\nimport { Toaster as Sonner, toast, useSonner, type ToasterProps } from \"@/lib/sonner-primitive\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { useInkScope } from \"@/lib/ink/vue\";\nimport { cn } from \"@/lib/utils\";\ntype ToastClassNames = NonNullable<NonNullable<ToasterProps[\"toastOptions\"]>[\"classNames\"]>;\ntype LooseleafToasterProps = ToasterProps & {\n  decoration?: \"none\" | \"tape\" | \"pin\";\n  portal?: boolean;\n};\nconst SLIP = cn(\"ll-paper ll-tooth-fine ll-stock-slip ll-sheet-slip pointer-events-auto flex w-(--width) items-center gap-3 p-4 font-hand text-[15px] text-foreground compact:p-3.5 calm:p-3\", \"data-[type=success]:ll-stock-check data-[type=success]:ll-sheet-check data-[type=success]:[--ll-tilt:-0.5deg]\", \"data-[type=error]:ll-stock-sticky-pink data-[type=error]:ll-sheet-sticky data-[type=error]:[--ll-tilt:0.9deg]\", \"data-[type=warning]:ll-stock-sticky-yellow data-[type=warning]:ll-sheet-sticky data-[type=warning]:[--ll-tilt:-0.8deg]\", \"data-[type=info]:ll-stock-sticky-blue data-[type=info]:ll-sheet-sticky data-[type=info]:[--ll-tilt:0.6deg]\", \"data-[type=loading]:[--ll-tilt:0.35deg] data-[type=default]:[--ll-tilt:-0.3deg]\", \"[&[data-expanded=false][data-front=false]>*]:opacity-0\", \"data-[x-position=right]:animate-[ll-toss_var(--ll-dur-toss)_var(--ll-ease-settle)_backwards] data-[x-position=left]:animate-[ll-drop_var(--ll-dur-drop)_var(--ll-ease-settle)_backwards] data-[x-position=center]:animate-[ll-drop_var(--ll-dur-drop)_var(--ll-ease-settle)_backwards]\");\nconst TAPE = \"after:pointer-events-none after:absolute after:-top-3 after:left-1/2 after:h-4.5 after:w-14 after:-translate-x-1/2 after:-rotate-3 after:border-y after:border-tape-edge after:bg-[color-mix(in_srgb,var(--ll-kraft)_70%,transparent)] after:[background-image:linear-gradient(90deg,transparent_29%,var(--ll-tape-edge)_29%_30%,transparent_30%_69%,var(--ll-tape-edge)_69%_70%,transparent_70%)] after:content-[''] after:[clip-path:polygon(0_0,100%_0,96%_20%,100%_40%,96%_60%,100%_80%,96%_100%,0_100%,4%_80%,0_60%,4%_40%,0_20%)] calm:after:hidden\";\nconst PIN = \"after:pointer-events-none after:absolute after:-top-2 after:left-1/2 after:size-3.5 after:-translate-x-1/2 after:rounded-full after:bg-tomato after:content-[''] after:[background-image:radial-gradient(circle_at_34%_30%,var(--ll-photo)_0_13%,transparent_15%),radial-gradient(circle_at_66%_70%,rgb(var(--ll-shade)/0.32),transparent_60%)] after:shadow-[0_2px_2px_rgb(var(--ll-shade)/0.35)] calm:after:hidden\";\nconst BASE: ToastClassNames = {\n  toast: SLIP,\n  content: \"flex min-w-0 flex-1 flex-col gap-0.5\" as const,\n  title: \"text-[15px] leading-snug font-bold\" as const,\n  description: \"text-sm leading-snug text-muted-foreground\" as const,\n  icon: \"relative flex size-5 shrink-0 items-center justify-center text-ink\" as const,\n  loader: \"text-ink\" as const,\n  actionButton: \"ll-swipe ms-auto min-h-6 shrink-0 cursor-pointer px-2.5 py-0.5 text-sm font-bold whitespace-nowrap transition-[translate] duration-(--ll-dur-press) active:translate-y-(--ll-press-sink)\" as const,\n  cancelButton: \"ms-auto min-h-6 shrink-0 cursor-pointer px-2 py-0.5 text-sm whitespace-nowrap text-ink-muted underline decoration-wavy underline-offset-4 hover:text-foreground\" as const,\n  closeButton: \"absolute end-1.5 top-1.5 z-(--ll-z-raised) grid size-6 cursor-pointer place-items-center text-ink hover:ll-swipe\" as const\n};\nconst Toaster = defineUi<LooseleafToasterProps>(\"Toaster\", [\"class\", \"toastOptions\", \"decoration\", \"theme\", \"icons\", \"style\", \"portal\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const toastOptions = computed(() => _props[\"toastOptions\"]);\n  const decoration = computed(() => _props[\"decoration\"] === undefined ? \"none\" as const : _props[\"decoration\"]);\n  const theme = computed(() => _props[\"theme\"] === undefined ? \"light\" as const : _props[\"theme\"]);\n  const icons = computed(() => _props[\"icons\"]);\n  const style = computed(() => _props[\"style\"]);\n  const portal = computed(() => _props[\"portal\"] === undefined ? false : _props[\"portal\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"toastOptions\", \"decoration\", \"theme\", \"icons\", \"style\", \"portal\"]));\n  const scope = useInkScope();\n  const mounted = shallowRef(initialState(false));\n  const setMounted = stateSetter(mounted);\n  watchDependencies(() => {\n    if (portal.value) setMounted(true);\n  }, () => [portal.value], false);\n  const user = computed(() => toastOptions.value?.classNames ?? {});\n  const merged = computed(() => Object.fromEntries((Object.keys({\n    ...BASE,\n    ...user.value\n  }) as Array<keyof ToastClassNames>).map(k => [k, cn(BASE[k], k === \"content\" && decoration.value !== \"none\" && (decoration.value === \"tape\" ? TAPE : PIN), user.value[k])])) as ToastClassNames);\n  const stack = renderValue(() =>\n  // lint-house-disable-next-line data-slot\n  <Sonner theme={theme.value} class={cn(\"toaster group pointer-events-auto\", className.value)} icons={{\n    success: <Icon name=\"circle-check\" size={20} />,\n    info: <Icon name=\"info\" size={20} />,\n    warning: <Icon name=\"triangle-alert\" size={20} />,\n    error: <Icon name=\"octagon-x\" size={20} />,\n    loading: <Icon name=\"loader-circle\" size={20} class=\"animate-spin\" />,\n    close: <Icon name=\"x\" size={14} />,\n    ...icons.value\n  }} style={cssStyle({\n    zIndex: \"var(--ll-z-toast)\" as const,\n    \"--width\": \"min(360px, calc(100vw - 32px))\" as const,\n    ...style.value\n  } as UI.CSSProperties)} toastOptions={{\n    unstyled: true,\n    ...toastOptions.value,\n    classNames: merged.value\n  }} {...domProps(props.value)} />);\n  return () => {\n    if (!portal.value) return stack.value;\n    return mounted.value ? createPortal(<div data-slot=\"toaster-portal\" {...domProps(scope.value)} class=\"contents\">{stack.value}</div>, document.body) : null;\n  };\n});\nexport { Toaster, toast, useSonner };\nexport type { LooseleafToasterProps as ToasterProps };\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "sonner",
+    "related": [
+      "alert",
+      "dialog",
+      "button",
+      "popover"
+    ],
+    "a11y": [
+      "Sonner renders a polite aria-live region (`aria-label=\"Notifications alt+T\"`); Alt+T focuses it so a keyboard user can reach the toasts, and hovering or focusing pauses the timers. Each type is its own icon shape and paper (guest check, pink, yellow, blue sticky), so color is never the only signal.",
+      "Action and cancel are real buttons at least 24 px tall; the close button is named \"Close toast\". Keep toast text short and never put the only copy of an error in a toast that disappears: pair it with an inline message.",
+      "Swipe to dismiss is a pointer shortcut only (sonner); every toast also closes with its close button, its action, its timer or `toast.dismiss()`.",
+      "The toss-in uses the theme's `ll-toss` (`ll-drop` when the stack is not on the right) and collapses to nothing with reduced motion. In `calm` density the slips lose their tilt, tape and pin.",
+      "Toasts are above dialogs and popovers on the z-scale and stay clickable while a modal is open."
+    ],
+    "usage": "// app/layout.tsx  (once)\nimport { Toaster } from \"@/components/ui/sonner\"\n\nexport default function Layout({ children }) {\n  return (\n    <>\n      {children}\n      <Toaster />\n    </>\n  )\n}\n\nimport { toast } from \"sonner\"\n\ntoast.success(\"Notebook saved\", { description: \"All 48 pages are safe.\" })\n\ntoast.promise(saveNotebook(), {\n  loading: \"Saving notebook…\",\n  success: \"Saved\",\n  error: \"Could not save\",\n})",
+    "parts": [
+      "Toaster",
+      "toast",
+      "useSonner"
+    ]
+  }
+}

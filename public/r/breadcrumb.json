@@ -1,0 +1,58 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "breadcrumb",
+  "type": "registry:ui",
+  "title": "Breadcrumb",
+  "description": "The path to the page you are on, written in a notebook: names between pencil slashes, links that wear the highlighter when pointed at, and the current page underlined twice in blue felt. Swap the slash for a chevron or any node, and fold the middle of a long path into a dropdown.",
+  "categories": [
+    "Navigation"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "icon",
+    "ink",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/breadcrumb.tsx",
+      "type": "registry:ui",
+      "target": "@ui/breadcrumb.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Slot } from \"@/lib/primitives\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { breadcrumbPageRecipe } from \"@/lib/ink/recipes/breadcrumb-ink\";\nimport { cn } from \"@/lib/utils\";\nconst Breadcrumb = defineUi<UI.ComponentProps<\"nav\">>(\"Breadcrumb\", [], (_props, {\n  slots: _slots\n}) => {\n  const props = computed(() => omitProps(_props, []));\n  return () => {\n    return <nav aria-label=\"breadcrumb\" data-slot=\"breadcrumb\" {...domProps(props.value)}>{_slots.default?.()}</nav>;\n  };\n});\nconst BreadcrumbList = defineUi<UI.ComponentProps<\"ol\">>(\"BreadcrumbList\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <ol data-slot=\"breadcrumb-list\" class={cn(\"flex flex-wrap items-center gap-1.5 font-hand text-base leading-6 break-words text-muted-foreground sm:gap-2\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</ol>;\n  };\n});\nconst BreadcrumbItem = defineUi<UI.ComponentProps<\"li\">>(\"BreadcrumbItem\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <li data-slot=\"breadcrumb-item\" class={cn(\"inline-flex items-center gap-1.5\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</li>;\n  };\n});\nconst BreadcrumbLink = defineUi<UI.ComponentProps<\"a\"> & {\n  asChild?: boolean;\n}>(\"BreadcrumbLink\", [\"asChild\", \"class\"], (_props, {\n  slots: _slots\n}) => {\n  const asChild = computed(() => _props[\"asChild\"]);\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"asChild\", \"class\"]));\n  const Comp = computed(() => jsxTag(asChild.value ? Slot.Root : \"a\" as const));\n  return () => {\n    return <Comp.value data-slot=\"breadcrumb-link\" class={cn(\"-mx-1 px-1 transition-colors hover:ll-swipe focus-visible:ll-swipe\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</Comp.value>;\n  };\n});\nconst BreadcrumbPage = defineUi<UI.ComponentProps<\"span\"> & {\n  seed?: string | number;\n}>(\"BreadcrumbPage\", [\"class\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"class\", \"seed\", \"ref\", \"children\"]));\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: breadcrumbPageRecipe,\n    params: {},\n    kind: \"crumb\" as const,\n    seed: seed.value,\n    still: true\n  }));\n  return () => {\n    return <span data-slot=\"breadcrumb-page\" role=\"link\" aria-disabled=\"true\" aria-current=\"page\" ref={useMergedRef<HTMLSpanElement>(hostRef, ref.value)} {...domProps(node.value ? hostProps.value : {})} class={cn(\"relative isolate inline-block px-0.5 pb-1 font-bold text-foreground\", className.value)} {...domProps(props.value)}>\r\n      {node.value}\r\n      {readSlot(_slots.default)}\r\n    </span>;\n  };\n});\nconst BreadcrumbSeparator = defineUi<UI.ComponentProps<\"li\">>(\"BreadcrumbSeparator\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const children = renderValue(() => readSlot(_slots.default));\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"children\", \"class\"]));\n  return () => {\n    return <li data-slot=\"breadcrumb-separator\" role=\"presentation\" aria-hidden=\"true\" class={cn(\"text-pencil-mark [&>svg:not(.absolute):not([class*='size-'])]:size-4\", className.value)} {...domProps(props.value)}>\r\n      {readSlot(_slots.default) ?? <Icon name=\"slash\" size={16} />}\r\n    </li>;\n  };\n});\nconst BreadcrumbEllipsis = defineUi<UI.ComponentProps<\"span\">>(\"BreadcrumbEllipsis\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <span data-slot=\"breadcrumb-ellipsis\" role=\"presentation\" aria-hidden=\"true\" class={cn(\"flex size-9 items-center justify-center\", className.value)} {...domProps(props.value)}>\r\n      <Icon name=\"ellipsis\" size={16} />\r\n      <span class=\"sr-only\">More</span>\r\n    </span>;\n  };\n});\nexport { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/breadcrumb-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/breadcrumb-ink.ts",
+      "content": "import { underline } from '@/lib/ink/shapes'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\n\r\nexport const breadcrumbPageRecipe = defineRecipe<Record<string, never>>({\r\n  id: 'breadcrumb-page',\r\n  kind: 'crumb',\r\n  layers: ['rest'],\r\n  pad: 8,\r\n  draw(ink, { w, h }, _p, ctx) {\r\n    ink.layer('rest', () => {\r\n      if (ctx.calm) underline(ink, 1, h - 5, w - 2, { kind: 'single', pen: 'pencil.fine' })\r\n      else underline(ink, 1, h - 8, w - 2, { kind: 'double', pen: 'blue.fine', opts: { width: 1.1 } })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "breadcrumb",
+    "related": [
+      "pagination",
+      "navigation-menu",
+      "dropdown-menu",
+      "tabs"
+    ],
+    "a11y": [
+      "Landmark and list semantics as in the WAI-ARIA breadcrumb pattern: `nav` labeled \"breadcrumb\" holding an ordered list; the current page carries `aria-current=\"page\"` (and, as upstream, `role=\"link\"` with `aria-disabled` since it goes nowhere).",
+      "Separators and the ellipsis glyph are hidden from assistive technology; the ellipsis keeps an `sr-only` \"More\", and the button you wrap it in needs its own name (\"Toggle menu\").",
+      "The underline and the highlighter are decoration with no pointer events and never move the text. Links keep the theme's focus ring; the current page is bold and underlined, so it does not depend on color."
+    ],
+    "usage": "import {\n  Breadcrumb,\n  BreadcrumbItem,\n  BreadcrumbLink,\n  BreadcrumbList,\n  BreadcrumbPage,\n  BreadcrumbSeparator,\n} from \"@/components/ui/breadcrumb\"\n\nexport function Example() {\n  return (\n    <Breadcrumb>\n      <BreadcrumbList>\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"/\">Home</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbLink href=\"/components\">Components</BreadcrumbLink>\n        </BreadcrumbItem>\n        <BreadcrumbSeparator />\n        <BreadcrumbItem>\n          <BreadcrumbPage>Breadcrumb</BreadcrumbPage>\n        </BreadcrumbItem>\n      </BreadcrumbList>\n    </Breadcrumb>\n  )\n}",
+    "parts": [
+      "Breadcrumb",
+      "BreadcrumbList",
+      "BreadcrumbItem",
+      "BreadcrumbLink",
+      "BreadcrumbPage",
+      "BreadcrumbSeparator",
+      "BreadcrumbEllipsis"
+    ]
+  }
+}

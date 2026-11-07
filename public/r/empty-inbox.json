@@ -1,0 +1,42 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "empty-inbox",
+  "type": "registry:block",
+  "title": "Empty inbox",
+  "description": "A taped inbox card with three filters and an empty state under each: inbox zero with Stubby celebrating beside a hand-circled 0, all quiet, and nothing starred. Looks right on paper or on the desk.",
+  "categories": [
+    "feedback"
+  ],
+  "registryDependencies": [
+    "button",
+    "card",
+    "circled",
+    "empty",
+    "icon",
+    "looseleaf-theme",
+    "mascot",
+    "sticker",
+    "tabs"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/empty-inbox/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/empty-inbox/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, useId, shallowRef } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from \"@/components/ui/card\";\nimport { Circled } from \"@/components/ui/circled\";\nimport { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from \"@/components/ui/empty\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { Mascot } from \"@/components/ui/mascot\";\nimport { Sticker } from \"@/components/ui/sticker\";\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from \"@/components/ui/tabs\";\ntype EmptyInboxProps = {\n  onCompose?: () => void;\n  onRefresh?: () => void;\n};\nconst EmptyInbox = defineUi<EmptyInboxProps>(\"EmptyInbox\", [\"onCompose\", \"onRefresh\"], (_props, {\n  slots: _slots\n}) => {\n  const onCompose = computed(() => _props[\"onCompose\"]);\n  const onRefresh = computed(() => _props[\"onRefresh\"]);\n  const titleId = useId();\n  const checks = shallowRef(initialState(0));\n  const setChecks = stateSetter(checks);\n  return () => {\n    return <section aria-labelledby={titleId} class=\"@container w-full\">\r\n      <div class=\"px-7 py-10 @xl:px-8 @xl:py-14\">\r\n        <Card tape=\"top\" tapeKind=\"washi-dots\" seed=\"empty-inbox\" class=\"mx-auto max-w-2xl\">\r\n          <CardHeader>\r\n            <CardTitle>\r\n              <h2 id={titleId}>Inbox</h2>\r\n            </CardTitle>\r\n            <CardDescription role=\"status\">{checks.value === 0 ? \"Checked just now\" as const : \"Checked again. Still nothing new.\" as const}</CardDescription>\r\n            <CardAction>\r\n              <Button type=\"button\" variant=\"ghost\" size=\"icon-sm\" aria-label=\"Check for new mail\" onClick={() => {\n                setChecks(n => n + 1);\n                onRefresh.value?.();\n              }}>\r\n                <Icon name=\"rotate-cw\" />\r\n              </Button>\r\n            </CardAction>\r\n          </CardHeader>\r\n\r\n          <CardContent>\r\n            <Tabs defaultValue=\"all\" class=\"gap-2\">\r\n              <TabsList variant=\"line\" aria-label=\"Filter mail\">\r\n                <TabsTrigger value=\"all\">All mail</TabsTrigger>\r\n                <TabsTrigger value=\"unread\">Unread</TabsTrigger>\r\n                <TabsTrigger value=\"starred\">Starred</TabsTrigger>\r\n              </TabsList>\r\n\r\n              <TabsContent value=\"all\">\r\n                <Empty>\r\n                  <EmptyHeader>\r\n                    <EmptyMedia class=\"mb-1 gap-1\">\r\n                      <Circled tone=\"red\" weight=\"brush\" seed=\"inbox-zero\" class=\"mx-2 px-1 font-script text-5xl leading-none font-bold\" aria-hidden=\"true\">\r\n                        0\r\n                      </Circled>\r\n                      <Mascot pose=\"celebrate\" size={112} />\r\n                      <Sticker name=\"done\" size={50} rotate={9} class=\"-ms-3 mt-8\" />\r\n                    </EmptyMedia>\r\n                    <EmptyTitle>Inbox zero</EmptyTitle>\r\n                    <EmptyDescription>You have read everything. Go stretch, or put the kettle on.</EmptyDescription>\r\n                  </EmptyHeader>\r\n                  <EmptyContent>\r\n                    <div class=\"flex flex-wrap items-center justify-center gap-x-3 gap-y-3\">\r\n                      <Button type=\"button\" onClick={onCompose.value}>\r\n                        <Icon name=\"pencil\" />\r\n                        Write a message\r\n                      </Button>\r\n                      <Button asChild variant=\"ghost\">\r\n                        <a href=\"#archive\">Visit the archive</a>\r\n                      </Button>\r\n                    </div>\r\n                  </EmptyContent>\r\n                </Empty>\r\n              </TabsContent>\r\n\r\n              <TabsContent value=\"unread\">\r\n                <Empty>\r\n                  <EmptyHeader>\r\n                    <EmptyMedia pose=\"sleep\" size={124} />\r\n                    <EmptyTitle>All quiet</EmptyTitle>\r\n                    <EmptyDescription>Nothing unread. Enjoy it while it lasts.</EmptyDescription>\r\n                  </EmptyHeader>\r\n                </Empty>\r\n              </TabsContent>\r\n\r\n              <TabsContent value=\"starred\">\r\n                <Empty>\r\n                  <EmptyHeader>\r\n                    <EmptyMedia pose=\"peek\" size={124} />\r\n                    <EmptyTitle>Nothing starred yet</EmptyTitle>\r\n                    <EmptyDescription>Star a message to keep it close. It will wait for you here.</EmptyDescription>\r\n                  </EmptyHeader>\r\n                </Empty>\r\n              </TabsContent>\r\n            </Tabs>\r\n          </CardContent>\r\n        </Card>\r\n      </div>\r\n    </section>;\n  };\n});\nexport default EmptyInbox;\nexport type { EmptyInboxProps };\n"
+    }
+  ],
+  "docs": "Installed the \"Empty inbox\" block into your components directory under blocks/empty-inbox/.\nImport it: import EmptyInbox from \"<your components alias>/blocks/empty-inbox/page\"",
+  "meta": {
+    "tags": [
+      "empty state",
+      "inbox",
+      "stubby",
+      "tabs"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "progress",
+  "type": "registry:ui",
+  "title": "Progress",
+  "description": "A bar somebody hatched in pencil and is coloring in with a marker. The marker is one full-length pass revealed by a CSS clip up to the value, so changing the value is a transition, not a redraw. Without a value it becomes a scribble sliding across. Reka UI Progress underneath.",
+  "categories": [
+    "Feedback"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/progress.tsx",
+      "type": "registry:ui",
+      "target": "@ui/progress.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, proxyRefs } from \"vue\";\nimport { Progress as ProgressPrimitive } from \"@/lib/primitives\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { progressFillRecipe, progressRecipe, type ProgressTone } from \"@/lib/ink/recipes/progress-ink\";\nimport { cn } from \"@/lib/utils\";\nconst css = \"@keyframes ll-progress-slide{from{clip-path:inset(-12px 100% -12px -40%)}to{clip-path:inset(-12px -40% -12px 100%)}}\" + \"@keyframes ll-progress-slide-rtl{from{clip-path:inset(-12px -40% -12px 100%)}to{clip-path:inset(-12px 100% -12px -40%)}}\";\nconst sizes = {\n  sm: \"h-3\" as const,\n  default: \"h-4\" as const,\n  lg: \"h-5\" as const\n} as const;\nconst Progress = defineUi<UI.ComponentProps<typeof ProgressPrimitive.Root> & {\n  size?: keyof typeof sizes;\n  tone?: ProgressTone;\n  seed?: string | number;\n}>(\"Progress\", [\"class\", \"value\", \"max\", \"size\", \"tone\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const value = computed(() => _props[\"value\"]);\n  const max = computed(() => _props[\"max\"] === undefined ? 100 : _props[\"max\"]);\n  const size = computed(() => _props[\"size\"] === undefined ? \"default\" as const : _props[\"size\"]);\n  const tone = computed(() => _props[\"tone\"] === undefined ? \"marker\" as const : _props[\"tone\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"value\", \"max\", \"size\", \"tone\", \"seed\", \"ref\"]));\n  const safeMax = computed(() => Number.isFinite(max.value) && max.value > 0 ? max.value : 100);\n  const indeterminate = computed(() => typeof value.value !== \"number\" || Number.isNaN(value.value));\n  const clamped = computed(() => indeterminate.value ? null : Math.min(safeMax.value, Math.max(0, value.value)));\n  const pct = computed(() => clamped.value === null ? 0 : clamped.value / safeMax.value * 100);\n  const _rootCore = useInk(() => ({\n    recipe: progressRecipe,\n    params: {},\n    kind: \"progress\" as const,\n    seed: seed.value,\n    still: true\n  }));\n  const root = computed(() => proxyRefs(_rootCore));\n  const _fillCore = useInk(() => ({\n    recipe: progressFillRecipe,\n    params: {\n      tone: tone.value,\n      indeterminate: indeterminate.value\n    },\n    kind: \"progress\" as const,\n    seed: root.value.seed ? `${root.value.seed}:fill` : undefined,\n    still: true\n  }));\n  const fill = computed(() => proxyRefs(_fillCore));\n  return () => {\n    return <>\r\n      <style>\r\n        {css}\r\n      </style>\r\n      <ProgressPrimitive.Root data-slot=\"progress\" ref={useMergedRef<HTMLDivElement>(root.value.hostRef, ref.value)} {...domProps(root.value.hostProps)} value={clamped.value} max={safeMax.value} class={cn(\"relative isolate w-full bg-paper-shade outline-hidden data-ink-ready:bg-transparent forced-colors:border forced-colors:border-[ButtonText]\", sizes[size.value], className.value)} {...domProps(props.value)}>\r\n        {root.value.node}\r\n        <ProgressPrimitive.Indicator data-slot=\"progress-indicator\" ref={fill.value.hostRef} {...domProps(fill.value.hostProps)} style={cssStyle(indeterminate.value ? undefined : {\n          \"--ll-progress\": pct.value\n        } as UI.CSSProperties)} class={cn(\"absolute inset-0 isolate bg-marker/70 outline-hidden data-ink-ready:bg-transparent forced-colors:bg-[Highlight]\", \"[clip-path:inset(-12px_calc(100%_-_var(--ll-progress,100)_*_1%)_-12px_0)] rtl:[clip-path:inset(-12px_0_-12px_calc(100%_-_var(--ll-progress,100)_*_1%))]\", \"transition-[clip-path] duration-(--ll-dur-sheet) ease-out\", \"data-[state=indeterminate]:animate-[ll-progress-slide_1.6s_linear_infinite] rtl:data-[state=indeterminate]:animate-[ll-progress-slide-rtl_1.6s_linear_infinite]\", \"motion-reduce:data-[state=indeterminate]:animate-none motion-reduce:data-[state=indeterminate]:[clip-path:inset(-12px_30%_-12px_30%)]\", \"[[data-motion=reduced]_&]:data-[state=indeterminate]:animate-none [[data-motion=reduced]_&]:data-[state=indeterminate]:[clip-path:inset(-12px_30%_-12px_30%)]\")}>\r\n          {fill.value.node}\r\n        </ProgressPrimitive.Indicator>\r\n      </ProgressPrimitive.Root>\r\n    </>;\n  };\n});\nexport { Progress };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/progress-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/progress-ink.ts",
+      "content": "import { solidFill } from '@/lib/ink/fills'\r\nimport { roundRectPoly } from '@/lib/ink/geom'\r\nimport { clamp } from '@/lib/ink/rng'\r\nimport { box } from '@/lib/ink/shapes'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\nimport type { PenName, Pt } from '@/lib/ink/types'\r\n\r\nexport const progressToneList = ['marker', 'hi', 'green', 'blue'] as const\r\nexport type ProgressTone = (typeof progressToneList)[number]\r\n\r\nconst TONE_PEN: Record<ProgressTone, PenName> = { marker: 'terracotta', hi: 'hi', green: 'm_grass', blue: 'm_sky' }\r\n\r\nexport const progressRecipe = defineRecipe<Record<string, never>>({\r\n  id: 'progress',\r\n  kind: 'progress',\r\n  layers: ['rest'],\r\n  pad: 12,\r\n  draw(ink, { w, h }, _p, ctx) {\r\n    const r = clamp(h * 0.22, 1.5, 4)\r\n    const body = roundRectPoly(1.2, 1.2, w - 2.4, h - 2.4, r)\r\n    ink.layer('rest', () => {\r\n      ink.poly('under', body, 'slip', 0.85)\r\n      const gap = clamp(w / 60, ctx.calm ? 5.5 : 4, 40)\r\n      void gap\r\n      solidFill(ink, body, 'paper-shade', { alpha: 1, material: 'wash' })\r\n      if (ctx.calm) box(ink, 0, 0, w, h, { pen: 'pencil.fine', corner: r })\r\n      else box(ink, 0, 0, w, h, { pen: 'ink', corner: r, opts: { width: 1.05, simple: w > 240 } })\r\n    })\r\n  },\r\n})\r\n\r\nexport interface ProgressFillParams {\r\n  tone?: ProgressTone\r\n  indeterminate?: boolean\r\n}\r\n\r\nexport const progressFillRecipe = defineRecipe<ProgressFillParams>({\r\n  id: 'progress-fill',\r\n  kind: 'progress',\r\n  layers: ['rest'],\r\n  pad: 12,\r\n  draw(ink, { w, h }, { tone = 'marker', indeterminate }, ctx) {\r\n    ink.layer('rest', () => {\r\n      if (indeterminate) {\r\n        const rng = ink.next('scribble')\r\n        const top = h * 0.16\r\n        const bot = h * 0.84\r\n        const step = clamp(w / 40, h * 0.75, 16)\r\n        const pts: Pt[] = [[-1, h / 2]]\r\n        for (let x = 2, up = false; x < w - 1; x += step, up = !up) pts.push([Math.min(x + rng.range(-1, 1), w - 1), (up ? top : bot) + rng.range(-0.8, 0.8)])\r\n        pts.push([w + 0.5, h / 2])\r\n        ink.stroke(pts, TONE_PEN[tone], { width: tone === 'hi' ? 0.36 : tone === 'blue' ? 1.4 : clamp(h * 0.07, 0.5, 0.9), alpha: 0.92, start: 'pool', end: 'pool', wobble: 0.5, poly: true, round: 2, simple: w > 160 || ctx.calm })\r\n        return\r\n      }\r\n      const base = tone === 'hi' ? 14 : 9\r\n      const width = clamp((h - 3.4) / base, 0.3, 2.2)\r\n      const mid = h / 2\r\n      const long = w > 300\r\n      void width\r\n      void mid\r\n      void long\r\n      const color = tone === 'hi' ? 'hi' : tone === 'green' ? 'grass' : tone === 'blue' ? 'sky' : 'marker'\r\n      ink.part('fill', () => {\r\n        solidFill(ink, roundRectPoly(1.6, 1.6, w - 3.2, h - 3.2, clamp(h * 0.22, 1.5, 4)), color, { alpha: 0.95 })\r\n        return { dx: 0, dy: 0 }\r\n      })\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "progress",
+    "related": [
+      "slider",
+      "spinner",
+      "skeleton",
+      "field"
+    ],
+    "a11y": [
+      "role=\"progressbar\" with aria-valuemin, aria-valuemax and aria-valuenow (omitted while indeterminate); Reka UI also sets data-state, data-value and data-max. Give it a name with aria-label or aria-labelledby; use aria-valuetext for \"Step 2 of 5\" style text.",
+      "It is a status display, not a control: not focusable. Put the percentage in text next to it if people need the number; screen readers get it from aria-valuenow.",
+      "The drawing is aria-hidden and pointer-events: none. The hatch shows how much is left even when the marker's hue is hard to tell; in Windows high contrast the ink is replaced by a real border and a Highlight fill.",
+      "Reduced motion (the OS setting or data-motion=\"reduced\"): value changes jump instead of gliding and the indeterminate scribble stops, sitting still in the middle of the bar.",
+      "Right-to-left: the marker grows from the right and the indeterminate window slides right to left."
+    ],
+    "usage": "import { Progress } from \"@/components/ui/progress\"\n\nexport function Example() {\n  return <Progress value={66} class=\"w-[60%]\" aria-label=\"Chapter progress\" />\n}",
+    "parts": [
+      "Progress"
+    ]
+  }
+}

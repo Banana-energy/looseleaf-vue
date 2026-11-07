@@ -1,0 +1,50 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "collapsible",
+  "type": "registry:ui",
+  "title": "Collapsible",
+  "description": "One panel that folds away behind a trigger. Minimal by design: the panel slides, and if you ask for it, writes a margin brace beside its text. The chevron indicator turns over the same way the accordion's does.",
+  "categories": [
+    "Layout"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "icon",
+    "ink",
+    "ink-recipes",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/collapsible.tsx",
+      "type": "registry:ui",
+      "target": "@ui/collapsible.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Collapsible as CollapsiblePrimitive } from \"@/lib/primitives\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { useInk } from \"@/lib/ink/vue\";\nimport { MARGIN_BRACKET_DRAW, marginBracketRecipe, type MarginBracketParams } from \"@/lib/ink/recipes/margin-bracket-ink\";\nimport { markTouched } from \"@/lib/ink/recipes/draw-on-ink\";\nimport { cn } from \"@/lib/utils\";\nconst FOLD = `@keyframes ll-collapsible-down { from { height: 0; clip-path: inset(0); } to { height: var(--radix-collapsible-content-height); clip-path: inset(0); } }\n@keyframes ll-collapsible-up { from { height: var(--radix-collapsible-content-height); clip-path: inset(0); } to { height: 0; clip-path: inset(0); } }`;\nconst Collapsible = defineUi<UI.ComponentProps<typeof CollapsiblePrimitive.Root>>(\"Collapsible\", [\"class\", \"onClickCapture\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const onClickCapture = computed(() => _props[\"onClickCapture\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"onClickCapture\"]));\n  return () => {\n    return <>\r\n      <style>\r\n        {FOLD}\r\n      </style>\r\n      <CollapsiblePrimitive.Root data-slot=\"collapsible\" class={cn(\"group/collapsible\", className.value)} onClickCapture={e => {\n        markTouched(e);\n        onClickCapture.value?.(e);\n      }} {...domProps(props.value)}>{_slots.default?.()}</CollapsiblePrimitive.Root>\r\n    </>;\n  };\n});\nconst CollapsibleTrigger = defineUi<UI.ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>>(\"CollapsibleTrigger\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <CollapsiblePrimitive.CollapsibleTrigger data-slot=\"collapsible-trigger\" class={cn(\"group/collapsible-trigger\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</CollapsiblePrimitive.CollapsibleTrigger>;\n  };\n});\nconst Bracket = defineUi<{\n  kind: MarginBracketParams[\"kind\"];\n}>(\"Bracket\", [\"kind\"], (_props, {\n  slots: _slots\n}) => {\n  const kind = computed(() => _props[\"kind\"]);\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: marginBracketRecipe,\n    params: {\n      kind: kind.value\n    },\n    kind: \"bracket\" as const,\n    still: true\n  }));\n  return () => {\n    return <span data-slot=\"collapsible-bracket\" aria-hidden=\"true\" ref={hostRef} {...domProps(node.value ? hostProps.value : {})} class={cn(\"pointer-events-none absolute inset-y-0 start-0 block w-3.5 forced-colors:hidden\", MARGIN_BRACKET_DRAW)}>\r\n      {node.value}\r\n    </span>;\n  };\n});\nconst CollapsibleContent = defineUi<UI.ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent> & {\n  bracket?: MarginBracketParams[\"kind\"] | false;\n}>(\"CollapsibleContent\", [\"class\", \"bracket\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const bracket = computed(() => _props[\"bracket\"] === undefined ? false : _props[\"bracket\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"children\", \"bracket\"]));\n  return () => {\n    return <CollapsiblePrimitive.CollapsibleContent data-slot=\"collapsible-content\" class={cn(\"group/collapsible-content data-[state=closed]:animate-[ll-collapsible-up_var(--ll-dur-sheet)_var(--ll-ease-out)] data-[state=open]:animate-[ll-collapsible-down_var(--ll-dur-sheet)_var(--ll-ease-out)]\", className.value)} {...domProps(props.value)}>\r\n      {bracket.value ? <div class=\"relative ps-5 group-data-[state=open]/collapsible-content:animate-soak\">\r\n          <Bracket kind={bracket.value} />\r\n          {readSlot(_slots.default)}\r\n        </div> : readSlot(_slots.default)}\r\n    </CollapsiblePrimitive.CollapsibleContent>;\n  };\n});\nconst CollapsibleIndicator = defineUi<Omit<UI.ComponentProps<typeof Icon>, \"name\">>(\"CollapsibleIndicator\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <Icon data-slot=\"collapsible-indicator\" name=\"chevron-down\" size={16} class={cn(\"transition-transform duration-(--ll-dur-sheet) ease-settle group-data-[state=open]/collapsible-trigger:rotate-180\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</Icon>;\n  };\n});\nexport { Collapsible, CollapsibleTrigger, CollapsibleContent, CollapsibleIndicator };\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "collapsible",
+    "related": [
+      "accordion",
+      "card",
+      "button"
+    ],
+    "a11y": [
+      "The trigger is a button with `aria-expanded` and `aria-controls`; Enter and Space toggle it. Closed content is not rendered.",
+      "Give the trigger a name: visible text, or a `sr-only` span when it is an icon button.",
+      "The brace and the chevron are decoration (aria-hidden); state is told by aria-expanded.",
+      "Reduced motion opens and closes the panel at once."
+    ],
+    "usage": "import { Button } from \"@/components/ui/button\"\nimport { Collapsible, CollapsibleContent, CollapsibleIndicator, CollapsibleTrigger } from \"@/components/ui/collapsible\"\n\nexport function Example() {\n  return (\n    <Collapsible class=\"w-[350px]\">\n      <CollapsibleTrigger asChild>\n        <Button variant=\"link\">\n          Show details\n          <CollapsibleIndicator />\n        </Button>\n      </CollapsibleTrigger>\n      <CollapsibleContent bracket=\"curly\">Folded away until you ask.</CollapsibleContent>\n    </Collapsible>\n  )\n}",
+    "parts": [
+      "Collapsible",
+      "CollapsibleTrigger",
+      "CollapsibleContent",
+      "CollapsibleIndicator"
+    ]
+  }
+}

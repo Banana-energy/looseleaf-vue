@@ -1,0 +1,38 @@
+// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。
+import * as UI from "@/lib/types";
+import { defineUi, omitProps, domProps, elementRef, jsxTag } from "@/lib/component";
+import { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from "@/lib/composables";
+import { Children, cloneElement, createElement, isValidElement } from "@/lib/vnode";
+import { cssStyle } from "@/lib/css";
+import { computed } from "vue";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item";
+export const meta = {
+  title: "Icon" as const,
+  description: "shadcn's `item-icon`: `ItemMedia variant=\"icon\"` sets a glyph in a square of its own at the start of the row." as const,
+  layout: "center" as const
+};
+const Example = defineUi<{}>("Example", [], (_props, {
+  slots: _slots
+}) => {
+  return () => {
+    return <div class="flex w-full max-w-lg flex-col gap-6">
+      <Item variant="outline">
+        <ItemMedia variant="icon">
+          <Icon name="shield-alert" />
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle>Security Alert</ItemTitle>
+          <ItemDescription>New login detected from unknown device.</ItemDescription>
+        </ItemContent>
+        <ItemActions>
+          <Button size="sm" variant="outline">
+            Review
+          </Button>
+        </ItemActions>
+      </Item>
+    </div>;
+  };
+});
+export default Example;

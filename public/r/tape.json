@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "tape",
+  "type": "registry:ui",
+  "title": "Tape",
+  "description": "A strip of masking, washi, kraft or cellophane tape, drawn: translucent, with slit lines along its edges, crinkles and torn or pinked ends. Stick it across a corner, use it as a label, or let Paper place it for you.",
+  "categories": [
+    "Paper"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-paper",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/tape.tsx",
+      "type": "registry:ui",
+      "target": "@ui/tape.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { dropShadow, tiltFor } from \"@/lib/ink/paper/shadows\";\nimport { tape, type TapeEnds, type TapeKind } from \"@/lib/ink/paper/props\";\nimport { PropSvg } from \"@/lib/ink/paper/prop-svg\";\nimport { useDensity, useInkSeed, useInkTier } from \"@/lib/ink/vue\";\nimport { cn } from \"@/lib/utils\";\ntype TapeProps = Omit<UI.ComponentProps<\"svg\">, \"children\"> & {\n  kind?: TapeKind;\n  length?: number;\n  height?: number;\n  angle?: number;\n  ends?: TapeEnds;\n  color?: \"tomato\" | \"tangerine\" | \"lemon\" | \"grass\" | \"teal\" | \"sky\" | \"grape\" | \"bubblegum\";\n  seed?: string | number;\n};\nconst Tape = defineUi<TapeProps>(\"Tape\", [\"kind\", \"length\", \"height\", \"angle\", \"ends\", \"color\", \"seed\", \"class\", \"style\"], (_props, {\n  slots: _slots\n}) => {\n  const kind = computed(() => _props[\"kind\"] === undefined ? \"masking\" as const : _props[\"kind\"]);\n  const length = computed(() => _props[\"length\"] === undefined ? 72 : _props[\"length\"]);\n  const height = computed(() => _props[\"height\"] === undefined ? 22 : _props[\"height\"]);\n  const angle = computed(() => _props[\"angle\"]);\n  const ends = computed(() => _props[\"ends\"]);\n  const color = computed(() => _props[\"color\"]);\n  const seedProp = computed(() => _props[\"seed\"]);\n  const className = computed(() => _props[\"class\"]);\n  const style = computed(() => _props[\"style\"]);\n  const props = computed(() => omitProps(_props, [\"kind\", \"length\", \"height\", \"angle\", \"ends\", \"color\", \"seed\", \"class\", \"style\"]));\n  const seed = useInkSeed(() => seedProp.value);\n  const tier = useInkTier();\n  const _nestedHook0 = useDensity();\n  const calm = computed(() => _nestedHook0.value === \"calm\");\n  const res = computed(() => tape(`${seed.value}|tape`, {\n    kind: kind.value,\n    length: length.value,\n    height: height.value,\n    ends: ends.value,\n    color: color.value,\n    tier: tier.value,\n    calm: calm.value\n  }));\n  const deg = computed(() => angle.value ?? tiltFor(`${seed.value}|tape`, 4));\n  return () => {\n    return <PropSvg res={res.value} kind=\"tape\" data-slot=\"tape\" data-kind={kind.value} class={cn(\"pointer-events-none relative z-(--ll-z-prop) block shrink-0\", className.value)} style={cssStyle({\n      rotate: `clamp(calc(var(--ll-tilt-max) * -2.5), ${deg.value}deg, calc(var(--ll-tilt-max) * 2.5))`,\n      filter: dropShadow(\"tape\"),\n      ...style.value\n    })} {...domProps(props.value)}>{_slots.default?.()}</PropSvg>;\n  };\n});\nexport { Tape };\nexport type { TapeProps };\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "paper",
+      "card",
+      "sticker"
+    ],
+    "a11y": [
+      "Tape is decoration: aria-hidden, focusable=false, pointer-events: none. Never put the only copy of information on it; a label written on tape is real text next to (not inside) the svg.",
+      "Tape keeps its colors in Windows high contrast (it is an intrinsic ink kind).",
+      "Its tilt collapses to zero in calm density."
+    ],
+    "usage": "import { Tape } from \"@/components/ui/tape\"\n\n<div class=\"relative w-64 p-6\">\n  <Tape kind=\"washi-dots\" class=\"absolute -top-3 left-6\" />\n  …content\n</div>",
+    "parts": [
+      "Tape"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

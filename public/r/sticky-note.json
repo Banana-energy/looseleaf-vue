@@ -1,0 +1,58 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "sticky-note",
+  "type": "registry:ui",
+  "title": "Sticky note",
+  "description": "A square of colored paper with a gum band, turned a little more than a page. Five pads, any size, written in marker. It can curl a corner, hang from a pin or a strip of tape, and grow a tick box that is ticked with a felt pen.",
+  "categories": [
+    "Paper"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-paper",
+    "ink-recipes",
+    "looseleaf-theme",
+    "paper",
+    "use-paper-object"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/sticky-note.tsx",
+      "type": "registry:ui",
+      "target": "@ui/sticky-note.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, shallowRef } from \"vue\";\nimport { Paper, type PaperProps } from \"@/components/ui/paper\";\nimport { usePaperDecor } from \"@/hooks/use-paper-object\";\nimport { stickyNoteRecipe } from \"@/lib/ink/recipes/sticky-note-ink\";\nimport { REVEAL_DASH, REVEAL_WHEN_CHECKED } from \"@/lib/ink/recipes/draw-on-ink\";\nimport { cn } from \"@/lib/utils\";\ntype StickyColor = \"yellow\" | \"green\" | \"orange\" | \"pink\" | \"blue\";\ntype StickyNoteProps = Omit<PaperProps, \"stock\"> & {\n  color?: StickyColor;\n  done?: boolean;\n  onDoneChange?: (done: boolean) => void;\n  doneLabel?: string;\n};\nconst StickyNote = defineUi<StickyNoteProps>(\"StickyNote\", [\"class\", \"color\", \"done\", \"onDoneChange\", \"doneLabel\", \"seed\", \"tilt\", \"size\", \"style\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const ref = computed(() => _props[\"ref\"]);\n  const color = computed(() => _props[\"color\"] === undefined ? \"yellow\" as const : _props[\"color\"]);\n  const done = computed(() => _props[\"done\"]);\n  const onDoneChange = computed(() => _props[\"onDoneChange\"]);\n  const doneLabel = computed(() => _props[\"doneLabel\"] === undefined ? \"Done\" as const : _props[\"doneLabel\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const tilt = computed(() => _props[\"tilt\"]);\n  const size = computed(() => _props[\"size\"]);\n  const style = computed(() => _props[\"style\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"children\", \"ref\", \"color\", \"done\", \"onDoneChange\", \"doneLabel\", \"seed\", \"tilt\", \"size\", \"style\"]));\n  const tickable = computed(() => done.value !== undefined);\n  const o = usePaperDecor(() => ({\n    recipe: stickyNoteRecipe,\n    params: {},\n    kind: \"sticky\" as const,\n    ref: ref.value,\n    seed: seed.value,\n    tilt: tilt.value,\n    tiltMax: 1.6,\n    size: size.value,\n    enabled: tickable.value\n  }));\n  const el = shallowRef<HTMLElement | null | null>(null);\n  const seen = shallowRef(done.value);\n  watchDependencies(() => {\n    if (seen.value === done.value) return;\n    seen.value = done.value;\n    el.value?.setAttribute(\"data-touched\", \"\");\n  }, () => [done.value], false);\n  const setRef = (node: HTMLElement | null) => {\n    el.value = node;\n    return (o.value.paper.ref as UI.RefCallback<HTMLElement>)(node);\n  };\n  return () => {\n    return <Paper data-slot=\"sticky-note\" data-color={color.value} data-state={done.value !== undefined ? done.value ? \"checked\" as const : \"unchecked\" as const : undefined} stock={`sticky-${color.value}`} size={size.value} {...domProps(o.value.paper)} ref={setRef} {...domProps(props.value)} class={cn(o.value.paper.className, \"flex min-h-40 w-44 flex-col gap-1 px-4 pt-6 pb-4 font-script text-[1.35rem] leading-[1.15] text-ink break-words\", tickable.value && [\"pt-8\", REVEAL_DASH, REVEAL_WHEN_CHECKED, \"data-[state=checked]:[&_[data-slot=sticky-note-content]]:line-through data-[state=checked]:[&_[data-slot=sticky-note-content]]:decoration-1\"], className.value)} style={cssStyle({\n      ...o.value.paper.style,\n      ...style.value\n    })}>\r\n      {o.value.decor}\r\n      {tickable.value && onDoneChange.value ? <button type=\"button\" role=\"checkbox\" aria-checked={!!done.value} aria-label={doneLabel.value} data-slot=\"sticky-note-check\" onClick={() => onDoneChange.value(!done.value)} class=\"absolute end-[3.5px] top-[2.5px] z-(--ll-z-prop) size-8 cursor-pointer rounded-full hover:bg-ink/10\" /> : tickable.value && done.value ? <span class=\"sr-only\">{doneLabel.value}. </span> : null}\r\n      {readSlot(_slots.default)}\r\n    </Paper>;\n  };\n});\nconst StickyNoteTitle = defineUi<UI.ComponentProps<\"div\">>(\"StickyNoteTitle\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"sticky-note-title\" class={cn(\"text-[1.7rem] leading-none font-bold\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst StickyNoteContent = defineUi<UI.ComponentProps<\"div\">>(\"StickyNoteContent\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"sticky-note-content\" class={cn(\"flex-1\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nconst StickyNoteFooter = defineUi<UI.ComponentProps<\"div\">>(\"StickyNoteFooter\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <div data-slot=\"sticky-note-footer\" class={cn(\"mt-auto pt-2 font-hand text-sm text-ink-soft\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</div>;\n  };\n});\nexport { StickyNote, StickyNoteTitle, StickyNoteContent, StickyNoteFooter };\nexport type { StickyNoteProps, StickyColor };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/sticky-note-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/sticky-note-ink.ts",
+      "content": "import { box } from '@/lib/ink/shapes'\r\nimport { checkLines } from '@/lib/ink/shapes'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\nimport { reveal, revealId } from '@/lib/ink/recipes/draw-on-ink'\r\nimport { MIRROR } from '@/lib/ink/recipes/paper-set-ink'\r\n\r\nexport const STICKY_BOX = { size: 17, inset: 11, top: 10 } as const\r\n\r\nexport const stickyNoteRecipe = defineRecipe<Record<string, never>>({\r\n  id: 'sticky-note-decor',\r\n  kind: 'sticky',\r\n  layers: ['rest', 'checked'],\r\n  pad: 6,\r\n  draw(ink, { w, h }, _p, ctx) {\r\n    const s = STICKY_BOX.size\r\n    const x = w - STICKY_BOX.inset - s\r\n    const y = STICKY_BOX.top\r\n    const mirror = ctx.dir === 'rtl'\r\n    const inMirror = (fn: () => void) => (mirror ? ink.group({ transform: MIRROR(w) }, fn) : fn())\r\n    ink.layer('rest', () => inMirror(() => box(ink, x, y, s, s, { pen: 'ink.fine', corner: 2.5, opts: { alpha: 0.6 } })))\r\n    ink.layer('checked', () =>\r\n      inMirror(() => reveal(ink, { id: revealId(ctx.seed, 't'), lines: checkLines(ink.next('tick'), x + 2, y, s + 1), pen: 'greenfelt', box: { w, h }, revealWidth: 7, width: 1.15 })),\r\n    )\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "paper",
+      "tape",
+      "card",
+      "index-card"
+    ],
+    "a11y": [
+      "A note is a plain `div`. Give it `role=\"note\"` or `as`-like semantics through props when it means more (for instance `role=\"group\"` with an `aria-label` in a board of notes).",
+      "The gum band, curl, pin and tape are aria-hidden decoration. The tick box is drawing only unless you pass `onDoneChange`, and then it is a real checkbox (named by `doneLabel`, Space toggles, `aria-checked` follows `done`). A done note without it says \"Done.\" to screen readers through hidden text; either way it is struck through, so meaning never rests on color or the drawing alone.",
+      "Ink on every pad is at least 9:1; struck-through text switches to ink-soft (5.8:1 or better). Tilt is zero in calm density.",
+      "Sticky text is real DOM and wraps at any size (`break-words`), so a note resized by its container never clips."
+    ],
+    "usage": "import { StickyNote, StickyNoteContent, StickyNoteFooter, StickyNoteTitle } from \"@/components/ui/sticky-note\"\n\n<StickyNote color=\"pink\" curl fastener=\"pin\" done={done} onDoneChange={setDone}>\n  <StickyNoteTitle>urgent</StickyNoteTitle>\n  <StickyNoteContent>call mum before six</StickyNoteContent>\n  <StickyNoteFooter>from Ada</StickyNoteFooter>\n</StickyNote>",
+    "parts": [
+      "StickyNote",
+      "StickyNoteTitle",
+      "StickyNoteContent",
+      "StickyNoteFooter"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

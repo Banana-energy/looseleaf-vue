@@ -1,0 +1,55 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "quote",
+  "type": "registry:ui",
+  "title": "Quote",
+  "description": "A pull quote with big hand-drawn quotation marks and an attribution. A real figure, blockquote and figcaption, with marker or felt marks drawn in the gutters: an opening pair at the top, a closing pair at the bottom.",
+  "categories": [
+    "Marks"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-recipes",
+    "looseleaf-theme",
+    "use-mark-ink"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/quote.tsx",
+      "type": "registry:ui",
+      "target": "@ui/quote.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { MARK_REVEAL, useMarkPhase } from \"@/hooks/use-mark-ink\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { quoteRecipe } from \"@/lib/ink/recipes/quote-ink\";\nimport type { MarkPen, MarkWeight } from \"@/lib/ink/recipes/text-marks-ink\";\nimport { cn } from \"@/lib/utils\";\nconst SIZE = {\n  sm: 24,\n  md: 32,\n  lg: 46\n} as const;\nconst PADDING = {\n  sm: \"ps-10 pe-8 py-1\" as const,\n  md: \"ps-[3.25rem] pe-10 py-1.5\" as const,\n  lg: \"ps-[4.75rem] pe-14 py-2\" as const\n} as const;\nconst Quote = defineUi<UI.ComponentProps<\"figure\">>(\"Quote\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <figure data-slot=\"quote\" class={cn(\"m-0 grid w-fit max-w-full content-start gap-2.5 self-start justify-self-start\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</figure>;\n  };\n});\nconst QuoteText = defineUi<UI.ComponentProps<\"blockquote\"> & {\n  size?: keyof typeof SIZE;\n  tone?: MarkPen;\n  weight?: MarkWeight;\n  rule?: boolean;\n  animate?: boolean;\n  show?: boolean;\n  delay?: number;\n  seed?: string | number;\n}>(\"QuoteText\", [\"size\", \"tone\", \"weight\", \"rule\", \"animate\", \"show\", \"delay\", \"seed\", \"class\", \"style\"], (_props, {\n  slots: _slots\n}) => {\n  const size = computed(() => _props[\"size\"] === undefined ? \"md\" as const : _props[\"size\"]);\n  const tone = computed(() => _props[\"tone\"] === undefined ? \"marker\" as const : _props[\"tone\"]);\n  const weight = computed(() => _props[\"weight\"] === undefined ? \"regular\" as const : _props[\"weight\"]);\n  const rule = computed(() => _props[\"rule\"] === undefined ? false : _props[\"rule\"]);\n  const animate = computed(() => _props[\"animate\"] === undefined ? false : _props[\"animate\"]);\n  const show = computed(() => _props[\"show\"] === undefined ? true : _props[\"show\"]);\n  const delay = computed(() => _props[\"delay\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const className = computed(() => _props[\"class\"]);\n  const style = computed(() => _props[\"style\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"size\", \"tone\", \"weight\", \"rule\", \"animate\", \"show\", \"delay\", \"seed\", \"class\", \"style\", \"children\", \"ref\"]));\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: quoteRecipe,\n    params: {\n      tone: tone.value,\n      weight: weight.value,\n      size: SIZE[size.value],\n      rule: rule.value,\n      animate: animate.value\n    },\n    kind: \"quote\" as const,\n    seed: seed.value\n  }));\n  const _hook14 = useMarkPhase(() => ({\n    animate: animate.value,\n    show: show.value\n  }));\n  const phaseRef = computed(() => _hook14.value.phaseRef);\n  const phaseProps = computed(() => _hook14.value.phaseProps);\n  const ready = computed(() => !!node.value && show.value);\n  return () => {\n    return <blockquote data-slot=\"quote-text\" ref={useMergedRef<HTMLElement>(hostRef, phaseRef.value, ref.value as UI.Ref<HTMLElement> | undefined)} {...domProps(ready.value ? hostProps.value : {})} {...domProps(phaseProps.value)} style={cssStyle({\n      ...(animate.value ? {\n        \"--ll-draw-delay\": `${delay.value ?? 0}ms`\n      } as UI.CSSProperties : undefined),\n      ...style.value\n    })} class={cn(\"relative isolate m-0 outline-none font-script text-[26px] leading-[1.3] text-foreground\", PADDING[size.value], !node.value && show.value && !animate.value && \"before:absolute before:start-0 before:top-0 before:font-script before:text-5xl before:text-marker before:content-['\\\\201C']\", \"forced-colors:before:absolute forced-colors:before:start-0 forced-colors:before:top-0 forced-colors:before:font-script forced-colors:before:text-5xl forced-colors:before:content-['\\\\201C']\", animate.value && MARK_REVEAL, className.value)} {...domProps(props.value)}>\r\n      {ready.value ? node.value : null}\r\n      {readSlot(_slots.default)}\r\n    </blockquote>;\n  };\n});\nconst QuoteAttribution = defineUi<UI.ComponentProps<\"figcaption\">>(\"QuoteAttribution\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <figcaption data-slot=\"quote-attribution\" class={cn(\"ps-[3.25rem] font-hand text-sm text-muted-foreground before:content-['—_']\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</figcaption>;\n  };\n});\nexport { Quote, QuoteText, QuoteAttribution };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/quote-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/quote-ink.ts",
+      "content": "import { pen as penSpec } from '@/lib/ink/pens'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\nimport { markRevealId, revealMark } from '@/lib/ink/recipes/mark-reveal-ink'\r\nimport { markPen, type MarkPen, type MarkWeight } from '@/lib/ink/recipes/text-marks-ink'\r\nimport type { Rng } from '@/lib/ink/rng'\r\nimport type { Line, PenName, PenSpec, Pt } from '@/lib/ink/types'\r\nimport { RULER } from '@/lib/ink/shapes'\r\n\r\nexport interface QuoteParams {\r\n  tone: MarkPen\r\n  weight: MarkWeight\r\n  size: number\r\n  rule: boolean\r\n  animate?: boolean\r\n}\r\n\r\nfunction mark(rng: Rng, x: number, y: number, s: number, opening: boolean): Line {\r\n  const j = () => rng.gauss(0, s * 0.012)\r\n  const lean = rng.gauss(0, 0.04)\r\n  const bend = (t: number) => Math.sin(t * Math.PI) * s * 0.09\r\n  const pts: Pt[] = []\r\n  const n = 12\r\n  for (let i = 0; i <= n; i++) {\r\n    const t = i / n\r\n    const px = opening ? 0.66 - 0.54 * t - lean * t : 0.62 - 0.4 * t - lean * t\r\n    const py = opening ? 0.06 + 0.8 * t : 0.14 + 0.78 * t\r\n    pts.push([x + s * px + (opening ? -bend(t) : bend(t) * 0.5) + j(), y + s * py + j()])\r\n  }\r\n  return { pts, o: opening ? { start: 'soft', end: 'pool', wobble: 0.4, speed: 0.8 } : { start: 'pool', end: 'flick', wobble: 0.4, speed: 0.9 } }\r\n}\r\n\r\nexport const quoteRecipe = defineRecipe<QuoteParams>({\r\n  id: 'quote',\r\n  kind: 'quote',\r\n  layers: ['rest'],\r\n  pad: 14,\r\n  draw(ink, { w, h }, p, ctx) {\r\n    const s = p.size\r\n    const c = s * 0.72\r\n    const pen: PenName | PenSpec = p.tone === 'marker' ? penSpec('ink.brush', { color: 'marker', alpha: 0.88 }) : markPen(p.tone, 'brush', 18).pen\r\n    const rng = ink.next('quote')\r\n    const lines: Line[] = [\r\n      mark(rng.fork('o1'), 2, 2, s, true),\r\n      mark(rng.fork('o2'), 2 + s * 0.46, 2, s, true),\r\n      mark(rng.fork('c1'), w - c * 1.05, h - c * 1.0, c, false),\r\n      mark(rng.fork('c2'), w - c * 1.05 + c * 0.46, h - c * 1.0, c, false),\r\n    ]\r\n    if (ctx.dir === 'rtl') for (const l of lines) l.pts = l.pts.map(([x, y]): Pt => [w - x, y])\r\n    const width = (s / 30) * 0.95 * (p.weight === 'fine' ? 0.7 : p.weight === 'brush' ? 1.25 : 1)\r\n    ink.layer('rest', () => {\r\n      if (p.animate) revealMark(ink, { id: markRevealId(ctx.seed, 'q'), lines, pen, box: { w, h }, pad: 20, width, revealWidth: s * 0.3 })\r\n      else ink.lines(lines, pen, { width })\r\n      if (p.rule) {\r\n        const x = ctx.dir === 'rtl' ? w - 3 : 3\r\n        ink.lines([{ pts: [[x, s + 10], [x, h - c - 4]], o: RULER }], 'pencil', { width: 1.1 })\r\n      }\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "typography",
+      "signature",
+      "lettering",
+      "handwritten"
+    ],
+    "a11y": [
+      "Real semantics: <figure> > <blockquote cite> + <figcaption>. Assistive technology announces a quotation and its source.",
+      "The quotation marks are drawings (aria-hidden), not characters in the text, so they are not read aloud or copied with the words.",
+      "The marks live in the blockquote's padding and never overlap the words; RTL mirrors the whole drawing.",
+      "Reduced motion zeroes the draw-on."
+    ],
+    "usage": "import { Quote, QuoteAttribution, QuoteText } from \"@/components/ui/quote\"\n\nexport function Example() {\n  return (\n    <Quote>\n      <QuoteText>The best time to write it down was when it happened.</QuoteText>\n      <QuoteAttribution>Ada, in the margin of a book</QuoteAttribution>\n    </Quote>\n  )\n}",
+    "parts": [
+      "Quote",
+      "QuoteText",
+      "QuoteAttribution"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

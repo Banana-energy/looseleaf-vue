@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "chat-align",
+  "type": "registry:lib",
+  "title": "Chat Align",
+  "description": "Shared Looseleaf helpers: chat-align.",
+  "files": [
+    {
+      "path": "src/lib/chat-align.ts",
+      "type": "registry:lib",
+      "target": "@lib/chat-align.ts",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, toValue, type MaybeRefOrGetter, type ComputedRef } from \"vue\";\ntype ChatAlign = \"start\" | \"end\";\nconst ChatAlignContext = createContext<ChatAlign | undefined>(undefined);\nfunction useChatAlign(): ComputedRef<ChatAlign | undefined> {\n  const _nestedHook0 = useContext(ChatAlignContext);\n  return computed(() => {\n    return _nestedHook0.value;\n  });\n}\nexport { ChatAlignContext, useChatAlign };\nexport type { ChatAlign };\n"
+    }
+  ],
+  "registryDependencies": [],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

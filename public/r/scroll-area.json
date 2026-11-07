@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "scroll-area",
+  "type": "registry:ui",
+  "title": "Scroll Area",
+  "description": "A scroll container whose bar is a pencil \"scroll mark\": a graphite pull sliding down a faint gutter, gone over once more when a hand is on it. It fades in on hover or scroll, works in both directions, and is Reka UI underneath.",
+  "categories": [
+    "Layout"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/scroll-area.tsx",
+      "type": "registry:ui",
+      "target": "@ui/scroll-area.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, proxyRefs } from \"vue\";\nimport { ScrollArea as ScrollAreaPrimitive } from \"@/lib/primitives\";\nimport { useInk, useMergedRef } from \"@/lib/ink/vue\";\nimport { scrollThumbRecipe, scrollTrackRecipe } from \"@/lib/ink/recipes/scroll-area-ink\";\nimport { cn } from \"@/lib/utils\";\nconst ScrollArea = defineUi<UI.ComponentProps<typeof ScrollAreaPrimitive.Root> & {\n  bleed?: boolean;\n  orientation?: \"vertical\" | \"horizontal\" | \"both\";\n}>(\"ScrollArea\", [\"class\", \"bleed\", \"orientation\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const bleed = computed(() => _props[\"bleed\"] === undefined ? false : _props[\"bleed\"]);\n  const orientation = computed(() => _props[\"orientation\"] === undefined ? \"vertical\" as const : _props[\"orientation\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"children\", \"bleed\", \"orientation\"]));\n  return () => {\n    return <ScrollAreaPrimitive.Root data-slot=\"scroll-area\" class={cn(\"relative\", className.value)} {...domProps(props.value)}>\r\n      <ScrollAreaPrimitive.Viewport data-slot=\"scroll-area-viewport\" class={cn(\"size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--ll-focus)\", orientation.value === \"vertical\" && \"[&>div]:block!\", bleed.value && \"p-3\")}>\r\n        {readSlot(_slots.default)}\r\n      </ScrollAreaPrimitive.Viewport>\r\n      {orientation.value !== \"horizontal\" ? <ScrollBar /> : null}\r\n      {orientation.value !== \"vertical\" ? <ScrollBar orientation=\"horizontal\" /> : null}\r\n      <ScrollAreaPrimitive.Corner />\r\n    </ScrollAreaPrimitive.Root>;\n  };\n});\nconst ScrollBar = defineUi<UI.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar> & {\n  seed?: string | number;\n}>(\"ScrollBar\", [\"class\", \"orientation\", \"seed\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const orientation = computed(() => _props[\"orientation\"] === undefined ? \"vertical\" as const : _props[\"orientation\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"orientation\", \"seed\", \"ref\"]));\n  const _trackCore = useInk(() => ({\n    recipe: scrollTrackRecipe,\n    params: {\n      orientation: orientation.value\n    },\n    kind: \"track\" as const,\n    seed: seed.value === undefined ? undefined : `${seed.value}|track`,\n    still: true\n  }));\n  const track = computed(() => proxyRefs(_trackCore));\n  const _thumbCore = useInk(() => ({\n    recipe: scrollThumbRecipe,\n    params: {\n      orientation: orientation.value\n    },\n    kind: \"thumb\" as const,\n    seed: seed.value === undefined ? undefined : `${seed.value}|thumb`,\n    still: true\n  }));\n  const thumb = computed(() => proxyRefs(_thumbCore));\n  return () => {\n    return <ScrollAreaPrimitive.ScrollAreaScrollbar data-slot=\"scroll-area-scrollbar\" orientation={orientation.value} ref={useMergedRef<HTMLDivElement>(track.value.hostRef, ref.value)} {...domProps(track.value.node ? track.value.hostProps : {})} class={cn(\"isolate flex touch-none p-px transition-colors select-none forced-colors:outline-0! data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:animate-in data-[state=visible]:fade-in-0\", orientation.value === \"vertical\" && \"h-full w-2.5 border-l border-l-transparent\", orientation.value === \"horizontal\" && \"h-2.5 flex-col border-t border-t-transparent\", className.value)} {...domProps(props.value)}>\r\n      {track.value.node}\r\n      <ScrollAreaPrimitive.ScrollAreaThumb data-slot=\"scroll-area-thumb\" ref={thumb.value.hostRef} {...domProps(thumb.value.node ? thumb.value.hostProps : {})} class=\"relative isolate flex-1 forced-colors:bg-[CanvasText] forced-colors:outline-0!\">\r\n        {thumb.value.node}\r\n      </ScrollAreaPrimitive.ScrollAreaThumb>\r\n    </ScrollAreaPrimitive.ScrollAreaScrollbar>;\n  };\n});\nexport { ScrollArea, ScrollBar };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/scroll-area-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/scroll-area-ink.ts",
+      "content": "import { pen } from '@/lib/ink/pens'\r\nimport { defineRecipe } from '@/lib/ink/recipes'\r\nimport type { Pt } from '@/lib/ink/types'\r\nimport { RULER } from '@/lib/ink/shapes'\r\n\r\nexport type ScrollOrientation = 'vertical' | 'horizontal'\r\n\r\nfunction along(o: ScrollOrientation, len: number, mid: number, inset: number): Pt[] {\r\n  const end = inset + Math.max(1, len - 2 * inset)\r\n  return o === 'vertical' ? [[mid, inset], [mid, end]] : [[inset, mid], [end, mid]]\r\n}\r\n\r\nexport const scrollTrackRecipe = defineRecipe<{ orientation: ScrollOrientation }>({\r\n  id: 'scroll-track',\r\n  kind: 'track',\r\n  layers: ['rest'],\r\n  pad: 2,\r\n  draw(ink, { w, h }, { orientation }) {\r\n    const vertical = orientation === 'vertical'\r\n    const len = vertical ? h : w\r\n    const mid = (vertical ? w : h) / 2\r\n    ink.layer('rest', () => {\r\n      ink.stroke(along(orientation, len, mid, 2), 'pencil.fine', { ...RULER, alpha: 0.4 })\r\n    })\r\n  },\r\n})\r\n\r\nconst LEAD = pen('pencil', { W: 3.6, dryAmt: 0.3, dryWl: 9, dens: 0.9, wob: { amp: 0.5, wl: 80, tr: 0.15 } })\r\n\r\nexport const scrollThumbRecipe = defineRecipe<{ orientation: ScrollOrientation }>({\r\n  id: 'scroll-thumb',\r\n  kind: 'thumb',\r\n  layers: ['rest', 'hover'],\r\n  pad: 1,\r\n  draw(ink, { w, h }, { orientation }, ctx) {\r\n    const vertical = orientation === 'vertical'\r\n    const len = vertical ? h : w\r\n    const mid = (vertical ? w : h) / 2\r\n    ink.layer('rest', () => {\r\n      ink.stroke(along(orientation, len, mid, 1), ctx.calm ? 'pencil.fine' : LEAD, { ...RULER, width: ctx.calm ? 1.5 : 1 })\r\n    })\r\n    if (!ctx.calm && len > 44) {\r\n      ink.layer('rest', () => {\r\n        for (const d of [-3.2, 3.2]) {\r\n          const c = len / 2 + d\r\n          const a: Pt = vertical ? [mid - 3.6, c] : [c, mid - 3.6]\r\n          const b: Pt = vertical ? [mid + 3.6, c] : [c, mid + 3.6]\r\n          ink.stroke([a, b], 'pencil.fine', { ...RULER, alpha: 0.85, simple: true })\r\n        }\r\n      })\r\n    }\r\n    ink.layer('hover', () => {\r\n      ink.stroke(along(orientation, len, mid + 0.7, 2), pen('pencil', { W: 2, alpha: 0.7 }), RULER)\r\n    })\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "scroll-area",
+    "related": [
+      "table",
+      "resizable",
+      "card",
+      "tabs"
+    ],
+    "a11y": [
+      "Native scrolling: wheel, touch, keyboard (arrows, Space, PageUp/PageDown, Home/End) and scrollbar-less devices all work; the mark is an overlay for pointers and never the only way to scroll.",
+      "A scroll region with nothing focusable in it is reachable by keyboard in current browsers; the viewport draws a blue ring inside its edge when focused. If yours is not, give the content `tabIndex={0}` and a name.",
+      "The gutter and thumb are aria-hidden drawings; the thumb can be dragged and the gutter clicked, as in Reka UI.",
+      "Windows high contrast draws the thumb in the system text color. Reduced motion removes the fade.",
+      "Right-to-left content puts the vertical mark on the left: pass `dir=\"rtl\"` to the root, as Reka UI asks."
+    ],
+    "usage": "import { ScrollArea } from \"@/components/ui/scroll-area\"\n\nexport function Example() {\n  return (\n    <ScrollArea class=\"h-72 w-48\" bleed>\n      <div class=\"p-4\">{/* long content */}</div>\n    </ScrollArea>\n  )\n}",
+    "parts": [
+      "ScrollArea",
+      "ScrollBar"
+    ]
+  }
+}

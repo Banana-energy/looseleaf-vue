@@ -1,0 +1,58 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "native-select",
+  "type": "registry:ui",
+  "title": "Native Select",
+  "description": "The browser's own <select> in a hand-drawn frame with a pencil chevron. You keep the platform's popup, mobile picker, typeahead and autofill, and a list of hundreds of options costs nothing. Reach for Select when you want the paper slip.",
+  "categories": [
+    "Forms"
+  ],
+  "registryDependencies": [
+    "field-class",
+    "icon",
+    "ink",
+    "ink-recipes",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/native-select.tsx",
+      "type": "registry:ui",
+      "target": "@ui/native-select.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { splitFieldClass } from \"@/lib/field-class\";\nimport { useInk } from \"@/lib/ink/vue\";\nimport { nativeSelectRecipe } from \"@/lib/ink/recipes/native-select-ink\";\nimport { cn } from \"@/lib/utils\";\nconst isTrue = (v: unknown) => v === true || v === \"true\";\nconst NativeSelect = defineUi<Omit<UI.ComponentProps<\"select\">, \"size\"> & {\n  size?: \"sm\" | \"default\";\n  seed?: string | number;\n}>(\"NativeSelect\", [\"class\", \"size\", \"seed\", \"style\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const size = computed(() => _props[\"size\"] === undefined ? \"default\" as const : _props[\"size\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const style = computed(() => _props[\"style\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const ref = computed(() => _props[\"ref\"]);\n  const props = computed(() => omitProps(_props, [\"class\", \"size\", \"seed\", \"style\", \"children\", \"ref\"]));\n  const {\n    hostRef,\n    hostProps,\n    node\n  } = useInk(() => ({\n    recipe: nativeSelectRecipe,\n    params: {\n      disabled: !!props.value.disabled,\n      invalid: isTrue(props.value[\"aria-invalid\"])\n    },\n    kind: \"field\" as const,\n    seed: seed.value,\n    still: true\n  }));\n  const split = computed(() => splitFieldClass(className.value));\n  return () => {\n    return <span data-slot=\"native-select-wrapper\" data-size={size.value} data-ink-focus=\"within\" ref={hostRef} {...domProps(hostProps.value)} style={cssStyle(style.value)} class={cn(\"group/native-select relative isolate flex h-9 w-fit items-center font-hand text-base text-(--ll-input-ink) caret-(--ll-caret) has-[select[multiple]]:h-auto data-[size=sm]:h-8 data-[size=sm]:text-[15px] compact:h-8 calm:h-7 calm:text-[15px] compact:data-[size=sm]:h-7\", split.value.frame)}>\r\n      {node.value}\r\n      <select data-slot=\"native-select\" data-size={size.value} ref={ref.value} class={cn(\"h-full w-full min-w-0 appearance-none bg-transparent ps-3 pe-10 aria-invalid:pe-14 outline-none text-[length:inherit] disabled:cursor-not-allowed disabled:text-pencil-text has-[option[value='']:checked]:text-(--ll-placeholder) forced-colors:aria-invalid:underline forced-colors:aria-invalid:decoration-wavy\", split.value.control)} {...domProps(props.value)}>\r\n        {readSlot(_slots.default)}\r\n      </select>\r\n      <Icon name=\"chevron-down\" size={16} data-slot=\"native-select-icon\" class=\"pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-ink-soft select-none group-has-[select:disabled]/native-select:text-pencil-text\" />\r\n    </span>;\n  };\n});\nconst NativeSelectOption = defineUi<UI.ComponentProps<\"option\">>(\"NativeSelectOption\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <option data-slot=\"native-select-option\" class={cn(\"bg-popover text-popover-foreground\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</option>;\n  };\n});\nconst NativeSelectOptGroup = defineUi<UI.ComponentProps<\"optgroup\">>(\"NativeSelectOptGroup\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <optgroup data-slot=\"native-select-optgroup\" class={cn(\"bg-popover text-popover-foreground\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</optgroup>;\n  };\n});\nexport { NativeSelect, NativeSelectOptGroup, NativeSelectOption };\n"
+    },
+    {
+      "path": "src/lib/ink/recipes/native-select-ink.ts",
+      "type": "registry:lib",
+      "target": "@lib/ink/recipes/native-select-ink.ts",
+      "content": "import { defineRecipe } from '@/lib/ink/recipes'\r\nimport { drawSelectFrame } from '@/lib/ink/recipes/select-frame-ink'\r\n\r\nexport interface NativeSelectParams {\r\n  disabled?: boolean\r\n  invalid?: boolean\r\n}\r\n\r\nexport const nativeSelectRecipe = defineRecipe<NativeSelectParams>({\r\n  id: 'native-select',\r\n  kind: 'field',\r\n  layers: ['rest', 'hover', 'focus', 'invalid', 'disabled'],\r\n  lazy: ['focus', 'hover'],\r\n  pad: 12,\r\n  draw(ink, box, params, ctx) {\r\n    drawSelectFrame(ink, box, { ...params, openable: false }, ctx)\r\n  },\r\n})\r\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "native-select",
+    "related": [
+      "select",
+      "input",
+      "field",
+      "input-group"
+    ],
+    "a11y": [
+      "It is a native select: role=combobox / listbox, the platform's keyboard (arrows, typeahead, Enter, Escape), its own mobile picker, autofill and form value. Nothing is re-implemented.",
+      "Label it with a Label (`htmlFor` + `id`) or `aria-label`. A first option with an empty value reads as a placeholder (graphite text) when it is selected.",
+      "The frame follows the select's own state: keyboard focus draws the blue ring, `aria-invalid` the red box, `disabled` the dashed one. The popup itself cannot be styled by any library; only its colors and font are asked for.",
+      "The chevron is decorative (aria-hidden) and does not take the pointer, so the whole box opens the list. Windows high contrast replaces the ink by a real border.",
+      "Right-to-left: the chevron cell, the divider tick and the bang are on the start side."
+    ],
+    "usage": "import { Label } from \"@/components/ui/label\"\nimport { NativeSelect, NativeSelectOption } from \"@/components/ui/native-select\"\n\nexport function Example() {\n  return (\n    <div class=\"grid gap-2\">\n      <Label htmlFor=\"country\">Country</Label>\n      <NativeSelect id=\"country\" defaultValue=\"is\" class=\"w-[220px]\">\n        <NativeSelectOption value=\"is\">Iceland</NativeSelectOption>\n        <NativeSelectOption value=\"pt\">Portugal</NativeSelectOption>\n      </NativeSelect>\n    </div>\n  )\n}",
+    "parts": [
+      "NativeSelect",
+      "NativeSelectOption",
+      "NativeSelectOptGroup"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

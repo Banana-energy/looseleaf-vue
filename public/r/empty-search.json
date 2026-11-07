@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "empty-search",
+  "type": "registry:block",
+  "title": "Empty search",
+  "description": "A contacts list with a live search. When nothing matches, Stubby comes out with his magnifying glass, quotes the words back, and offers to clear the box or try a search that works. Looks right on paper or on the desk.",
+  "categories": [
+    "feedback"
+  ],
+  "registryDependencies": [
+    "avatar",
+    "button",
+    "card",
+    "empty",
+    "icon",
+    "input-group",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/blocks/empty-search/components/empty-search-people.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/empty-search/components/empty-search-people.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Avatar, AvatarFallback } from \"@/components/ui/avatar\";\ntype EmptySearchPerson = {\n  name: string;\n  role: string;\n};\nconst PEOPLE: EmptySearchPerson[] = [{\n  name: \"Ada Lovelace\" as const,\n  role: \"Editor, London\" as const\n}, {\n  name: \"Jo Okafor\" as const,\n  role: \"Illustrator, Lagos\" as const\n}, {\n  name: \"Mika Kobayashi\" as const,\n  role: \"Bookbinder, Osaka\" as const\n}, {\n  name: \"Sam Reyes\" as const,\n  role: \"Printer, Lisbon\" as const\n}, {\n  name: \"Priya Nair\" as const,\n  role: \"Operations, Pune\" as const\n}, {\n  name: \"Tomas Berg\" as const,\n  role: \"Finance, Malmö\" as const\n}];\nfunction findPeople(query: string, people: EmptySearchPerson[] = PEOPLE): EmptySearchPerson[] {\n  const q = query.trim().toLowerCase();\n  if (!q) return people;\n  return people.filter(p => p.name.toLowerCase().includes(q) || p.role.toLowerCase().includes(q));\n}\nconst EmptySearchList = defineUi<{\n  people: EmptySearchPerson[];\n}>(\"EmptySearchList\", [\"people\"], (_props, {\n  slots: _slots\n}) => {\n  const people = computed(() => _props[\"people\"]);\n  return () => {\n    return <ul class=\"grid list-none gap-1\" aria-label=\"Contacts\">\r\n      {people.value.map(p => <li key={p.name} class=\"flex items-center gap-3 py-1.5\">\r\n          <Avatar>\r\n            <AvatarFallback name={p.name} />\r\n          </Avatar>\r\n          <div class=\"min-w-0\">\r\n            <p class=\"truncate text-[17px] leading-6 font-bold\">{p.name}</p>\r\n            <p class=\"truncate text-sm leading-5 text-ink-muted\">{p.role}</p>\r\n          </div>\r\n        </li>)}\r\n    </ul>;\n  };\n});\nexport { EmptySearchList, PEOPLE, findPeople };\nexport type { EmptySearchPerson };\n"
+    },
+    {
+      "path": "src/blocks/empty-search/page.tsx",
+      "type": "registry:component",
+      "target": "@components/blocks/empty-search/page.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, useId, shallowRef } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Card, CardContent, CardDescription, CardHeader, CardTitle } from \"@/components/ui/card\";\nimport { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from \"@/components/ui/empty\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from \"@/components/ui/input-group\";\nimport { EmptySearchList, PEOPLE, findPeople } from \"@/blocks/empty-search/components/empty-search-people\";\nconst SUGGESTIONS = [\"Ada\", \"Printer\", \"Lagos\"];\ntype EmptySearchProps = {\n  defaultQuery?: string;\n};\nconst EmptySearch = defineUi<EmptySearchProps>(\"EmptySearch\", [\"defaultQuery\"], (_props, {\n  slots: _slots\n}) => {\n  const defaultQuery = computed(() => _props[\"defaultQuery\"] === undefined ? \"ghost pepper\" as const : _props[\"defaultQuery\"]);\n  const titleId = useId();\n  const inputRef = shallowRef<HTMLInputElement | null>(null);\n  const query = shallowRef(initialState(defaultQuery.value));\n  const setQuery = stateSetter(query);\n  const people = computed(() => findPeople(query.value));\n  const set = computed(() => (value: string) => {\n    setQuery(value);\n    inputRef.value?.focus();\n  });\n  return () => {\n    return <section aria-labelledby={titleId} class=\"@container w-full\">\r\n      <div class=\"px-8 py-10 @xl:py-14\">\r\n        <Card tape=\"corner\" tapeKind=\"masking\" seed=\"empty-search\" class=\"mx-auto max-w-2xl\">\r\n          <CardHeader>\r\n            <CardTitle>\r\n              <h2 id={titleId}>Contacts</h2>\r\n            </CardTitle>\r\n            <CardDescription>{PEOPLE.length} people in your address book</CardDescription>\r\n          </CardHeader>\r\n\r\n          <CardContent class=\"grid gap-4\">\r\n            <InputGroup>\r\n              <InputGroupAddon>\r\n                <Icon name=\"search\" />\r\n              </InputGroupAddon>\r\n              <InputGroupInput ref={inputRef} type=\"search\" aria-label=\"Search contacts\" placeholder=\"Search by name or place\" value={query.value} onChange={(e: Event) => setQuery((e.target as HTMLInputElement).value)} />\r\n              {query.value ? <InputGroupAddon align=\"inline-end\">\r\n                  <InputGroupButton type=\"button\" size=\"icon-xs\" aria-label=\"Clear search\" onClick={() => set.value(\"\")}>\r\n                    <Icon name=\"x\" />\r\n                  </InputGroupButton>\r\n                </InputGroupAddon> : null}\r\n            </InputGroup>\r\n\r\n            <p role=\"status\" class=\"sr-only\">\r\n              {people.value.length === 0 ? \"No results.\" as const : `${people.value.length} ${people.value.length === 1 ? \"person\" as const : \"people\" as const} found.`}\r\n            </p>\r\n\r\n            {people.value.length > 0 ? <EmptySearchList people={people.value} /> : <Empty class=\"border border-dashed\">\r\n                <EmptyHeader>\r\n                  <EmptyMedia pose=\"search\" size={120} />\r\n                  <EmptyTitle class=\"wrap-anywhere\">No results for &ldquo;{query.value.trim()}&rdquo;</EmptyTitle>\r\n                  <EmptyDescription>Nobody is called that. Check the spelling, or try a shorter word.</EmptyDescription>\r\n                </EmptyHeader>\r\n                <EmptyContent>\r\n                  <Button type=\"button\" onClick={() => set.value(\"\")}>\r\n                    Clear search\r\n                  </Button>\r\n                  <div class=\"mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-2\">\r\n                    <span class=\"text-sm text-ink-muted\">Try</span>\r\n                    {SUGGESTIONS.map(s => <Button key={s} type=\"button\" variant=\"outline\" size=\"sm\" onClick={() => set.value(s)}>\r\n                        {s}\r\n                      </Button>)}\r\n                  </div>\r\n                </EmptyContent>\r\n              </Empty>}\r\n          </CardContent>\r\n        </Card>\r\n      </div>\r\n    </section>;\n  };\n});\nexport default EmptySearch;\nexport type { EmptySearchProps };\n"
+    }
+  ],
+  "docs": "Installed the \"Empty search\" block into your components directory under blocks/empty-search/.\nImport it: import EmptySearch from \"<your components alias>/blocks/empty-search/page\"",
+  "meta": {
+    "tags": [
+      "empty state",
+      "search",
+      "stubby",
+      "input group"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

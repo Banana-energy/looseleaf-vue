@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "use-mobile",
+  "type": "registry:hook",
+  "title": "use-mobile",
+  "description": "The use-mobile React hook from Looseleaf.",
+  "files": [
+    {
+      "path": "src/hooks/use-mobile.ts",
+      "type": "registry:hook",
+      "target": "@hooks/use-mobile.ts",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed, toValue, type MaybeRefOrGetter, shallowRef } from \"vue\";\nconst MOBILE_BREAKPOINT = 768;\nexport function useIsMobile() {\n  const isMobile = shallowRef<boolean | undefined>(initialState(undefined));\n  const setIsMobile = stateSetter(isMobile);\n  watchDependencies(() => {\n    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);\n    const onChange = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);\n    mql.addEventListener(\"change\", onChange);\n    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);\n    return () => mql.removeEventListener(\"change\", onChange);\n  }, () => [], false);\n  return computed(() => {\n    return !!isMobile.value;\n  });\n}\n"
+    }
+  ],
+  "registryDependencies": [],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

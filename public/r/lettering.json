@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "lettering",
+  "type": "registry:ui",
+  "title": "Lettering",
+  "description": "Display titles in the script font with a riso print look: ink with a second color printed a hair off register. Pure CSS text-shadow, so the words are real text at any size. No gradients, no filters.",
+  "categories": [
+    "Typography"
+  ],
+  "registryDependencies": [
+    "handwritten",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/lettering.tsx",
+      "type": "registry:ui",
+      "target": "@ui/lettering.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Handwritten } from \"@/components/ui/handwritten\";\nimport { cn } from \"@/lib/utils\";\nconst SIZE = {\n  sm: \"text-3xl\" as const,\n  md: \"text-5xl\" as const,\n  lg: \"text-6xl\" as const,\n  xl: \"text-7xl sm:text-8xl\" as const,\n  hero: \"text-7xl sm:text-9xl\" as const\n} as const;\nconst TONE = {\n  marker: \"[--ll-riso:var(--ll-marker)]\" as const,\n  tomato: \"[--ll-riso:var(--ll-tomato)]\" as const,\n  tangerine: \"[--ll-riso:var(--ll-tangerine)]\" as const,\n  lemon: \"[--ll-riso:var(--ll-lemon)]\" as const,\n  grass: \"[--ll-riso:var(--ll-grass)]\" as const,\n  teal: \"[--ll-riso:var(--ll-teal)]\" as const,\n  sky: \"[--ll-riso:var(--ll-sky)]\" as const,\n  grape: \"[--ll-riso:var(--ll-grape)]\" as const,\n  bubblegum: \"[--ll-riso:var(--ll-bubblegum)]\" as const\n} as const;\nconst DUOTONE = \"[text-shadow:calc(0.055em*var(--ll-misreg-k))_calc(0.045em*var(--ll-misreg-k))_0_var(--ll-riso),calc(-0.035em*var(--ll-misreg-k))_calc(0.07em*var(--ll-misreg-k))_0_var(--ll-riso-b)]\";\nconst Lettering = defineUi<Omit<UI.ComponentProps<\"h2\">, \"ref\"> & {\n  as?: UI.ElementType;\n  size?: keyof typeof SIZE;\n  tone?: keyof typeof TONE;\n  duotone?: keyof typeof TONE;\n  wobble?: number;\n  seed?: string | number;\n  ref?: UI.Ref<HTMLElement>;\n}>(\"Lettering\", [\"as\", \"size\", \"tone\", \"duotone\", \"wobble\", \"seed\", \"class\", \"style\"], (_props, {\n  slots: _slots\n}) => {\n  const Comp = computed(() => jsxTag(_props[\"as\"] === undefined ? \"h2\" as const : _props[\"as\"]));\n  const size = computed(() => _props[\"size\"] === undefined ? \"lg\" as const : _props[\"size\"]);\n  const tone = computed(() => _props[\"tone\"] === undefined ? \"marker\" as const : _props[\"tone\"]);\n  const duotone = computed(() => _props[\"duotone\"]);\n  const wobble = computed(() => _props[\"wobble\"] === undefined ? 0 : _props[\"wobble\"]);\n  const seed = computed(() => _props[\"seed\"]);\n  const className = computed(() => _props[\"class\"]);\n  const style = computed(() => _props[\"style\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"as\", \"size\", \"tone\", \"duotone\", \"wobble\", \"seed\", \"class\", \"style\", \"children\"]));\n  const second = computed(() => duotone.value ? {\n    \"--ll-riso-b\": `var(--ll-${duotone.value})`\n  } as UI.CSSProperties : undefined);\n  return () => {\n    return <Comp.value data-slot=\"lettering\" data-size={size.value} style={cssStyle({\n      ...second.value,\n      ...style.value\n    })} class={cn(\"ll-riso font-script leading-[0.95] font-bold tracking-tight text-balance text-ink\", SIZE[size.value], TONE[tone.value], duotone.value && DUOTONE, className.value)} {...domProps(props.value)}>\r\n      {wobble.value > 0 ? <Handwritten as=\"span\" strength={wobble.value} seed={seed.value}>\r\n          {readSlot(_slots.default)}\r\n        </Handwritten> : readSlot(_slots.default)}\r\n    </Comp.value>;\n  };\n});\nexport { Lettering };\n"
+    }
+  ],
+  "meta": {
+    "status": "new",
+    "related": [
+      "typography",
+      "signature",
+      "handwritten",
+      "quote"
+    ],
+    "a11y": [
+      "A real heading (or the element you choose): headings keep their level and outline. The offset color is decoration; the ink text has 14:1 contrast on paper.",
+      "Use one Lettering as the page's h1 at most; for repeated display text prefer p or span.",
+      "The riso offset is a text-shadow, so it scales with the text, follows the density knob (calm = none) and disappears in Windows high contrast."
+    ],
+    "usage": "import { Lettering } from \"@/components/ui/lettering\"\n\nexport function Example() {\n  return (\n    <Lettering as=\"h1\" size=\"xl\" tone=\"teal\">\n      Paper Club\n    </Lettering>\n  )\n}",
+    "parts": [
+      "Lettering"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

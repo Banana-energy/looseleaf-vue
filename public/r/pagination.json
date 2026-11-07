@@ -1,0 +1,53 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "pagination",
+  "type": "registry:ui",
+  "title": "Pagination",
+  "description": "Page links as drawn buttons: each number is a Button around your own link, the page you are on is a block of highlighter, the arrows and the ellipsis are hand-drawn. It is just links, so it works with any router, or with plain hrefs and no JavaScript at all.",
+  "categories": [
+    "Navigation"
+  ],
+  "registryDependencies": [
+    "button",
+    "icon",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/pagination.tsx",
+      "type": "registry:ui",
+      "target": "@ui/pagination.tsx",
+      "content": "// 从上游固定版本迁移为原生 Vue 组件；保留绘制参数与 CSS，并将派生状态转换为 computed。\nimport * as UI from \"@/lib/types\";\nimport { defineUi, omitProps, domProps, elementRef, jsxTag } from \"@/lib/component\";\nimport { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from \"@/lib/composables\";\nimport { Children, cloneElement, createElement, isValidElement } from \"@/lib/vnode\";\nimport { cssStyle } from \"@/lib/css\";\nimport { computed } from \"vue\";\nimport { Button } from \"@/components/ui/button\";\nimport { Icon } from \"@/components/ui/icon\";\nimport { cn } from \"@/lib/utils\";\nconst Pagination = defineUi<UI.ComponentProps<\"nav\">>(\"Pagination\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <nav role=\"navigation\" aria-label=\"pagination\" data-slot=\"pagination\" class={cn(\"mx-auto flex w-full justify-center\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</nav>;\n  };\n});\nconst PaginationContent = defineUi<UI.ComponentProps<\"ul\">>(\"PaginationContent\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <ul data-slot=\"pagination-content\" class={cn(\"flex flex-row items-center gap-1.5\", className.value)} {...domProps(props.value)}>{_slots.default?.()}</ul>;\n  };\n});\nconst PaginationItem = defineUi<UI.ComponentProps<\"li\">>(\"PaginationItem\", [], (_props, {\n  slots: _slots\n}) => {\n  const props = computed(() => omitProps(_props, []));\n  return () => {\n    return <li data-slot=\"pagination-item\" {...domProps(props.value)}>{_slots.default?.()}</li>;\n  };\n});\ntype PaginationLinkProps = {\n  isActive?: boolean;\n  disabled?: boolean;\n} & Pick<UI.ComponentProps<typeof Button>, \"size\"> & UI.ComponentProps<\"a\">;\nconst PaginationLink = defineUi<PaginationLinkProps>(\"PaginationLink\", [\"class\", \"isActive\", \"disabled\", \"size\", \"onClick\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const isActive = computed(() => _props[\"isActive\"]);\n  const disabled = computed(() => _props[\"disabled\"]);\n  const size = computed(() => _props[\"size\"] === undefined ? \"icon\" as const : _props[\"size\"]);\n  const onClick = computed(() => _props[\"onClick\"]);\n  const children = renderValue(() => readSlot(_slots.default));\n  const props = computed(() => omitProps(_props, [\"class\", \"isActive\", \"disabled\", \"size\", \"onClick\", \"children\"]));\n  return () => {\n    return <Button asChild variant={isActive.value ? \"secondary\" as const : \"ghost\" as const} size={size.value} class={className.value} disabled={disabled.value}>\r\n      <a aria-current={isActive.value ? \"page\" as const : undefined} data-slot=\"pagination-link\" data-active={isActive.value} onClick={disabled.value ? undefined : onClick.value} {...domProps(props.value)}>\r\n        {readSlot(_slots.default)}\r\n      </a>\r\n    </Button>;\n  };\n});\nconst PaginationPrevious = defineUi<UI.ComponentProps<typeof PaginationLink>>(\"PaginationPrevious\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <PaginationLink aria-label=\"Go to previous page\" size=\"default\" class={cn(\"gap-1 px-2.5 sm:ps-2.5\", className.value)} {...domProps(props.value)}>\r\n      <Icon name=\"chevron-left\" />\r\n      <span class=\"hidden sm:block\">Previous</span>\r\n    </PaginationLink>;\n  };\n});\nconst PaginationNext = defineUi<UI.ComponentProps<typeof PaginationLink>>(\"PaginationNext\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <PaginationLink aria-label=\"Go to next page\" size=\"default\" class={cn(\"gap-1 px-2.5 sm:pe-2.5\", className.value)} {...domProps(props.value)}>\r\n      <span class=\"hidden sm:block\">Next</span>\r\n      <Icon name=\"chevron-right\" />\r\n    </PaginationLink>;\n  };\n});\nconst PaginationEllipsis = defineUi<UI.ComponentProps<\"span\">>(\"PaginationEllipsis\", [\"class\"], (_props, {\n  slots: _slots\n}) => {\n  const className = computed(() => _props[\"class\"]);\n  const props = computed(() => omitProps(_props, [\"class\"]));\n  return () => {\n    return <span aria-hidden data-slot=\"pagination-ellipsis\" class={cn(\"flex size-9 items-center justify-center text-ink-soft\", className.value)} {...domProps(props.value)}>\r\n      <Icon name=\"ellipsis\" />\r\n      <span class=\"sr-only\">More pages</span>\r\n    </span>;\n  };\n});\nexport { Pagination, PaginationContent, PaginationLink, PaginationItem, PaginationPrevious, PaginationNext, PaginationEllipsis };\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "pagination",
+    "related": [
+      "button",
+      "breadcrumb",
+      "tabs",
+      "table"
+    ],
+    "a11y": [
+      "A `nav` landmark labeled \"pagination\" holding a list of links. The current page has `aria-current=\"page\"`; it is also bold-on-highlighter, so it does not rely on color.",
+      "Previous and Next carry `aria-label`s that name their destination, so they read the same when the word is hidden on a phone. Give number links an accessible name of their own when the bare number is ambiguous (`aria-label=\"Page 3\"`).",
+      "A disabled link is `aria-disabled`, removed from the tab order and drawn as the dashed alternative; its click is prevented and your `onClick` is not called.",
+      "Each link is at least 36 px square (32 compact, 28 calm), a tab stop with the theme's drawn blue focus ring. Being plain anchors, they work without JavaScript and with any router."
+    ],
+    "usage": "import {\n  Pagination,\n  PaginationContent,\n  PaginationEllipsis,\n  PaginationItem,\n  PaginationLink,\n  PaginationNext,\n  PaginationPrevious,\n} from \"@/components/ui/pagination\"\n\nexport function Example() {\n  return (\n    <Pagination>\n      <PaginationContent>\n        <PaginationItem>\n          <PaginationPrevious href=\"?page=1\" />\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationLink href=\"?page=1\">1</PaginationLink>\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationLink href=\"?page=2\" isActive>\n            2\n          </PaginationLink>\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationEllipsis />\n        </PaginationItem>\n        <PaginationItem>\n          <PaginationNext href=\"?page=3\" />\n        </PaginationItem>\n      </PaginationContent>\n    </Pagination>\n  )\n}",
+    "parts": [
+      "Pagination",
+      "PaginationContent",
+      "PaginationItem",
+      "PaginationLink",
+      "PaginationPrevious",
+      "PaginationNext",
+      "PaginationEllipsis"
+    ]
+  },
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ]
+}

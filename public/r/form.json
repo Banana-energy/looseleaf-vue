@@ -1,0 +1,58 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "form",
+  "type": "registry:ui",
+  "title": "Form",
+  "description": "react-hook-form wired to the drawn controls, exactly like shadcn's Form. FormControl gives the control its id, aria-describedby and aria-invalid, so an Input, Select, Checkbox or Switch turns red pencil when the field has an error, its label follows, and FormMessage writes the message under it with a wavy red underline.",
+  "categories": [
+    "Forms"
+  ],
+  "dependencies": [
+    "vue",
+    "reka-ui"
+  ],
+  "registryDependencies": [
+    "ink",
+    "ink-recipes",
+    "label",
+    "looseleaf-theme"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/form.tsx",
+      "type": "registry:ui",
+      "target": "@ui/form.tsx",
+      "content": "import { computed, useId } from 'vue'\nimport { Controller as FormField, FormProvider as Form, FormFieldContext } from '@/lib/form-bridge'\nimport { Slot } from '@/lib/primitive-adapter'\nimport { Label } from './label'\nimport { defineUi, omitProps } from '@/lib/component'\nimport { createContext, useContext } from '@/lib/composables'\nimport { useInk } from '@/lib/ink/vue'\nimport { fieldErrorRecipe } from '@/lib/ink/recipes/field-error-ink'\nimport { cn } from '@/lib/utils'\nimport type * as UI from '@/lib/types'\n\nconst ItemContext = createContext<string | undefined>(undefined)\n// 字段、标签与错误提示共享同一个 vee-validate 字段上下文。\nfunction useFormField() {\n  const field = useContext(FormFieldContext)\n  const id = useContext(ItemContext)\n  return computed(() => ({ ...field.value, formItemId: `${id.value}-form-item`, formDescriptionId: `${id.value}-form-item-description`, formMessageId: `${id.value}-form-item-message` }))\n}\nconst FormItem = defineUi<UI.ComponentProps<'div'>>('FormItem', ['class'], (props, { slots }) => { const id = useId(); return () => <ItemContext.Provider value={id}><div data-slot=\"form-item\" {...props} class={cn('grid gap-2', props.class)}>{slots.default?.()}</div></ItemContext.Provider> })\nconst FormLabel = defineUi<UI.ComponentProps<typeof Label>>('FormLabel', ['class'], (props, { slots }) => { const field = useFormField(); return () => <Label {...props} data-slot=\"form-label\" data-error={!!field.value.error} for={field.value.formItemId} class={cn('data-[error=true]:text-destructive', props.class)}>{slots.default?.()}</Label> })\nconst FormControl = defineUi<UI.ComponentProps<typeof Slot.Root>>('FormControl', [], (props, { slots }) => { const field = useFormField(); return () => <Slot.Root {...props} data-slot=\"form-control\" id={field.value.formItemId} aria-describedby={field.value.error ? `${field.value.formDescriptionId} ${field.value.formMessageId}` : field.value.formDescriptionId} aria-invalid={!!field.value.error}>{slots.default?.()}</Slot.Root> })\nconst FormDescription = defineUi<UI.ComponentProps<'p'>>('FormDescription', ['class'], (props, { slots }) => { const field = useFormField(); return () => <p {...props} data-slot=\"form-description\" id={field.value.formDescriptionId} class={cn('text-sm text-muted-foreground', props.class)}>{slots.default?.()}</p> })\nconst FormMessage = defineUi<UI.ComponentProps<'p'> & { seed?: string | number }>('FormMessage', ['class', 'seed'], (props, { slots }) => {\n  const field = useFormField()\n  const ink = useInk(() => ({ recipe: fieldErrorRecipe, params: {}, kind: 'underline', seed: props.seed, still: true }))\n  return () => { const body = field.value.error || slots.default?.(); return body ? <p {...omitProps(props, ['class', 'seed'])} data-slot=\"form-message\" id={field.value.formMessageId} ref={ink.hostRef} {...ink.hostProps.value} class={cn('relative isolate w-fit max-w-full pb-1 text-sm text-destructive outline-hidden forced-colors:underline forced-colors:decoration-wavy', props.class)}>{ink.node.value}{body}</p> : null }\n})\nexport { Form, FormItem, FormField, FormLabel, FormControl, FormDescription, FormMessage, useFormField }\n"
+    }
+  ],
+  "meta": {
+    "status": "stable",
+    "upstream": "form",
+    "related": [
+      "field",
+      "input",
+      "select",
+      "checkbox",
+      "label"
+    ],
+    "a11y": [
+      "FormLabel is a real <label for>, FormControl puts the same id on the control, and aria-describedby points at the description and (while invalid) the message; aria-invalid is set for you.",
+      "FormMessage is a <p> that appears next to the control with its id in aria-describedby, so a screen reader reads it with the control when focus arrives. Wrap it in an element with role=\"alert\" (or use Field's FieldError) if you want it announced the moment it appears.",
+      "Not every control can be named by FormLabel's `for`: a Slider (role=slider on a span) or a Rating (a radiogroup) needs `aria-labelledby` pointing at an `id` you give the FormLabel, or an `aria-label`. FormControl's id, aria-describedby and aria-invalid do reach a Slider's thumb, a Rating's group and a RadioGroup's group (whose radios turn red).",
+      "Errors do not rely on color alone: the message text, the wavy underline and the control's own drawn state (red box, a bang on text fields) all say it.",
+      "Validation timing is react-hook-form's (`mode`: onSubmit by default, onChange, onBlur ...); the drawn components do not re-render their ink when it changes, only their state layers.",
+      "Windows high contrast: the ink is replaced by real borders, and the message gets a wavy text underline."
+    ],
+    "usage": "import { zodResolver } from \"@hookform/resolvers/zod\"\nimport { useForm } from \"react-hook-form\"\nimport { z } from \"zod\"\n\nimport { Button } from \"@/components/ui/button\"\nimport { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from \"@/components/ui/form\"\nimport { Input } from \"@/components/ui/input\"\n\nconst schema = z.object({ email: z.string().email(\"Enter an address like ada@notes.dev.\") })\n\nexport function Example() {\n  const form = useForm<z.infer<typeof schema>>({ resolver: zodResolver(schema), defaultValues: { email: \"\" } })\n  return (\n    <Form {...form}>\n      <form onSubmit={form.handleSubmit(console.warn)} class=\"grid max-w-sm gap-4\" noValidate>\n        <FormField\n          control={form.control}\n          name=\"email\"\n          render={({ field }) => (\n            <FormItem>\n              <FormLabel>Email</FormLabel>\n              <FormControl>\n                <Input {...field} />\n              </FormControl>\n              <FormMessage />\n            </FormItem>\n          )}\n        />\n        <Button type=\"submit\">Save</Button>\n      </form>\n    </Form>\n  )\n}",
+    "parts": [
+      "Form",
+      "FormField",
+      "FormItem",
+      "FormLabel",
+      "FormControl",
+      "FormDescription",
+      "FormMessage",
+      "useFormField"
+    ]
+  }
+}
