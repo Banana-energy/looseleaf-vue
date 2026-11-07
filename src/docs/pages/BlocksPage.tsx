@@ -63,6 +63,7 @@ const BlockDocPage = defineUi<{
   const next = computed(() => catalog.value.blocks[index.value + 1]);
   const text = useSettings();
   return () => {
+    const zh = text.value.locale === "zh-CN";
     const title = localizedBlockTitle(text.value.locale, block.value.slug, block.value.title);
     return <Page kicker={<Link to={paths.blocks()}>{text.value.locale === "zh-CN" ? "区块" : "Blocks"}</Link>} title={title} description={localizedBlockDescription(text.value.locale, block.value.title, block.value.description)} meta={block.value.tags.map(t => <Chip key={t} tone="outline">
           {t}
