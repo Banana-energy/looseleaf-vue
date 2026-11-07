@@ -11,13 +11,16 @@ import { paths } from "../core/router-core";
 import { Callout, Page, Pager, Prose, Section, Tile, TileGrid } from "../kit";
 import { ContentSlot } from "../widgets/ContentSlot";
 import { NotFoundPage } from "./NotFoundPage";
+import { localizedFoundationLabel, localizedFoundationSummary } from "../core/i18n";
+import { useLocaleText } from "../core/settings";
 export const FoundationsIndexPage = defineUi<{}>("FoundationsIndexPage", [], (_props, {
   slots: _slots
 }) => {
+  const text = useLocaleText();
   return () => {
-    return <Page kicker="Foundations" title="Foundations" description="The ideas the components are built on. Each page is a short brief; the longer versions are drawn as they are written.">
+    return <Page kicker={text.value.t("nav.foundations")} title={text.value.t("nav.foundations")} description={text.value.locale === "zh-CN" ? "组件背后的设计基础：颜色、纸张、笔触、动效和可访问性。" : "The ideas the components are built on. Each page is a short brief; the longer versions are drawn as they are written."}>
       <TileGrid>
-        {FOUNDATIONS.map(t => <Tile key={t.slug} to={paths.foundations(t.slug)} title={t.title} description={t.summary} />)}
+        {FOUNDATIONS.map(t => <Tile key={t.slug} to={paths.foundations(t.slug)} title={localizedFoundationLabel(text.value.locale, t.slug, t.title)} description={localizedFoundationSummary(text.value.locale, t.slug, t.title, t.summary)} />)}
       </TileGrid>
     </Page>;
   };
@@ -29,17 +32,18 @@ export const FoundationPage = defineUi<{
 }) => {
   const topic = computed(() => _props["topic"]);
   const entry = computed(() => FOUNDATION_BY_SLUG.get(topic.value));
+  const text = useLocaleText();
   return () => {
     if (!entry.value) return <NotFoundPage what="foundation" missing={topic.value} />;
     const index = FOUNDATIONS.indexOf(entry.value);
     const prev = FOUNDATIONS[index - 1];
     const next = FOUNDATIONS[index + 1];
-    return <Page kicker={<Link to={paths.foundations()}>Foundations</Link>} title={entry.value.title} description={entry.value.summary} toc="auto" footer={<Pager label="Previous and next foundation" prev={prev && {
+    return <Page kicker={<Link to={paths.foundations()}>{text.value.t("nav.foundations")}</Link>} title={localizedFoundationLabel(text.value.locale, entry.value.slug, entry.value.title)} description={localizedFoundationSummary(text.value.locale, entry.value.slug, entry.value.title, entry.value.summary)} toc="auto" footer={<Pager label={text.value.t("page.previousNext")} prev={prev && {
       to: paths.foundations(prev.slug),
-      title: prev.title
+      title: localizedFoundationLabel(text.value.locale, prev.slug, prev.title)
     }} next={next && {
       to: paths.foundations(next.slug),
-      title: next.title
+      title: localizedFoundationLabel(text.value.locale, next.slug, next.title)
     }} />}>
       <ContentSlot contentKey={`foundations/${entry.value.slug}`} fallback={<Placeholder topic={entry.value} />} />
     </Page>;

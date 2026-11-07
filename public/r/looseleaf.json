@@ -157,10 +157,11 @@
     "typography",
     "underline"
   ],
-  "docs": "Looseleaf is installed: paper tokens, fonts (Kalam, Caveat, Special Elite, IBM Plex Mono), the ink drawing engine and every component.\nDark mode follows shadcn: add the `dark` class to <html>. A second theme is a `[data-theme=\"…\"]` block that overrides the CSS variables.\nDocs and the component list: https://kevintngo.github.io/looseleaf",
+  "docs": "Looseleaf is installed: paper tokens, fonts (Kalam, Caveat, Special Elite, IBM Plex Mono), the ink drawing engine and every component.\nDark mode follows shadcn: add the `dark` class to <html>. A second theme is a `[data-theme=\"…\"]` block that overrides the CSS variables.\nDocs and the component list: https://looseleaf-vue.banana-energy.cn",
   "dependencies": [
     "vue",
     "reka-ui"
   ],
   "files": []
 }
+

@@ -23,7 +23,7 @@ const Example = defineUi<{}>("Example", [], (_props, {
       <HoverCard>
         <HoverCardTrigger asChild>
           <Button variant="link" class="px-1" asChild>
-            <a href="https://kevintngo.github.io/looseleaf/changelog">Looseleaf 1.0</a>
+            <a href="https://looseleaf-vue.banana-energy.cn/changelog">Looseleaf 1.0</a>
           </Button>
         </HoverCardTrigger>
         <HoverCardContent tape="top" tilt={-1.2} seed="release" class="w-72">
@@ -38,3 +38,4 @@ const Example = defineUi<{}>("Example", [], (_props, {
   };
 });
 export default Example;
+

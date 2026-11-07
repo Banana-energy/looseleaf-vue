@@ -12,7 +12,7 @@ import { AnchorHeading, Callout, CodeBlock, InlineCode, Page, Prose, Section } f
 import { CommandTabs } from "../widgets/CommandTabs";
 import { ContentSlot } from "../widgets/ContentSlot";
 const FONT_PACKAGES = ["@fontsource/ibm-plex-mono"];
-const FONT_IMPORTS = `@import url("https://kevintngo.github.io/looseleaf/fonts/kevin-sans.css");
+const FONT_IMPORTS = `@import url("https://looseleaf-vue.banana-energy.cn/fonts/kevin-sans.css");
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "@fontsource/ibm-plex-mono/500.css";`;
 const FONT_TOKENS = `@theme inline {
@@ -240,3 +240,4 @@ const GettingStartedBody = defineUi<{}>("GettingStartedBody", [], (_props, {
     </>;
   };
 });
+

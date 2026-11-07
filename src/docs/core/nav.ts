@@ -8,7 +8,7 @@ import { computed } from "vue";
 import type { Catalog } from "./catalog";
 import { FOUNDATIONS, FOUNDATION_BY_SLUG } from "./foundations";
 import { paths, slugifyAnchor, type Route } from "./router-core";
-import { categoryLabel, translate, type Locale } from "./i18n";
+import { categoryLabel, localizedComponentTitle, localizedFoundationLabel, translate, type Locale } from "./i18n";
 export const SITE_NAME = "Looseleaf";
 export const SITE_TAGLINE = "shadcn/ui, drawn by hand";
 export interface NavLinkModel {
@@ -58,7 +58,7 @@ export function buildNav(catalog: Catalog, route: Route, locale: Locale): NavSec
     active: route.name === "foundations" && !activeTopic,
     links: FOUNDATIONS.map(t => ({
       id: t.slug,
-      label: t.title,
+      label: localizedFoundationLabel(locale, t.slug, t.title),
       to: paths.foundations(t.slug),
       active: activeTopic === t.slug
     })),
@@ -77,7 +77,7 @@ export function buildNav(catalog: Catalog, route: Route, locale: Locale): NavSec
       containsActive: g.items.some(c => c.slug === activeComponent),
       links: g.items.map(c => ({
         id: c.slug,
-        label: c.doc.title,
+        label: localizedComponentTitle(locale, c.doc),
         to: paths.components(c.slug),
         active: activeComponent === c.slug
       }))
@@ -122,12 +122,16 @@ export function routeTitle(route: Route, catalog: Catalog, locale: Locale): stri
         return null;
       case "getting-started":
         return translate(locale, "route.gettingStarted");
-      case "foundations":
+      case "foundations": {
         if (!route.topic) return translate(locale, "route.foundations");
-        return FOUNDATION_BY_SLUG.get(route.topic)?.title ?? translate(locale, "route.notFound");
-      case "components":
+        const foundation = FOUNDATION_BY_SLUG.get(route.topic);
+        return foundation ? localizedFoundationLabel(locale, foundation.slug, foundation.title) : translate(locale, "route.notFound");
+      }
+      case "components": {
         if (!route.slug) return translate(locale, "route.components");
-        return catalog.bySlug.get(route.slug)?.doc.title ?? translate(locale, "route.componentNotFound");
+        const component = catalog.bySlug.get(route.slug);
+        return component ? localizedComponentTitle(locale, component.doc) : translate(locale, "route.componentNotFound");
+      }
       case "blocks":
         if (!route.slug) return translate(locale, "route.blocks");
         return catalog.blockBySlug.get(route.slug)?.title ?? translate(locale, "route.blockNotFound");

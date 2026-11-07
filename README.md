@@ -2,6 +2,8 @@
 
 Looseleaf Vue 是 [Looseleaf](https://github.com/kevintngo/looseleaf) 的 Vue 3 + TypeScript 版本，保留纸张、手绘笔触和组件交互风格。
 
+在线文档：[looseleaf-vue.banana-energy.cn](https://looseleaf-vue.banana-energy.cn/)
+
 ## 开发
 
 ```bash

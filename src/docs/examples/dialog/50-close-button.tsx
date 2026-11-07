@@ -32,7 +32,7 @@ const Example = defineUi<{}>("Example", [], (_props, {
             <Label for="share-link" class="sr-only">
               Link
             </Label>
-            <Input id="share-link" defaultValue="https://kevintngo.github.io/looseleaf/docs/installation" readonly />
+            <Input id="share-link" defaultValue="https://looseleaf-vue.banana-energy.cn/docs/installation" readonly />
           </div>
         </div>
         <DialogFooter class="sm:justify-start">
@@ -47,3 +47,4 @@ const Example = defineUi<{}>("Example", [], (_props, {
   };
 });
 export default Example;
+

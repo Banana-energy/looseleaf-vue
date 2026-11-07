@@ -29,8 +29,9 @@ const items = source.items.map(item => ({
     return [{ ...file, path: file.path, target, content }]
   }),
 }))
-const output = { ...source, name: 'looseleaf-vue', homepage: 'https://kevintngo.github.io/looseleaf', items }
+const output = { ...source, name: 'looseleaf-vue', homepage: 'https://looseleaf-vue.banana-energy.cn', items }
 fs.writeFileSync(path.join(root, 'registry.json'), JSON.stringify(output, null, 2) + '\n')
 fs.mkdirSync(path.join(root, 'public/r'), { recursive: true })
 for (const item of items) fs.writeFileSync(path.join(root, 'public/r', `${item.name}.json`), JSON.stringify({ $schema: source.$schema, ...item }, null, 2) + '\n')
 console.log(`生成 Vue registry：${items.length} 个条目`)
+

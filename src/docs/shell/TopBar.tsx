@@ -15,7 +15,8 @@ import { Kbd } from "../kit";
 import { SettingsMenu } from "./SettingsMenu";
 import { LogoMark } from "./LogoMark";
 import { useLocaleText } from "../core/settings";
-export const GITHUB_URL: string = import.meta.env.VITE_GITHUB_URL ?? "https://github.com/kevintngo/looseleaf";
+// 顶栏图标始终指向 Vue 版本仓库，文档地址单独由 README 和 registry 配置维护。
+export const GITHUB_URL: string = import.meta.env.VITE_GITHUB_URL ?? "https://github.com/Banana-energy/looseleaf-vue";
 function useShortcutHint(): ComputedRef<string> {
   const hint = shallowRef(initialState("Ctrl K"));
   const setHint = stateSetter(hint);

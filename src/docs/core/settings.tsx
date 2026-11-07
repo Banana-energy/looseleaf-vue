@@ -23,11 +23,13 @@ export interface Settings {
   setLocale(value: Locale): void;
 }
 const noop = () => {};
+// 使用新的键名让已有英文偏好不覆盖本次中文默认值；用户仍可在设置中切换到 English。
+const LOCALE_STORAGE_KEY = "locale-v2";
 const SettingsContext = createContext<Settings>({
   density: "comfortable" as const,
   motion: "system" as const,
   packageManager: "pnpm" as const,
-  locale: "en" as const,
+  locale: "zh-CN" as const,
   setDensity: noop,
   setMotion: noop,
   setPackageManager: noop,
@@ -45,7 +47,7 @@ export const SettingsProvider = defineUi<{
   const setMotionState = stateSetter(motion);
   const packageManager = shallowRef<PackageManager>(initialState(() => readStoredChoice("pm", PACKAGE_MANAGERS, "pnpm")));
   const setPackageManagerState = stateSetter(packageManager);
-  const locale = shallowRef<Locale>(initialState(() => readStoredChoice("locale", LOCALES, "en")));
+  const locale = shallowRef<Locale>(initialState(() => readStoredChoice(LOCALE_STORAGE_KEY, LOCALES, "zh-CN")));
   const setLocaleState = stateSetter(locale);
   watchDependencies(() => {
     const root = document.documentElement;
@@ -67,7 +69,7 @@ export const SettingsProvider = defineUi<{
   };
   const setLocale = (value: Locale) => {
     setLocaleState(value);
-    writeStored("locale", value);
+    writeStored(LOCALE_STORAGE_KEY, value);
     document.documentElement.lang = value;
   };
   const value = computed<Settings>(() => ({

@@ -45,7 +45,7 @@
       "The recess frame and tape are aria-hidden decoration. Give the media an accessible name if it carries meaning.",
       "Portalled content repeats the InkProvider's `data-density`, `data-motion` and `data-theme`; with reduced motion it appears without the zoom."
     ],
-    "usage": "import { HoverCard, HoverCardCaption, HoverCardContent, HoverCardMedia, HoverCardTrigger } from \"@/components/ui/hover-card\"\nimport { Button } from \"@/components/ui/button\"\nimport { Doodle } from \"@/components/ui/doodle\"\n\nexport function Example() {\n  return (\n    <HoverCard>\n      <HoverCardTrigger asChild>\n        <Button variant=\"link\" asChild>\n          <a href=\"https://kevintngo.github.io/looseleaf\">@looseleaf</a>\n        </Button>\n      </HoverCardTrigger>\n      <HoverCardContent tape=\"top\">\n        <HoverCardMedia>\n          <Doodle name=\"flower\" size={88} />\n        </HoverCardMedia>\n        <HoverCardCaption>@looseleaf</HoverCardCaption>\n        <p class=\"px-1 text-sm text-muted-foreground\">shadcn/ui, drawn by hand.</p>\n      </HoverCardContent>\n    </HoverCard>\n  )\n}",
+    "usage": "import { HoverCard, HoverCardCaption, HoverCardContent, HoverCardMedia, HoverCardTrigger } from \"@/components/ui/hover-card\"\nimport { Button } from \"@/components/ui/button\"\nimport { Doodle } from \"@/components/ui/doodle\"\n\nexport function Example() {\n  return (\n    <HoverCard>\n      <HoverCardTrigger asChild>\n        <Button variant=\"link\" asChild>\n          <a href=\"https://looseleaf-vue.banana-energy.cn\">@looseleaf</a>\n        </Button>\n      </HoverCardTrigger>\n      <HoverCardContent tape=\"top\">\n        <HoverCardMedia>\n          <Doodle name=\"flower\" size={88} />\n        </HoverCardMedia>\n        <HoverCardCaption>@looseleaf</HoverCardCaption>\n        <p class=\"px-1 text-sm text-muted-foreground\">shadcn/ui, drawn by hand.</p>\n      </HoverCardContent>\n    </HoverCard>\n  )\n}",
     "parts": [
       "HoverCard",
       "HoverCardTrigger",
@@ -55,3 +55,4 @@
     ]
   }
 }
+

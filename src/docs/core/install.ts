@@ -8,7 +8,7 @@ import { computed } from "vue";
 export type PackageManager = "npm" | "pnpm" | "yarn" | "bun";
 export const PACKAGE_MANAGERS: readonly PackageManager[] = ["npm", "pnpm", "yarn", "bun"];
 export const NAMESPACE = "@looseleaf";
-export const DEFAULT_REGISTRY_URL = "https://kevintngo.github.io/looseleaf/r";
+export const DEFAULT_REGISTRY_URL = "https://looseleaf-vue.banana-energy.cn/r";
 export function registryBase(env: Record<string, unknown> = import.meta.env): string {
   const url = typeof env.VITE_REGISTRY_URL === "string" && env.VITE_REGISTRY_URL ? env.VITE_REGISTRY_URL : DEFAULT_REGISTRY_URL;
   return url.replace(/\/+$/, "");
@@ -135,3 +135,4 @@ export function registryInfo(registryText: string, name: string): RegistryInfo |
     files
   };
 }
+

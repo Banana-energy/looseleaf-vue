@@ -16,7 +16,7 @@ export const meta = {
   layout: "center" as const,
   height: 300
 };
-const LINK = "https://kevintngo.github.io/looseleaf/n/field-notes";
+const LINK = "https://looseleaf-vue.banana-energy.cn/n/field-notes";
 const Example = defineUi<{}>("Example", [], (_props, {
   slots: _slots
 }) => {
@@ -57,3 +57,4 @@ const Example = defineUi<{}>("Example", [], (_props, {
   };
 });
 export default Example;
+

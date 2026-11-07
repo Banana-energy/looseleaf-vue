@@ -24,10 +24,11 @@ const Example = defineUi<{}>("Example", [], (_props, {
   }
 }`} />
       <CodeBlock filename="package.json" seed="json" code={`{\n  "name": "looseleaf",\n  "private": true,\n  "keywords": ["paper", null]\n}`} />
-      <CodeBlock language="bash" filename="terminal" wrap seed="bash" code={`$ npx shadcn add https://kevintngo.github.io/looseleaf/r/bubble.json https://kevintngo.github.io/looseleaf/r/message.json --overwrite
+      <CodeBlock language="bash" filename="terminal" wrap seed="bash" code={`$ npx shadcn add https://looseleaf-vue.banana-energy.cn/r/bubble.json https://looseleaf-vue.banana-energy.cn/r/message.json --overwrite
 # then draw something
 export FOO=$BAR && echo "\${FOO}" | grep -i tags`} />
     </div>;
   };
 });
 export default Example;
+

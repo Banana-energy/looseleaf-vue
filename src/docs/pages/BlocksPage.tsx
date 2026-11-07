@@ -17,19 +17,21 @@ import { ContentSlot } from "../widgets/ContentSlot";
 import { PreviewFrame } from "../widgets/PreviewFrame";
 import { useLoaded } from "../widgets/use-loaded";
 import { NotFoundPage } from "./NotFoundPage";
+import { localizedBlockDescription, localizedBlockTitle } from "../core/i18n";
 export const BlocksIndexPage = defineUi<{}>("BlocksIndexPage", [], (_props, {
   slots: _slots
 }) => {
   const catalog = useCatalog();
+  const text = useSettings();
   return () => {
-    return <Page kicker="Library" title="Blocks" description="Whole pages composed from the components: sign in, dashboards and more. Install one and edit it; it is your code.">
-      {catalog.value.blocks.length === 0 ? <EmptyState title="No blocks yet">
+    return <Page kicker={text.value.locale === "zh-CN" ? "组件库" : "Library"} title={text.value.locale === "zh-CN" ? "区块" : "Blocks"} description={text.value.locale === "zh-CN" ? "由组件组合而成的完整页面：登录页、仪表盘以及更多界面。安装后即可继续编辑。" : "Whole pages composed from the components: sign in, dashboards and more. Install one and edit it; it is your code."}>
+      {catalog.value.blocks.length === 0 ? <EmptyState title={text.value.locale === "zh-CN" ? "暂无区块" : "No blocks yet"}>
           <p>
             A block appears here when it has files in <InlineCode>src/blocks/&lt;name&gt;/</InlineCode>. Add{" "}
             <InlineCode>src/docs/content/blocks/&lt;name&gt;.tsx</InlineCode> to show a live preview.
           </p>
         </EmptyState> : <TileGrid>
-          {catalog.value.blocks.map(b => <Tile key={b.slug} to={paths.blocks(b.slug)} title={b.title} description={b.description || undefined} meta={b.tags.map(t => <Chip key={t} tone="outline" plain>
+          {catalog.value.blocks.map(b => <Tile key={b.slug} to={paths.blocks(b.slug)} title={localizedBlockTitle(text.value.locale, b.slug, b.title)} description={localizedBlockDescription(text.value.locale, b.title, b.description)} meta={b.tags.map(t => <Chip key={t} tone="outline" plain>
                   {t}
                 </Chip>)} />)}
         </TileGrid>}
@@ -59,18 +61,20 @@ const BlockDocPage = defineUi<{
   const index = computed(() => catalog.value.blocks.indexOf(block.value));
   const prev = computed(() => catalog.value.blocks[index.value - 1]);
   const next = computed(() => catalog.value.blocks[index.value + 1]);
+  const text = useSettings();
   return () => {
-    return <Page kicker={<Link to={paths.blocks()}>Blocks</Link>} title={block.value.title} description={block.value.description || undefined} meta={block.value.tags.map(t => <Chip key={t} tone="outline">
+    const title = localizedBlockTitle(text.value.locale, block.value.slug, block.value.title);
+    return <Page kicker={<Link to={paths.blocks()}>{text.value.locale === "zh-CN" ? "区块" : "Blocks"}</Link>} title={title} description={localizedBlockDescription(text.value.locale, block.value.title, block.value.description)} meta={block.value.tags.map(t => <Chip key={t} tone="outline">
           {t}
         </Chip>)} toc={[{
       id: "preview" as const,
-      label: "Preview" as const
+      label: text.value.locale === "zh-CN" ? "预览" : "Preview"
     }, {
       id: "installation" as const,
-      label: "Installation" as const
+      label: text.value.locale === "zh-CN" ? "安装" : "Installation"
     }, {
       id: "files" as const,
-      label: "Files" as const
+      label: text.value.locale === "zh-CN" ? "文件" : "Files"
     }]} footer={<Pager label="Previous and next block" prev={prev.value && {
       to: paths.blocks(prev.value.slug),
       title: prev.value.title
@@ -78,7 +82,7 @@ const BlockDocPage = defineUi<{
       to: paths.blocks(next.value.slug),
       title: next.value.title
     }} />}>
-      <Section id="preview" title="Preview">
+      <Section id="preview" title={text.value.locale === "zh-CN" ? "预览" : "Preview"}>
         {block.value.contentKey ? <PreviewFrame>
             <Stage layout="full" height={520} label={`${block.value.title} preview`} surface={block.value.surface}>
               <ContentSlot contentKey={block.value.contentKey} />
@@ -90,11 +94,11 @@ const BlockDocPage = defineUi<{
           </Callout>}
       </Section>
 
-      <Section id="installation" title="Installation">
+      <Section id="installation" title={text.value.locale === "zh-CN" ? "安装" : "Installation"}>
         <BlockInstall block={block.value} />
       </Section>
 
-      <Section id="files" title="Files">
+      <Section id="files" title={text.value.locale === "zh-CN" ? "文件" : "Files"}>
         <BlockFiles block={block.value} />
       </Section>
     </Page>;

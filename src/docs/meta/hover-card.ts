@@ -74,7 +74,7 @@ export function Example() {
     <HoverCard>
       <HoverCardTrigger asChild>
         <Button variant="link" asChild>
-          <a href="https://kevintngo.github.io/looseleaf">@looseleaf</a>
+          <a href="https://looseleaf-vue.banana-energy.cn">@looseleaf</a>
         </Button>
       </HoverCardTrigger>
       <HoverCardContent tape="top">
@@ -89,3 +89,4 @@ export function Example() {
 }`,
   related: ["popover", "tooltip", "card", "paper"]
 } satisfies ComponentDoc;
+

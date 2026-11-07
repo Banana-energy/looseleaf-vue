@@ -10,10 +10,11 @@ import { addCommand } from "../core/install";
 import { categoryAnchor } from "../core/nav";
 import { FOUNDATIONS } from "../core/foundations";
 import { paths } from "../core/router-core";
-import { useSettings } from "../core/settings";
 import { ButtonLink, Chip, CodeBlock, EmptyState, Page, Section, StatusChip, Tile, TileGrid } from "../kit";
 import { ContentSlot, useHasContent } from "../widgets/ContentSlot";
 import { Link } from "../core/router";
+import { useLocaleText, useSettings } from "../core/settings";
+import { categoryLabel, localizedComponentDescription, localizedComponentTitle, localizedFoundationLabel, localizedFoundationSummary } from "../core/i18n";
 export const HomePage = defineUi<{}>("HomePage", [], (_props, {
   slots: _slots
 }) => {
@@ -41,13 +42,15 @@ const DefaultHome = defineUi<{}>("DefaultHome", [], (_props, {
   const fresh = computed(() => catalog.value.components.filter(c => c.doc.status === "new"));
   const showNew = computed(() => fresh.value.length >= 3);
   const featured = computed(() => (showNew.value ? fresh.value : catalog.value.components).slice(0, 6));
+  const text = useLocaleText();
   return () => {
-    return <Page kicker="shadcn/ui, drawn by hand" title="Looseleaf" description="A shadcn registry of real, accessible Vue components that look like paper, felt-tip, marker and tape. Same APIs as shadcn/ui, a notebook for a skin." meta={<>
+    const zh = text.value.locale === "zh-CN";
+    return <Page kicker={zh ? "手绘风格的 shadcn/ui" : "shadcn/ui, drawn by hand"} title="Looseleaf" description={zh ? "一个提供真实、可访问 Vue 组件的 shadcn 注册表，拥有纸张、签字笔、马克笔和胶带般的视觉。" : "A shadcn registry of real, accessible Vue components that look like paper, felt-tip, marker and tape. Same APIs as shadcn/ui, a notebook for a skin."} meta={<>
           <ButtonLink to={paths.gettingStarted} variant="primary" size="lg">
-            Get started
+            {zh ? "快速开始" : "Get started"}
           </ButtonLink>
           <ButtonLink to={paths.components()} size="lg">
-            Browse components
+            {zh ? "浏览组件" : "Browse components"}
           </ButtonLink>
         </>}>
       {hasArt.value ? <div class="dk-hero-art">
@@ -57,13 +60,13 @@ const DefaultHome = defineUi<{}>("DefaultHome", [], (_props, {
       <CodeBlock code={addCommand(packageManager.value, "looseleaf")} lang="bash" title="Everything, in one line" />
 
       <dl class="dk-stats grid grid-cols-3 gap-4 text-center">
-        {[["Components", catalog.value.components.length], ["Blocks", catalog.value.blocks.length], ["Foundations", FOUNDATIONS.length]].map(([label, value]) => <div key={label} class="flex flex-col-reverse items-center gap-1">
+        {[[zh ? "组件" : "Components", catalog.value.components.length], [zh ? "区块" : "Blocks", catalog.value.blocks.length], [zh ? "基础" : "Foundations", FOUNDATIONS.length]].map(([label, value]) => <div key={label} class="flex flex-col-reverse items-center gap-1">
             <dt class="font-type text-xs text-ink-muted">{label}</dt>
             <dd class="ll-num font-script text-5xl leading-none font-bold text-ink-you">{value}</dd>
           </div>)}
       </dl>
 
-      <Section id="principles" title="What you get">
+      <Section id="principles" title={zh ? "你将获得什么" : "What you get"}>
         <ul class="dk-principles grid gap-x-8 gap-y-5 sm:grid-cols-3" role="list">
           {PRINCIPLES.map(p => <li key={p.title}>
               <h3 class="font-script text-2xl leading-tight font-bold">{p.title}</h3>
@@ -72,19 +75,19 @@ const DefaultHome = defineUi<{}>("DefaultHome", [], (_props, {
         </ul>
       </Section>
 
-      <Section id="components" title={showNew.value ? "New and noteworthy" as const : "Components" as const}>
+      <Section id="components" title={showNew.value ? zh ? "最新组件" : "New and noteworthy" : text.value.t("nav.components")}>
         {catalog.value.components.length === 0 ? <EmptyState title="The library is still being drawn">
             <p>
               Components appear here as their docs are written. Meanwhile, read <Link to={paths.gettingStarted}>how installation works</Link>.
             </p>
           </EmptyState> : <>
             <TileGrid>
-              {featured.value.map(c => <Tile key={c.slug} to={paths.components(c.slug)} title={c.doc.title} description={c.doc.description} meta={<StatusChip status={c.doc.status} plain />} />)}
+              {featured.value.map(c => <Tile key={c.slug} to={paths.components(c.slug)} title={localizedComponentTitle(text.value.locale, c.doc)} description={localizedComponentDescription(text.value.locale, c.doc)} meta={<StatusChip status={c.doc.status} plain />} />)}
             </TileGrid>
-            <ul class="dk-chips mt-2" role="list" aria-label="Categories">
+            <ul class="dk-chips mt-2" role="list" aria-label={zh ? "分类" : "Categories"}>
               {catalog.value.groups.map(g => <li key={g.category}>
                   <Link to={`${paths.components()}#${categoryAnchor(g.category)}`} class="dk-chip-link">
-                    {g.category}{" "}
+                    {categoryLabel(text.value.locale, g.category)}{" "}
                     <Chip tone="count" plain>
                       {g.items.length}
                     </Chip>
@@ -94,11 +97,12 @@ const DefaultHome = defineUi<{}>("DefaultHome", [], (_props, {
           </>}
       </Section>
 
-      <Section id="foundations" title="Foundations" description="The ideas underneath: ink, paper, motion, density.">
+      <Section id="foundations" title={text.value.t("nav.foundations")} description={zh ? "组件背后的基础：墨水、纸张、动效和密度。" : "The ideas underneath: ink, paper, motion, density."}>
         <TileGrid>
-          {FOUNDATIONS.slice(0, 6).map(t => <Tile key={t.slug} to={paths.foundations(t.slug)} title={t.title} description={t.summary} />)}
+          {FOUNDATIONS.slice(0, 6).map(t => <Tile key={t.slug} to={paths.foundations(t.slug)} title={localizedFoundationLabel(text.value.locale, t.slug, t.title)} description={localizedFoundationSummary(text.value.locale, t.slug, t.title, t.summary)} />)}
         </TileGrid>
       </Section>
     </Page>;
   };
 });
+

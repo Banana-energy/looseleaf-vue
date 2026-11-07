@@ -29,7 +29,7 @@ const Example = defineUi<{}>("Example", [], (_props, {
         </a>
       </Item>
       <Item variant="outline" asChild>
-        <a href="https://kevintngo.github.io/looseleaf" target="_blank" rel="noopener noreferrer">
+        <a href="https://looseleaf-vue.banana-energy.cn" target="_blank" rel="noopener noreferrer">
           <ItemContent>
             <ItemTitle>External resource</ItemTitle>
             <ItemDescription>Opens in a new tab with security attributes.</ItemDescription>
@@ -43,3 +43,4 @@ const Example = defineUi<{}>("Example", [], (_props, {
   };
 });
 export default Example;
+

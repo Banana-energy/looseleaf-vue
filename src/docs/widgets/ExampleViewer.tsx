@@ -12,6 +12,8 @@ import { PreviewFrame } from "./PreviewFrame";
 import { ErrorBoundary } from "./ErrorBoundary";
 import type { ExampleModule } from "../types";
 import { exampleLoader, useLoaded, type Loaded } from "./use-loaded";
+import { useLocaleText } from "../core/settings";
+import { localizedExampleDescription, localizedExampleTitle } from "../core/i18n";
 export interface ExampleViewerProps {
   entry: ExampleEntry;
   slug: string;
@@ -90,20 +92,22 @@ export const ExampleViewer = defineUi<ExampleViewerProps>("ExampleViewer", ["ent
   const nearMount = useSeenNear(() => root, () => watching.value, () => MOUNT_MARGIN);
   const mount = computed(() => !lazy.value || pinned.value || nearMount.value);
   const state = useLoaded(() => mount.value || nearFetch.value ? exampleLoader(entry.value) : null);
+  const text = useLocaleText();
   useHoldScroll(() => root, () => lazy.value);
   const meta = computed(() => state.value.status === "ready" ? state.value.value.meta : undefined);
-  const title = computed(() => meta.value?.title || entry.value.title);
+  const title = computed(() => localizedExampleTitle(text.value.locale, meta.value?.title || entry.value.title));
+  const description = computed(() => localizedExampleDescription(text.value.locale, meta.value?.description));
   return () => {
     if (linked.value && !pinned.value) setPinned(true);
-    return <Section id={id.value} title={title.value} level={headingLevel.value} description={meta.value?.description} class="dk-example">
+    return <Section id={id.value} title={title.value} level={headingLevel.value} description={description.value} class="dk-example">
       <div ref={root}>
-        <Tabs label={`${title.value}: preview or code`} variant="pill" items={[{
+        <Tabs label={`${title.value}: ${text.value.t("page.previewOrCode")}`} variant="pill" items={[{
           id: "preview" as const,
-          label: "Preview" as const,
+          label: text.value.t("page.preview"),
           content: () => <ExamplePreview state={state.value} mount={mount.value} title={title.value} path={entry.value.path} />
         }, {
           id: "code" as const,
-          label: "Code" as const,
+          label: text.value.t("page.code"),
           content: () => <ExampleSource source={entry.value.source} title={`examples/${slug.value}/${entry.value.fileName}`} />
         }]} />
       </div>
@@ -122,12 +126,13 @@ const ExamplePreview = defineUi<{
   const mount = computed(() => _props["mount"]);
   const title = computed(() => _props["title"]);
   const path = computed(() => _props["path"]);
+  const text = useLocaleText();
   const room = computed(() => measured.get(path.value) ?? (state.value.status === "ready" && state.value.value.meta.height ? state.value.value.meta.height + CHROME : DEFAULT_ROOM));
   return () => {
     if (!mount.value) return <Skeleton quiet height={room.value} />;
-    if (state.value.status === "loading") return <Skeleton height={room.value} label={`Loading ${title.value}`} />;
+    if (state.value.status === "loading") return <Skeleton height={room.value} label={`${text.value.t("page.loadingExample")} ${title.value}`} />;
     if (state.value.status === "error") {
-      return <Callout tone="error" title="This example could not be loaded">
+      return <Callout tone="error" title={text.value.locale === "zh-CN" ? "示例加载失败" : "This example could not be loaded"}>
         <p>{state.value.error.message}</p>
       </Callout>;
     }
@@ -138,7 +143,7 @@ const ExamplePreview = defineUi<{
     return <Remembered path={path.value}>
       <PreviewFrame class="mt-1">
         <Stage layout={meta.layout} height={meta.height} label={`${title.value} preview`} surface={meta.stage === "desk" ? "desk" as const : "paper" as const} contain={meta.contain}>
-          <ErrorBoundary resetKey={path.value} title="This example crashed">
+          <ErrorBoundary resetKey={path.value} title={text.value.locale === "zh-CN" ? "示例运行出错" : "This example crashed"}>
             <Suspense fallback={<Skeleton height={80} />}>
               <Example />
             </Suspense>
@@ -179,15 +184,16 @@ const ExampleSource = defineUi<{
 }) => {
   const source = computed(() => _props["source"]);
   const title = computed(() => _props["title"]);
+  const text = useLocaleText();
   const state = useLoaded(() => source.value);
   return () => {
-    if (state.value.status === "loading") return <Skeleton height={120} label="Loading source" />;
+    if (state.value.status === "loading") return <Skeleton height={120} label={text.value.t("page.loadingSource")} />;
     if (state.value.status === "error") {
-      return <Callout tone="error" title="Could not load the source">
+      return <Callout tone="error" title={text.value.locale === "zh-CN" ? "源码加载失败" : "Could not load the source"}>
         <p>{state.value.error.message}</p>
       </Callout>;
     }
-    if (!state.value.value) return <Callout tone="warn">The source for this example is not available in this build.</Callout>;
+    if (!state.value.value) return <Callout tone="warn">{text.value.locale === "zh-CN" ? "当前构建中没有这个示例的源码。" : "The source for this example is not available in this build."}</Callout>;
     return <CodeBlock code={state.value.value} lang="tsx" title={title.value} lineNumbers />;
   };
 });
