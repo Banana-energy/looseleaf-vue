@@ -33,8 +33,6 @@ export function useInstallInfo(_source0: MaybeRefOrGetter<ComponentEntry>): Comp
 }> {
   const entry = computed(() => toValue(_source0));
   const catalog = useCatalog();
-  const text = useLocaleText();
-  const zh = computed(() => text.value.locale === "zh-CN");
   const registry = useLoaded(() => catalog.value.registry);
   const ui = useLoaded(() => entry.value.uiSource);
   const registryReady = computed(() => catalog.value.registry === null || registry.value.status !== "loading");
@@ -77,6 +75,8 @@ export const InstallBox = defineUi<{
   const catalog = useCatalog();
   const slug = computed(() => entry.value.slug);
   const dependsOn = computed(() => info.value.registryDependencies.filter(name => name !== "looseleaf-theme"));
+  const text = useLocaleText();
+  const zh = computed(() => text.value.locale === "zh-CN");
   return () => {
     return <div class="dk-install min-w-0">
       <Tabs label={zh.value ? "安装方式" : "Installation method"} items={[{
