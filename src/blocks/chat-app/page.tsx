@@ -6,10 +6,11 @@ import { Children, cloneElement, createElement, isValidElement } from "@/lib/vno
 import { cssStyle } from "@/lib/css";
 import { computed, shallowRef } from "vue";
 import { ChatAppConversationList } from "@/blocks/chat-app/components/chat-app-conversation-list";
-import { CONVERSATIONS, type ChatFile, type Conversation } from "@/blocks/chat-app/components/chat-app-data";
+import { conversationsForLocale, type ChatFile, type Conversation } from "@/blocks/chat-app/components/chat-app-data";
 import { useChatApp } from "@/blocks/chat-app/components/chat-app-state";
 import { ChatAppThread } from "@/blocks/chat-app/components/chat-app-thread";
 import { cn } from "@/lib/utils";
+import { useLocaleText } from "@/docs/core/settings";
 type Props = {
   className?: string;
   conversations?: Conversation[];
@@ -19,7 +20,9 @@ const ChatApp = defineUi<Props>("ChatApp", ["class", "conversations", "onSend"],
   slots: _slots
 }) => {
   const className = computed(() => _props["class"]);
-  const conversations = computed(() => _props["conversations"] === undefined ? CONVERSATIONS : _props["conversations"]);
+  const locale = useLocaleText();
+  const language = computed(() => locale.value.locale);
+  const conversations = computed(() => _props["conversations"] === undefined ? conversationsForLocale(language.value) : _props["conversations"]);
   const onSend = computed(() => _props["onSend"]);
   const chat = useChatApp(() => conversations.value, () => conversations.value[0]?.id ?? "", () => onSend.value);
   const view = shallowRef<"list" | "thread">(initialState("list"));
@@ -38,11 +41,11 @@ const ChatApp = defineUi<Props>("ChatApp", ["class", "conversations", "onSend"],
   return () => {
     return <div class="@container/chat w-full">
       <div ref={grid} data-slot="chat-app" data-view={view.value} class={cn("group/chat grid h-[50rem] max-h-[100svh] min-h-[32rem] w-full grid-cols-1 grid-rows-[minmax(0,1fr)] gap-6 p-4 pt-10 @3xl/chat:grid-cols-[minmax(16rem,21rem)_minmax(0,1fr)] @3xl/chat:p-6 @3xl/chat:pt-12", className.value)}>
-        <ChatAppConversationList conversations={chat.value.conversations} activeId={chat.value.activeId} onSelect={id => {
+        <ChatAppConversationList locale={language.value} conversations={chat.value.conversations} activeId={chat.value.activeId} onSelect={id => {
           chat.value.select(id);
           setView("thread");
         }} class="group-data-[view=thread]/chat:@max-3xl/chat:hidden" />
-        {chat.value.active ? <ChatAppThread key={chat.value.active.id} conversation={chat.value.active} status={chat.value.status} announce={chat.value.announce} onSend={chat.value.send} onStop={chat.value.stop} onBack={() => setView("list")} class="group-data-[view=list]/chat:@max-3xl/chat:hidden" /> : null}
+        {chat.value.active ? <ChatAppThread key={chat.value.active.id} locale={language.value} conversation={chat.value.active} status={chat.value.status} announce={chat.value.announce} onSend={chat.value.send} onStop={chat.value.stop} onBack={() => setView("list")} class="group-data-[view=list]/chat:@max-3xl/chat:hidden" /> : null}
       </div>
     </div>;
   };

@@ -228,6 +228,15 @@ const FOUNDATION_LABELS: Record<string, string> = {
   principles: "设计原则", color: "颜色", typography: "排版", pens: "笔触", paper: "纸张", icons: "图标", "stickers-doodles": "贴纸与涂鸦", motion: "动效", density: "密度", accessibility: "无障碍", theming: "主题"
 };
 
+// 区块标题来自元数据文件；集中映射后，侧栏、区块总览和详情页会保持同一套中文名称。
+const BLOCK_LABELS: Record<string, string> = {
+  "announcement-bar": "公告栏", "calendar-planner": "日历规划", "chat-app": "聊天应用", "checkout-01": "结账页面 01", "cta-01": "行动号召与票券", "dashboard-01": "仪表盘 01", "dashboard-analytics": "分析仪表盘", "dashboard-finance": "财务仪表盘", "empty-inbox": "空收件箱", "empty-search": "空搜索结果", "error-404": "404 错误页", "error-500": "500 错误页", "faq-01": "常见问题 01", "features-01": "功能卡片 01", "file-explorer": "文件浏览器", "footer-01": "拼接牛皮纸页脚", "forgot-password-01": "忘记密码 01", inbox: "收件箱", "kanban-board": "看板", "landing-hero-01": "落地页首屏 01", "landing-hero-02": "落地页首屏 02", "login-01": "登录页 01", "login-02": "登录页 02", "login-03": "登录页 03", "login-04": "登录页 04", "login-05": "登录页 05", "logos-01": "品牌标志墙", "newsletter-01": "邮件订阅", "notes-app": "笔记应用", "onboarding-01": "入门清单", "otp-01": "一次性密码 01", "pricing-01": "定价页 01", "profile-page": "个人资料页", "reset-password-01": "重置密码 01", "settings-appearance": "外观设置", "settings-billing": "账单设置", "settings-notifications": "通知设置", "settings-profile": "个人资料设置", "sidebar-01": "侧边栏 01", "sidebar-02": "侧边栏 02", "sidebar-03": "侧边栏 03", "sidebar-04": "侧边栏 04", "sidebar-05": "侧边栏 05", "sidebar-06": "侧边栏 06", "sidebar-07": "侧边栏 07", "sidebar-08": "侧边栏 08", "sidebar-09": "侧边栏 09", "sidebar-10": "侧边栏 10", "sidebar-11": "侧边栏 11", "sidebar-12": "侧边栏 12", "sidebar-13": "侧边栏 13", "sidebar-14": "侧边栏 14", "sidebar-15": "侧边栏 15", "sidebar-16": "侧边栏 16", "sidebar-shared": "侧边栏通用部件", "signup-01": "注册页 01", "signup-02": "注册页 02", "signup-03": "注册页 03", "signup-04": "注册页 04", "signup-05": "注册页 05", "testimonials-01": "用户评价墙"
+};
+
+const TAG_LABELS: Record<string, string> = {
+  app: "应用", chat: "聊天", messages: "消息", composer: "编辑器", calendar: "日历", planner: "规划", dialog: "对话框", productivity: "效率", marketing: "营销", banner: "横幅", ribbon: "缎带", dashboard: "仪表盘", analytics: "分析", finance: "财务", commerce: "商业", checkout: "结账", receipt: "收据", validation: "校验", cta: "行动号召", ticket: "票券", sidebar: "侧边栏", chart: "图表", charts: "图表", table: "表格", "empty state": "空状态", inbox: "收件箱", stubby: "Stubby", tabs: "标签页", search: "搜索", "input group": "输入组", error: "错误", faq: "常见问题", accordion: "手风琴", features: "功能", bento: "便当盒布局", corkboard: "软木板", files: "文件", folders: "文件夹", list: "列表", grid: "网格", footer: "页脚", kraft: "牛皮纸", stamp: "印章", password: "密码", auth: "身份验证", recovery: "找回", card: "卡片", desk: "桌面", mascot: "吉祥物", login: "登录", split: "分栏", collage: "拼贴", social: "社交", polaroid: "拍立得", email: "邮件", "magic-link": "魔法链接", logos: "标志", "social proof": "社会证明", marquee: "跑马灯", newsletter: "订阅", form: "表单", envelope: "信封", notes: "笔记", editor: "编辑器", onboarding: "入门", checklist: "清单", progress: "进度", otp: "一次性密码", verify: "验证", "input-otp": "密码输入", pricing: "定价", plans: "方案", toggle: "切换", profile: "资料", activity: "动态", tally: "计数", settings: "设置", appearance: "外观", theme: "主题", density: "密度", motion: "动效", notifications: "通知", invoices: "发票", payment: "支付", navigation: "导航", docs: "文档", collapsible: "可折叠", submenu: "子菜单", floating: "浮动", dropdown: "下拉", icons: "图标", inset: "内嵌", nested: "嵌套", mail: "邮件", popover: "弹出", tree: "树形", right: "右侧", header: "页头", parts: "部件", shared: "共享", signup: "注册", "password-strength": "密码强度", stickers: "贴纸", testimonials: "评价", hero: "首屏", landing: "落地页", "product shot": "产品展示", kanban: "看板", "sticky notes": "便签", "drag and drop": "拖放", 404: "404", 500: "500"
+};
+
 const EXAMPLE_WORDS: Record<string, string> = {
   default: "默认", variants: "变体", variant: "变体", sizes: "尺寸", size: "尺寸", states: "状态", state: "状态", disabled: "禁用", loading: "加载", basic: "基础", simple: "简单", custom: "自定义", with: "带", text: "文本", icon: "图标", icons: "图标", group: "分组", groups: "分组", styles: "样式", style: "样式", demo: "演示", examples: "示例", example: "示例", interactive: "交互式", preview: "预览", locales: "多语言", calendar: "日历", form: "表单", data: "数据", table: "表格"
 };
@@ -270,9 +279,13 @@ export function localizedFoundationSummary(locale: Locale, slug: string, title: 
 
 export function localizedBlockTitle(locale: Locale, slug: string, title: string): string {
   if (locale === "en") return title;
-  return `区块：${slug.split("-").map(word => EXAMPLE_WORDS[word] ?? COMPONENT_LABELS[word] ?? word).join(" ")}`;
+  return BLOCK_LABELS[slug] ?? title;
 }
 
-export function localizedBlockDescription(locale: Locale, title: string, description: string): string {
-  return locale === "zh-CN" ? `${title} 是一组可直接使用和继续编辑的页面区块。` : description;
+export function localizedBlockDescription(locale: Locale, slug: string, title: string, description: string): string {
+  return locale === "zh-CN" ? `${localizedBlockTitle(locale, slug, title)} 是一组可直接使用和继续编辑的页面区块。` : description;
+}
+
+export function localizedTag(locale: Locale, tag: string): string {
+  return locale === "zh-CN" ? TAG_LABELS[tag.toLowerCase()] ?? tag : tag;
 }

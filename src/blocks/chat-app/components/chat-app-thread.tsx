@@ -20,6 +20,7 @@ import { ChatAppFace } from "@/blocks/chat-app/components/chat-app-face";
 import type { ChatFile, ChatPart, ChatTurn, Conversation } from "@/blocks/chat-app/components/chat-app-data";
 import type { ChatStatus } from "@/blocks/chat-app/components/chat-app-state";
 import { cn } from "@/lib/utils";
+import { useLocaleText } from "@/docs/core/settings";
 const FileChip = defineUi<{
   file: ChatFile;
   children?: UI.ReactNode;
@@ -73,10 +74,11 @@ const Parts = defineUi<{
   const conversation = computed(() => _props["conversation"]);
   const live = computed(() => _props["live"]);
   const prose = computed(() => conversation.value.kind === "assistant");
+  const locale = useLocaleText();
   return () => {
     return <>
       {turn.value.parts.map((p: ChatPart, i) => {
-        if (p.kind === "tool") return <ToolNote key={i} title={p.title} result={p.result} />;
+        if (p.kind === "tool") return <ToolNote key={i} title={locale.value.locale === "zh-CN" && p.title === "ran npm test" ? "运行 npm test" : p.title} result={p.result} />;
         if (p.kind === "code") return <CodeBlock key={i} diff language="ts" filename={p.filename} code={p.code} seed={`${turn.value.id}-${i}`} class="mt-1" />;
         return <Bubble key={i} variant={prose.value ? "ghost" as const : "muted" as const} class="max-w-full">
             <BubbleContent seed={`${turn.value.id}-${i}`}>
@@ -99,12 +101,13 @@ const TurnView = defineUi<{
   const turn = computed(() => _props["turn"]);
   const conversation = computed(() => _props["conversation"]);
   const live = computed(() => _props["live"]);
+  const locale = useLocaleText();
   return () => {
     if (turn.value.from === "me") {
       const first = turn.value.parts[0];
       return <Message align="end">
         <MessageContent>
-          <MessageHeader class="justify-end">you · {turn.value.time}</MessageHeader>
+          <MessageHeader class="justify-end">{locale.value.locale === "zh-CN" ? "你" : "you"} · {turn.value.time}</MessageHeader>
           <Bubble variant="outline" pen="you">
             <BubbleContent seed={turn.value.id}>{first?.kind === "text" ? first.text : "" as const}</BubbleContent>
           </Bubble>
@@ -151,6 +154,7 @@ const RemoveFile = defineUi<{
   };
 });
 type Props = {
+  locale?: "en" | "zh-CN";
   conversation: Conversation;
   status: ChatStatus;
   announce: string;
@@ -159,7 +163,7 @@ type Props = {
   onBack: () => void;
   className?: string;
 };
-export const ChatAppThread = defineUi<Props>("ChatAppThread", ["conversation", "status", "announce", "onSend", "onStop", "onBack", "class"], (_props, {
+export const ChatAppThread = defineUi<Props>("ChatAppThread", ["locale", "conversation", "status", "announce", "onSend", "onStop", "onBack", "class"], (_props, {
   slots: _slots
 }) => {
   const conversation = computed(() => _props["conversation"]);
@@ -169,6 +173,7 @@ export const ChatAppThread = defineUi<Props>("ChatAppThread", ["conversation", "
   const onStop = computed(() => _props["onStop"]);
   const onBack = computed(() => _props["onBack"]);
   const className = computed(() => _props["class"]);
+  const zh = computed(() => _props["locale"] === "zh-CN");
   const files = shallowRef<ChatFile[]>(initialState([]));
   const setFiles = stateSetter(files);
   const heading = useId();
@@ -177,7 +182,7 @@ export const ChatAppThread = defineUi<Props>("ChatAppThread", ["conversation", "
   return () => {
     return <Paper as="section" stock="card" tilt={0.25} tape="top" tapeKind="washi-dots" seed="chat-thread" aria-labelledby={heading} data-slot="chat-app-thread" class={cn("flex min-h-0 flex-col pt-5 pb-3", className.value)}>
       <header class="flex items-center gap-3 px-4 pb-2 sm:px-6">
-        <Button variant="ghost" size="icon-sm" class="@3xl/chat:hidden" onClick={onBack.value} aria-label="Back to chats">
+        <Button variant="ghost" size="icon-sm" class="@3xl/chat:hidden" onClick={onBack.value} aria-label={zh.value ? "返回聊天列表" : "Back to chats"}>
           <Icon name="arrow-left" class="rtl:-scale-x-100" />
         </Button>
         <ChatAppFace conversation={conversation.value} size={40} />
@@ -191,10 +196,10 @@ export const ChatAppThread = defineUi<Props>("ChatAppThread", ["conversation", "
 
       <MessageScrollerProvider autoScroll defaultScrollPosition="end">
         <MessageScroller class="min-h-0 flex-1">
-          <MessageScrollerViewport aria-label={`Messages with ${conversation.value.name}`}>
+          <MessageScrollerViewport aria-label={zh.value ? `与 ${conversation.value.name} 的消息` : `Messages with ${conversation.value.name}`}>
             <MessageScrollerContent aria-live={busy.value ? "off" as const : undefined}>
               <Marker variant="separator">
-                <MarkerContent>Today</MarkerContent>
+                <MarkerContent>{zh.value ? "今天" : "Today"}</MarkerContent>
               </Marker>
               {conversation.value.turns.map((t, i) => <MessageScrollerItem key={t.id} messageId={t.id} scrollAnchor={t.from === "me"}>
                   <TurnView turn={t} conversation={conversation.value} live={status.value === "streaming" && i === conversation.value.turns.length - 1 && t.from === "them"} />
@@ -204,7 +209,7 @@ export const ChatAppThread = defineUi<Props>("ChatAppThread", ["conversation", "
                     <MessageContent>
                       <Bubble variant="muted">
                         <BubbleContent seed="typing">
-                          <TypingIndicator variant={conversation.value.kind === "assistant" ? "squiggle" as const : "dots" as const} label={`${conversation.value.replyFrom ?? conversation.value.name} is writing a reply`} seed="typing" />
+                          <TypingIndicator variant={conversation.value.kind === "assistant" ? "squiggle" as const : "dots" as const} label={zh.value ? `${conversation.value.replyFrom ?? conversation.value.name} 正在输入回复` : `${conversation.value.replyFrom ?? conversation.value.name} is writing a reply`} seed="typing" />
                         </BubbleContent>
                       </Bubble>
                     </MessageContent>
@@ -233,15 +238,15 @@ export const ChatAppThread = defineUi<Props>("ChatAppThread", ["conversation", "
               </FileChip>)}
           </PromptInputAttachments>
           <PromptInputBody>
-            <PromptInputTextarea aria-label={`Message ${conversation.value.name}`} placeholder="write something kind" />
+            <PromptInputTextarea aria-label={zh.value ? `给 ${conversation.value.name} 发消息` : `Message ${conversation.value.name}`} placeholder={zh.value ? "写点温柔的话" : "write something kind"} />
           </PromptInputBody>
           <PromptInputFooter>
             <PromptInputTools>
-              <PromptInputButton size="icon-sm" aria-label="Attach a file" disabled={files.value.length >= attachable.value.length} onClick={() => setFiles(all => all.length < attachable.value.length ? [...all, attachable.value[all.length]] : all)}>
+              <PromptInputButton size="icon-sm" aria-label={zh.value ? "添加文件" : "Attach a file"} disabled={files.value.length >= attachable.value.length} onClick={() => setFiles(all => all.length < attachable.value.length ? [...all, attachable.value[all.length]] : all)}>
                 <Icon name="paperclip" />
               </PromptInputButton>
             </PromptInputTools>
-            <PromptInputHint class="@max-3xl/chat:sr-only">{busy.value ? "Press stop to interrupt" as const : "Enter to send, Shift+Enter for a new line" as const}</PromptInputHint>
+            <PromptInputHint class="@max-3xl/chat:sr-only">{busy.value ? zh.value ? "按停止中断" as const : "Press stop to interrupt" as const : zh.value ? "按 Enter 发送，Shift+Enter 换行" as const : "Enter to send, Shift+Enter for a new line" as const}</PromptInputHint>
             <PromptInputSubmit />
           </PromptInputFooter>
         </PromptInput>

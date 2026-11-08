@@ -17,7 +17,7 @@ import { ContentSlot } from "../widgets/ContentSlot";
 import { PreviewFrame } from "../widgets/PreviewFrame";
 import { useLoaded } from "../widgets/use-loaded";
 import { NotFoundPage } from "./NotFoundPage";
-import { localizedBlockDescription, localizedBlockTitle } from "../core/i18n";
+import { localizedBlockDescription, localizedBlockTitle, localizedTag } from "../core/i18n";
 export const BlocksIndexPage = defineUi<{}>("BlocksIndexPage", [], (_props, {
   slots: _slots
 }) => {
@@ -31,8 +31,8 @@ export const BlocksIndexPage = defineUi<{}>("BlocksIndexPage", [], (_props, {
             {zh ? <>区块在 <InlineCode>src/blocks/&lt;name&gt;/</InlineCode> 中包含文件后会出现在这里；添加 <InlineCode>src/docs/content/blocks/&lt;name&gt;.tsx</InlineCode> 即可显示实时预览。</> : <>A block appears here when it has files in <InlineCode>src/blocks/&lt;name&gt;/</InlineCode>. Add <InlineCode>src/docs/content/blocks/&lt;name&gt;.tsx</InlineCode> to show a live preview.</>}
           </p>
         </EmptyState> : <TileGrid>
-          {catalog.value.blocks.map(b => <Tile key={b.slug} to={paths.blocks(b.slug)} title={localizedBlockTitle(text.value.locale, b.slug, b.title)} description={localizedBlockDescription(text.value.locale, b.title, b.description)} meta={b.tags.map(t => <Chip key={t} tone="outline" plain>
-                  {t}
+          {catalog.value.blocks.map(b => <Tile key={b.slug} to={paths.blocks(b.slug)} title={localizedBlockTitle(text.value.locale, b.slug, b.title)} description={localizedBlockDescription(text.value.locale, b.slug, b.title, b.description)} meta={b.tags.map(t => <Chip key={t} tone="outline" plain>
+                  {localizedTag(text.value.locale, t)}
                 </Chip>)} />)}
         </TileGrid>}
     </Page>;
@@ -65,8 +65,8 @@ const BlockDocPage = defineUi<{
   return () => {
     const zh = text.value.locale === "zh-CN";
     const title = localizedBlockTitle(text.value.locale, block.value.slug, block.value.title);
-    return <Page kicker={<Link to={paths.blocks()}>{text.value.locale === "zh-CN" ? "区块" : "Blocks"}</Link>} title={title} description={localizedBlockDescription(text.value.locale, block.value.title, block.value.description)} meta={block.value.tags.map(t => <Chip key={t} tone="outline">
-          {t}
+    return <Page kicker={<Link to={paths.blocks()}>{text.value.locale === "zh-CN" ? "区块" : "Blocks"}</Link>} title={title} description={localizedBlockDescription(text.value.locale, block.value.slug, block.value.title, block.value.description)} meta={block.value.tags.map(t => <Chip key={t} tone="outline">
+          {localizedTag(text.value.locale, t)}
         </Chip>)} toc={[{
       id: "preview" as const,
       label: text.value.locale === "zh-CN" ? "预览" : "Preview"
@@ -85,7 +85,7 @@ const BlockDocPage = defineUi<{
     }} />}>
       <Section id="preview" title={text.value.locale === "zh-CN" ? "预览" : "Preview"}>
         {block.value.contentKey ? <PreviewFrame>
-            <Stage layout="full" height={520} label={`${block.value.title} ${text.value.locale === "zh-CN" ? "预览" : "preview"}`} surface={block.value.surface}>
+            <Stage layout="full" height={520} label={`${title} ${text.value.locale === "zh-CN" ? "预览" : "preview"}`} surface={block.value.surface}>
               <ContentSlot contentKey={block.value.contentKey} />
             </Stage>
           </PreviewFrame> : <Callout tone="todo" title={zh ? "暂无实时预览" : "No live preview yet"}>
@@ -130,7 +130,8 @@ const BlockFiles = defineUi<{
   const text = useSettings();
   return () => {
     if (block.value.files.length === 0) return <p class="dk-hint">{text.value.locale === "zh-CN" ? "当前构建中没有找到源码文件。" : "No source files found in this build."}</p>;
-    return <Tabs label={`${block.value.title} ${text.value.locale === "zh-CN" ? "文件" : "files"}`} items={block.value.files.map(file => ({
+    const title = localizedBlockTitle(text.value.locale, block.value.slug, block.value.title);
+    return <Tabs label={`${title} ${text.value.locale === "zh-CN" ? "文件" : "files"}`} items={block.value.files.map(file => ({
       id: file.path,
       label: file.path,
       content: () => <BlockFileSource block={block.value.slug} file={file} />

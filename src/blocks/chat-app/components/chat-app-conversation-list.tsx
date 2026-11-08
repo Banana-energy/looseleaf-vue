@@ -17,18 +17,20 @@ import { ChatAppFace } from "@/blocks/chat-app/components/chat-app-face";
 import { snippet, type Conversation } from "@/blocks/chat-app/components/chat-app-data";
 import { cn } from "@/lib/utils";
 type Props = {
+  locale?: "en" | "zh-CN";
   conversations: Conversation[];
   activeId: string;
   onSelect: (id: string) => void;
   className?: string;
 };
-export const ChatAppConversationList = defineUi<Props>("ChatAppConversationList", ["conversations", "activeId", "onSelect", "class"], (_props, {
+export const ChatAppConversationList = defineUi<Props>("ChatAppConversationList", ["locale", "conversations", "activeId", "onSelect", "class"], (_props, {
   slots: _slots
 }) => {
   const conversations = computed(() => _props["conversations"]);
   const activeId = computed(() => _props["activeId"]);
   const onSelect = computed(() => _props["onSelect"]);
   const className = computed(() => _props["class"]);
+  const zh = computed(() => _props["locale"] === "zh-CN");
   const query = shallowRef(initialState(""));
   const setQuery = stateSetter(query);
   const show = shallowRef<"all" | "unread">(initialState("all"));
@@ -41,9 +43,9 @@ export const ChatAppConversationList = defineUi<Props>("ChatAppConversationList"
     return <Paper as="aside" stock="pad" rules="none" tilt={-0.3} fastener="binder-clip" seed="chat-list" aria-labelledby={heading} data-slot="chat-app-list" class={cn("flex min-h-0 flex-col gap-3 pt-6 pb-3", className.value)}>
       <div class="flex items-center justify-between gap-3 px-4">
         <h2 id={heading} tabindex={-1} class="font-script text-[1.7rem] leading-none font-semibold outline-offset-4 focus-visible:outline-2 focus-visible:outline-focus">
-          Chats
+          {zh.value ? "聊天" : "Chats"}
         </h2>
-        {unreadTotal.value > 0 ? <Badge variant="secondary">{unreadTotal.value} new</Badge> : null}
+        {unreadTotal.value > 0 ? <Badge variant="secondary">{unreadTotal.value} {zh.value ? "条新消息" : "new"}</Badge> : null}
       </div>
 
       <div class="grid gap-2.5 px-4">
@@ -51,11 +53,11 @@ export const ChatAppConversationList = defineUi<Props>("ChatAppConversationList"
           <InputGroupAddon>
             <Icon name="search" />
           </InputGroupAddon>
-          <InputGroupInput type="search" placeholder="Search chats" aria-label="Search chats" value={query.value} onChange={(e: Event) => setQuery((e.target as HTMLInputElement).value)} />
+          <InputGroupInput type="search" placeholder={zh.value ? "搜索聊天" : "Search chats"} aria-label={zh.value ? "搜索聊天" : "Search chats"} value={query.value} onChange={(e: Event) => setQuery((e.target as HTMLInputElement).value)} />
         </InputGroup>
-        <ToggleGroup type="single" size="sm" variant="outline" value={show.value} onValueChange={v => setShow(v === "unread" ? "unread" as const : "all" as const)} aria-label="Show" class="w-fit">
-          <ToggleGroupItem value="all">All</ToggleGroupItem>
-          <ToggleGroupItem value="unread">Unread</ToggleGroupItem>
+        <ToggleGroup type="single" size="sm" variant="outline" value={show.value} onValueChange={v => setShow(v === "unread" ? "unread" as const : "all" as const)} aria-label={zh.value ? "显示" : "Show"} class="w-fit">
+          <ToggleGroupItem value="all">{zh.value ? "全部" : "All"}</ToggleGroupItem>
+          <ToggleGroupItem value="unread">{zh.value ? "未读" : "Unread"}</ToggleGroupItem>
         </ToggleGroup>
       </div>
 
@@ -63,10 +65,10 @@ export const ChatAppConversationList = defineUi<Props>("ChatAppConversationList"
         {rows.value.length === 0 ? <Empty seed="chat-none" class="p-2 md:p-4">
             <EmptyHeader>
               <EmptyMedia pose="search" size={88} />
-              <EmptyTitle>No chats match</EmptyTitle>
-              <EmptyDescription>{q.value ? `Nothing says “${query.value.trim()}”. Try a shorter word.` : "You are all caught up." as const}</EmptyDescription>
+            <EmptyTitle>{zh.value ? "没有匹配的聊天" : "No chats match"}</EmptyTitle>
+            <EmptyDescription>{q.value ? zh.value ? `没有内容匹配“${query.value.trim()}”。试试更短的关键词。` : `Nothing says “${query.value.trim()}”. Try a shorter word.` : zh.value ? "你已经处理完所有消息了。" : "You are all caught up." as const}</EmptyDescription>
             </EmptyHeader>
-          </Empty> : <ItemGroup ruled aria-label="Conversations">
+          </Empty> : <ItemGroup ruled aria-label={zh.value ? "会话" : "Conversations"}>
             {rows.value.map(c => {
             const active = c.id === activeId.value;
             return <Item key={c.id} asChild size="sm" seed={c.id}>
@@ -82,7 +84,7 @@ export const ChatAppConversationList = defineUi<Props>("ChatAppConversationList"
                       <span class="ll-num text-sm text-muted-foreground">{c.time}</span>
                       {c.unread > 0 ? <Badge size="sm" class="ll-num">
                           {c.unread}
-                          <span class="sr-only"> unread</span>
+                          <span class="sr-only"> {zh.value ? "未读" : "unread"}</span>
                         </Badge> : null}
                     </ItemActions>
                   </button>

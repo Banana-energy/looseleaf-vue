@@ -8,6 +8,7 @@ import { computed, shallowRef } from "vue";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { cx } from "../kit";
+import { useLocaleText } from "../core/settings";
 export const MIN_WIDTH = 240;
 const PRESETS = [{
   label: "Phone" as const,
@@ -27,6 +28,8 @@ export const PreviewFrame = defineUi<{
 }) => {
   const children = renderValue(() => readSlot(_slots.default));
   const className = computed(() => _props["class"]);
+  const locale = useLocaleText();
+  const presets = computed(() => locale.value.locale === "zh-CN" ? [{ label: "手机", width: 375 }, { label: "平板", width: 768 }, { label: "全宽", width: null }] as const : PRESETS);
   const width = shallowRef<number | null>(initialState(null));
   const setWidth = stateSetter(width);
   const room = shallowRef(initialState(1200));
@@ -84,13 +87,13 @@ export const PreviewFrame = defineUi<{
   });
   return () => {
     return <div class={cx("flex flex-col gap-2", className.value)}>
-      <div role="group" aria-label="Preview width" class="hidden items-center gap-1 sm:flex print:hidden">
-        {PRESETS.map(p => <Button key={p.label} type="button" variant="ghost" size="xs" aria-pressed={p.width === width.value} onClick={() => set.value(p.width)} class="aria-pressed:font-bold">
+      <div role="group" aria-label={locale.value.locale === "zh-CN" ? "预览宽度" : "Preview width"} class="hidden items-center gap-1 sm:flex print:hidden">
+        {presets.value.map(p => <Button key={p.label} type="button" variant="ghost" size="xs" aria-pressed={p.width === width.value} onClick={() => set.value(p.width)} class="aria-pressed:font-bold">
             {p.label}
             {p.width ? <span class="font-normal text-ink-muted"> {p.width}</span> : null}
           </Button>)}
         <span class="ms-auto ll-num font-type text-xs tracking-wide text-ink-muted">
-          {width.value ? `${width.value} px wide` : "full width" as const}
+          {width.value ? locale.value.locale === "zh-CN" ? `${width.value} 像素宽` : `${width.value} px wide` : locale.value.locale === "zh-CN" ? "全宽" : "full width" as const}
         </span>
       </div>
       <div ref={track} class="relative min-w-0">

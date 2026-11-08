@@ -8,7 +8,7 @@ import { computed } from "vue";
 import type { Catalog } from "./catalog";
 import { FOUNDATIONS, FOUNDATION_BY_SLUG } from "./foundations";
 import { paths, slugifyAnchor, type Route } from "./router-core";
-import { categoryLabel, localizedComponentTitle, localizedFoundationLabel, translate, type Locale } from "./i18n";
+import { categoryLabel, localizedBlockTitle, localizedComponentTitle, localizedFoundationLabel, translate, type Locale } from "./i18n";
 export const SITE_NAME = "Looseleaf";
 export const SITE_TAGLINE = "shadcn/ui, drawn by hand";
 export interface NavLinkModel {
@@ -91,7 +91,7 @@ export function buildNav(catalog: Catalog, route: Route, locale: Locale): NavSec
     count: catalog.blocks.length,
     links: catalog.blocks.map(b => ({
       id: b.slug,
-      label: b.title,
+      label: localizedBlockTitle(locale, b.slug, b.title),
       to: paths.blocks(b.slug),
       active: activeBlock === b.slug
     })),
@@ -132,9 +132,11 @@ export function routeTitle(route: Route, catalog: Catalog, locale: Locale): stri
         const component = catalog.bySlug.get(route.slug);
         return component ? localizedComponentTitle(locale, component.doc) : translate(locale, "route.componentNotFound");
       }
-      case "blocks":
+      case "blocks": {
         if (!route.slug) return translate(locale, "route.blocks");
-        return catalog.blockBySlug.get(route.slug)?.title ?? translate(locale, "route.blockNotFound");
+        const block = catalog.blockBySlug.get(route.slug);
+        return block ? localizedBlockTitle(locale, block.slug, block.title) : translate(locale, "route.blockNotFound");
+      }
       case "playground":
         return translate(locale, "route.playground");
       case "changelog":

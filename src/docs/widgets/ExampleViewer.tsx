@@ -142,7 +142,7 @@ const ExamplePreview = defineUi<{
     } = state.value.value;
     return <Remembered path={path.value}>
       <PreviewFrame class="mt-1">
-        <Stage layout={meta.layout} height={meta.height} label={`${title.value} preview`} surface={meta.stage === "desk" ? "desk" as const : "paper" as const} contain={meta.contain}>
+        <Stage layout={meta.layout} height={meta.height} label={`${title.value}${text.value.locale === "zh-CN" ? "预览" : " preview"}`} surface={meta.stage === "desk" ? "desk" as const : "paper" as const} contain={meta.contain}>
           <ErrorBoundary resetKey={path.value} title={text.value.locale === "zh-CN" ? "示例运行出错" : "This example crashed"}>
             <Suspense fallback={<Skeleton height={80} />}>
               <Example />

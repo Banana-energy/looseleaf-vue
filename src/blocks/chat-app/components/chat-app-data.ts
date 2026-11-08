@@ -261,6 +261,27 @@ export const CONVERSATIONS: Conversation[] = [{
     size: "120 KB" as const
   }]
 }];
+
+const ZH_TEXT: Record<string, string> = {
+  s0: "早上好。今天想做点什么？", s1: "可以给我的笔记加上标签，并在列表上方增加筛选行吗？", s2: "我先查看了 src/notes/list.tsx。标签会成为 Note 上的字符串数组，筛选项会显示在列表上方。", s3: "先试试 #recipes：列表会缩小到带有这个标签的笔记，顶部计数也会保持准确。", n0: "你看到校样了吗？蓝色已经快调对了。", n1: "‘快调对了’这句话里可是大有文章。", n2: "确实如此。周六带上好胶带和那把小裁纸刀。", c0: "校样正在晾线上晾着，过来看看。", c1: "没有照片就等于没发生。", c2: "我这就来，带着饼干。", j0: "纸张订单的收据发给你了。十二令，损坏一个角，不收费。", j1: "谢谢！我这边已经付款了。", m0: "落地后给我打电话？不着急，水壶已经烧上了。", "reply-s": "说得好。之前的计数来自未筛选列表，所以有一次显示不对。我把它移到了筛选器下面。", "reply-s-2": "十二条笔记，显示十一条，现在数字和页面一致了。", "reply-n": "周六十点。我会替你留好窗边的凳子。", "reply-c": "带饼干就能坐窗边的凳子。Nell 向你问好。", "reply-j": "很好。我在箱子里给你放了一张质量最好的纸。", "reply-m": "真好。水壶还在烧着。"
+};
+
+// 聊天区块的示例数据也参与文档本地化，避免中文界面仍显示整段英文对话。
+export function conversationsForLocale(locale: "en" | "zh-CN"): Conversation[] {
+  if (locale === "en") return CONVERSATIONS;
+  const text = (id: string, fallback: string) => ZH_TEXT[id] ?? fallback;
+  return CONVERSATIONS.map(conversation => ({
+    ...conversation,
+    name: conversation.id === "club" ? "周二小组" : conversation.name,
+    subtitle: ({ stubby: "正在和你一起写作的铅笔头", nell: "主要做活字印刷", club: "Nell、Mo、Ines 和另外 2 人", jo: "纸张供应商，非常有耐心", mum: "总是烧着水壶" } as Record<string, string>)[conversation.id] ?? conversation.subtitle,
+    turns: conversation.turns.map(turn => ({
+      ...turn,
+      parts: turn.parts.map((part, index) => part.kind === "text" ? { ...part, text: turn.id === "s2" && index === 3 && locale === "zh-CN" ? "先试试 #recipes：列表会缩小到带有这个标签的笔记，顶部计数也会保持准确。" : text(turn.id, part.text) } : part)
+    })),
+    reply: conversation.reply.map((part, index) => part.kind === "text" ? { ...part, text: text(`reply-${conversation.id}${index ? "-2" : ""}`, part.text) } : part)
+  }));
+}
+
 export function snippet(c: Conversation): string {
   const last = c.turns[c.turns.length - 1];
   if (!last) return "Nothing written yet";

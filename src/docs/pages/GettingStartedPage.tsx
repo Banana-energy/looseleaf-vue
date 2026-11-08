@@ -11,6 +11,7 @@ import { paths } from "../core/router-core";
 import { AnchorHeading, Callout, CodeBlock, InlineCode, Page, Prose, Section } from "../kit";
 import { CommandTabs } from "../widgets/CommandTabs";
 import { ContentSlot } from "../widgets/ContentSlot";
+import { useLocaleText } from "../core/settings";
 const FONT_PACKAGES = ["@fontsource/ibm-plex-mono"];
 const FONT_IMPORTS = `@import url("https://looseleaf-vue.banana-energy.cn/fonts/kevin-sans.css");
 @import "@fontsource/ibm-plex-mono/400.css";
@@ -59,8 +60,10 @@ const ATTRIBUTES = `<html lang="en" data-density="compact" data-motion="reduced"
 export const GettingStartedPage = defineUi<{}>("GettingStartedPage", [], (_props, {
   slots: _slots
 }) => {
+  const text = useLocaleText();
   return () => {
-    return <Page kicker="Start here" title="Getting started" description="Looseleaf is a shadcn registry: the CLI copies drawn-by-hand components into your project, and you own the code." toc="auto">
+    const zh = text.value.locale === "zh-CN";
+    return <Page kicker={zh ? "从这里开始" : "Start here"} title={zh ? "快速开始" : "Getting started"} description={zh ? "Looseleaf 是一个 shadcn 注册表：CLI 会将手绘组件复制到你的项目中，源码由你掌握。" : "Looseleaf is a shadcn registry: the CLI copies drawn-by-hand components into your project, and you own the code."} toc="auto">
       <ContentSlot contentKey="getting-started" fallback={<GettingStartedBody />} />
     </Page>;
   };

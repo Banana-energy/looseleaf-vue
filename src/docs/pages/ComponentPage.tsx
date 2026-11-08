@@ -105,7 +105,7 @@ const ComponentDocPage = defineUi<{
               {more.value.map(example => <ExampleViewer key={example.path} entry={example} slug={entry.value.slug} headingLevel={3} lazy />)}
             </div> : <EmptyState title={text.value.t("page.noExamples")}>
               <p>
-                Add files to <InlineCode>src/docs/examples/{entry.value.slug}/</InlineCode>; they appear here on their own.
+                {text.value.locale === "zh-CN" ? <>将文件添加到 <InlineCode>src/docs/examples/{entry.value.slug}/</InlineCode> 后，示例会自动出现在这里。</> : <>Add files to <InlineCode>src/docs/examples/{entry.value.slug}/</InlineCode>; they appear here on their own.</>}
               </p>
             </EmptyState>}
         </Section> : null}

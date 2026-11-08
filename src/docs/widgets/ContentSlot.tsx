@@ -9,6 +9,7 @@ import type { ContentModule, Loader } from "../core/catalog";
 import { useCatalog } from "../core/catalog-context";
 import { Skeleton } from "../kit";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { useLocaleText } from "../core/settings";
 const lazyCache = new WeakMap<Loader<ContentModule>, UI.ComponentType>();
 function lazyBody(loader: Loader<ContentModule>): UI.ComponentType {
   let component = lazyCache.get(loader);
@@ -41,10 +42,11 @@ export const ContentSlot = defineUi<{
   const fallback = computed(() => _props["fallback"] === undefined ? null : _props["fallback"]);
   const _nestedHook0 = useCatalog();
   const loader = computed(() => _nestedHook0.value.content.get(contentKey.value));
+  const text = useLocaleText();
   return () => {
     if (!loader.value) return <>{fallback.value}</>;
     const Body = lazyBody(loader.value);
-    return <ErrorBoundary resetKey={contentKey.value} title="This page body crashed">
+    return <ErrorBoundary resetKey={contentKey.value} title={text.value.locale === "zh-CN" ? "页面内容加载失败" : "This page body crashed"}>
       <Suspense fallback={<Skeleton height={240} />}>
         <Body />
       </Suspense>
