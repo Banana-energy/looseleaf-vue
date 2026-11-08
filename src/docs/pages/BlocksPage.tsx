@@ -78,10 +78,10 @@ const BlockDocPage = defineUi<{
       label: text.value.locale === "zh-CN" ? "文件" : "Files"
     }]} footer={<Pager label={text.value.locale === "zh-CN" ? "上一区块和下一区块" : "Previous and next block"} prev={prev.value && {
       to: paths.blocks(prev.value.slug),
-      title: prev.value.title
+      title: localizedBlockTitle(text.value.locale, prev.value.slug, prev.value.title)
     }} next={next.value && {
       to: paths.blocks(next.value.slug),
-      title: next.value.title
+      title: localizedBlockTitle(text.value.locale, next.value.slug, next.value.title)
     }} />}>
       <Section id="preview" title={text.value.locale === "zh-CN" ? "预览" : "Preview"}>
         {block.value.contentKey ? <PreviewFrame>
