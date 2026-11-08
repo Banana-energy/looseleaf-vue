@@ -7,21 +7,16 @@ import { cssStyle } from "@/lib/css";
 import { computed, shallowRef } from "vue";
 import { Button } from "@/components/ui/button";
 import { Sketchpad, type SketchStroke, type SketchpadHandle } from "@/components/ui/sketchpad";
+import type { SketchPoint } from "@/lib/ink/recipes/sketchpad-ink";
 export const meta = {
   title: "Replay" as const,
   description: "A read-only sketchpad that draws itself on again, stroke after stroke, along each center line. Reduced motion shows the finished picture." as const,
   layout: "stack" as const
 };
-const STEP = defineUi<number>("STEP", [], (_props, {
-  slots: _slots
-}) => {
-  const n = _props;
-  return () => {
-    return Array.from({
-      length: n + 1
-    }, (_, i) => f(i / n));
-  };
-});
+// 生成可回放的等间距笔画点；这里使用普通函数，避免把数据生成器误当成 Vue 组件。
+const STEP = (count: number, fn: (progress: number) => SketchPoint): SketchPoint[] => Array.from({
+  length: count + 1
+}, (_, index) => fn(index / count));
 const HEART: SketchStroke[] = [{
   id: "heart" as const,
   tool: "marker" as const,

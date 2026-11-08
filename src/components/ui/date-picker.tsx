@@ -185,6 +185,10 @@ const PickerShell = defineUi<ShellProps>("PickerShell", ["id", "placeholder", "d
   const bad = shallowRef(initialState(false));
   const setBad = stateSetter(bad);
   const inputRef = shallowRef<HTMLInputElement | null | null>(null);
+  // InputControl 是组件包装层，使用 elementRef 将 ref 解包为真实 input 节点，确保表单校验 API 可用。
+  const inputElementRef = elementRef<HTMLInputElement>(element => {
+    inputRef.value = element;
+  });
   const setReadable = computed(() => (ok: boolean): void => inputRef.value?.setCustomValidity(ok ? "" as const : invalidMessage.value));
   const shown = computed(() => draft.value && draft.value.base === text.value ? draft.value.text : text.value);
   watchDependencies(() => {
@@ -248,7 +252,7 @@ const PickerShell = defineUi<ShellProps>("PickerShell", ["id", "placeholder", "d
       {typeable.value ? <PopoverAnchor asChild>
           <div data-slot="date-picker" data-state={open.value ? "open" as const : "closed" as const} data-ink-focus="within" ref={boxMerged.value} {...domProps(hostProps.value)} class={field.value}>
             {node.value}
-            <InputControl ref={inputRef} id={id.value} type="text" autocomplete="off" spellcheck={false} placeholder={ph.value} disabled={disabled.value} readonly={readOnly.value} required={required.value} aria-invalid={invalid.value || undefined} value={shown.value} onChange={(e: Event) => {
+            <InputControl ref={inputElementRef} id={id.value} type="text" autocomplete="off" spellcheck={false} placeholder={ph.value} disabled={disabled.value} readonly={readOnly.value} required={required.value} aria-invalid={invalid.value || undefined} value={shown.value} onChange={(e: Event) => {
             setBad(false);
             setReadable.value(true);
             setDraft({

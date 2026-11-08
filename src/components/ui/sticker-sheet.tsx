@@ -109,6 +109,10 @@ const StickerSheet = defineUi<StickerSheetProps>("StickerSheet", ["class", "stic
     if (!controlled.value) setInner(next);
     onPeeledChange.value?.(next);
   };
+  // 受控值变化时同步最新快照，避免在 render 中写入响应式状态触发递归更新。
+  watchDependencies(() => {
+    latest.value = peeled.value;
+  }, () => [peeled.value], false);
   const ctx = computed<StickerSheetContextValue>(() => ({
     peeled: peeled.value,
     size: size.value,
@@ -141,20 +145,24 @@ const StickerSheet = defineUi<StickerSheetProps>("StickerSheet", ["class", "stic
   }));
   const print = computed(() => proxyRefs(_printCore));
   const items = renderValue(() => Children.count(children.value) ? children.value : (stickers.value ?? []).map(n => <StickerSheetItem key={n} name={n} />));
-  const here = computed(() => new Set<string>());
-  const unknown = shallowRef(0);
-  const left = computed(() => here.value.size + unknown.value - [...here.value].filter(id => peeled.value.includes(id)).length);
+  const itemData = computed(() => Children.toArray(items.value).map(child => {
+    const props = isValidElement(child) ? child.props as {
+      name?: unknown;
+      id?: unknown;
+    } | null : null;
+    if (!props || typeof props.name !== "string" || !hasSticker(props.name)) return {
+      id: null
+    } as const;
+    return {
+      id: typeof props.id === "string" ? props.id : props.name
+    } as const;
+  }));
+  const left = computed(() => {
+    const ids = new Set(itemData.value.map(item => item.id).filter((id): id is string => id !== null));
+    const unknown = itemData.value.filter(item => item.id === null).length;
+    return ids.size + unknown - [...ids].filter(id => peeled.value.includes(id)).length;
+  });
   return () => {
-    latest.value = peeled.value;
-    Children.toArray(items.value).forEach(child => {
-      const p = isValidElement(child) ? child.props as {
-        name?: unknown;
-        id?: unknown;
-      } : null;
-      if (p && typeof p.name === "string") {
-        if (hasSticker(p.name)) here.value.add(typeof p.id === "string" ? p.id : p.name);
-      } else unknown.value++;
-    });
     return <StickerSheetContext.Provider value={ctx.value}>
       <Paper data-slot="sticker-sheet" data-backing={backing.value} data-disabled={disabled.value ? "" as const : undefined} role="group" aria-labelledby={title.value ? titleId : undefined} aria-label={title.value ? undefined : label.value} ref={ref.value} stock={B.value.stock} tilt={tilt.value} seed={seed.value} class={cn("w-fit max-w-full p-4 pt-4 has-[[data-dragging]]:z-(--ll-z-raised)", disabled.value && "opacity-70", className.value)} style={cssStyle({
         ...(B.value.tint ? {

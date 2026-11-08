@@ -157,6 +157,8 @@ type SketchpadProps = Omit<UI.ComponentProps<"div">, "onChange" | "defaultValue"
 const Sketchpad = defineUi<SketchpadProps>("Sketchpad", ["class", "value", "defaultValue", "onValueChange", "tool", "defaultTool", "onToolChange", "tools", "color", "defaultColor", "onColorChange", "size", "defaultSize", "onSizeChange", "width", "height", "readOnly", "disabled", "replay", "replaySpeed", "apiRef", "seed"], (_props, {
   slots: _slots
 }) => {
+  // 强制刷新计数器必须先于依赖它的 computed 声明，避免初始化阶段触发 TDZ。
+  const _state49 = shallowRef(0);
   const className = computed(() => {
     void _state49.value;
     return _props["class"];
@@ -320,7 +322,6 @@ const Sketchpad = defineUi<SketchpadProps>("Sketchpad", ["class", "value", "defa
     future: [],
     last: null
   });
-  const _state49 = shallowRef(0);
   const force = (...args) => {
     _state49.value = ((x: number) => x + 1)(_state49.value, ...args);
   };

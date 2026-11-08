@@ -140,6 +140,7 @@ const InstallSummary = defineUi<{
   const info = computed(() => _props["info"]);
   const dependsOn = computed(() => _props["dependsOn"]);
   const loading = computed(() => _props["loading"]);
+  const text = useLocaleText();
   return () => {
     if (loading.value) return <p class={HINT}>{text.value.locale === "zh-CN" ? "正在读取安装内容……" : "Reading what this installs…"}</p>;
     if (info.value.source === "none") return null;

@@ -134,6 +134,8 @@ const Combobox = defineUi<ComboboxProps>("Combobox", [], (_props, {
   slots: _slots
 }) => {
   const props = _props;
+  // 依赖注册项刷新视图的计数器必须先初始化，后续 computed 才能安全读取它。
+  const _state37 = shallowRef(initialState(0));
   const multiple = computed(() => {
     void _state37.value;
     return props.multiple === undefined ? false : props.multiple;
@@ -259,7 +261,6 @@ const Combobox = defineUi<ComboboxProps>("Combobox", [], (_props, {
     return new Map(items.value.map(i => [i.value, i]));
   });
   const seen = shallowRef(new Map<string, string>());
-  const _state37 = shallowRef(initialState(0));
   const bump = stateSetter(_state37);
   const register = (v: string, l: string) => {
     if (seen.value.get(v) === l) return;

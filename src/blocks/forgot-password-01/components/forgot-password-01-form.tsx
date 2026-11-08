@@ -54,24 +54,25 @@ const ForgotPasswordForm = defineUi<ForgotPasswordFormProps>("ForgotPasswordForm
   const handleSubmit = computed(() => _hook14.value.handleSubmit);
   const errors = computed(() => _hook14.value.formState.errors);
   const isSubmitting = computed(() => _hook14.value.formState.isSubmitting);
+  // 提交函数需要在 computed 创建前声明，确保表单回调捕获到同一作用域中的实现。
+  async function send(email: string) {
+    setFormError(null);
+    try {
+      await (onSubmit.value ?? pretend)({
+        email
+      });
+      setSentTo(email);
+      return true;
+    } catch (error) {
+      setFormError(error instanceof Error && error.message ? error.message : "We could not send that link. Try again in a moment." as const);
+      return false;
+    }
+  }
   watchDependencies(() => {
     if (sentTo.value) titleRef.value?.focus();
   }, () => [sentTo.value], false);
   const submit = computed(() => handleSubmit.value(values => send(values.email)));
   return () => {
-    async function send(email: string) {
-      setFormError(null);
-      try {
-        await (onSubmit.value ?? pretend)({
-          email
-        });
-        setSentTo(email);
-        return true;
-      } catch (error) {
-        setFormError(error instanceof Error && error.message ? error.message : "We could not send that link. Try again in a moment." as const);
-        return false;
-      }
-    }
     if (sentTo.value) {
       return <div class={cn("flex flex-col gap-6", className.value)} {...domProps(props.value)}>
         <Card tape="corner" seed="forgot-password-01-sent">

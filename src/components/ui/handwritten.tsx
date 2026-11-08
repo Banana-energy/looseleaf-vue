@@ -37,9 +37,10 @@ function walk(children: UI.ReactNode, w: Walk): UI.ReactNode[] {
     if (!isValidElement<{
       children?: UI.ReactNode;
       "data-handwritten"?: string;
-    }>(node) || node.props["data-handwritten"] === "off") return node;
+    // Vue 的纯文本包装节点可能没有 props，先确认 props 存在再读取跳过标记。
+    }>(node) || node.props?.["data-handwritten"] === "off") return node;
     const walked = node.type === Fragment || typeof node.type === "string" && !SKIP.has(node.type);
-    if (!walked || node.props.children == null) return node;
+    if (!walked || node.props?.children == null) return node;
     return cloneElement(node, undefined, ...walk(node.props.children, w));
   });
 }
