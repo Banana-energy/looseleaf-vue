@@ -4,7 +4,7 @@ import { defineUi, omitProps, domProps, elementRef, jsxTag } from "@/lib/compone
 import { createContext, useContext, watchDependencies, stateSetter, initialState, readSlot, renderValue, useExternalStore, useImperativeHandle, useLooseleafDirection, Suspense, lazy as vueLazy, memo as vueMemo, startTransition as vueStartTransition } from "@/lib/composables";
 import { Children, cloneElement, createElement, isValidElement } from "@/lib/vnode";
 import { cssStyle } from "@/lib/css";
-import { computed, useId, shallowRef } from "vue";
+import { computed, onMounted, useId, shallowRef } from "vue";
 import { ChatAlignContext } from "@/lib/chat-align";
 import { makeRng } from "@/lib/ink/rng";
 import { cn } from "@/lib/utils";
@@ -97,25 +97,34 @@ const MessageText = defineUi<Omit<UI.ComponentProps<"span">, "children"> & {
   const s = computed(() => seed.value === undefined ? id : String(seed.value));
   const bidi = computed(() => RTL_SCRIPT.test(text.value));
   const parts = computed(() => bidi.value ? [] : text.value.split(WORDS));
-  const last = shallowRef(parts.value.length - 1);
-  const settled = shallowRef<number | null | null>(null);
-  const word = shallowRef(0);
-  const out = renderValue(() => parts.value.map((p, i) => {
-    if (p === "") return null;
-    if (i % 2 === 1) return p;
-    const n = word.value++;
-    const fresh = streaming.value && i >= (settled.value ?? 0);
-    return <span key={i} data-word={fresh ? "fresh" as const : undefined} class={cn(fresh && "animate-soak", streaming.value && i === last.value && CARET) || undefined} style={cssStyle(jitter.value ? jitterOf(s.value, n) : undefined)}>
-        {p}
-      </span>;
-  }));
-  return () => {
-    while (last.value > 0 && (parts.value[last.value] === "" || last.value % 2 === 1)) last.value--;
+  // 末词索引只从当前分词结果派生，避免在渲染函数中回写响应式 ref。
+  const last = computed(() => {
+    let end = parts.value.length - 1;
+    while (end > 0 && (parts.value[end] === "" || end % 2 === 1)) end--;
+    return end;
+  });
+  const settled = shallowRef<number | null>(null);
+  // 首次挂载后记录已完成文本的边界；更新阶段只读取它，不在渲染期间修改状态。
+  onMounted(() => {
     if (settled.value === null) {
       let end = parts.value.length;
       while (end > 0 && parts.value[end - 1] === "") end--;
       settled.value = end;
     }
+  });
+  const out = renderValue(() => {
+    let word = 0;
+    return parts.value.map((p, i) => {
+      if (p === "") return null;
+      if (i % 2 === 1) return p;
+      const n = word++;
+      const fresh = streaming.value && i >= (settled.value ?? 0);
+      return <span key={i} data-word={fresh ? "fresh" as const : undefined} class={cn(fresh && "animate-soak", streaming.value && i === last.value && CARET) || undefined} style={cssStyle(jitter.value ? jitterOf(s.value, n) : undefined)}>
+          {p}
+        </span>;
+    });
+  });
+  return () => {
     return <span data-slot="message-text" data-streaming={streaming.value ? "" as const : undefined} dir={bidi.value ? "auto" as const : undefined} class={cn("whitespace-pre-wrap", bidi.value && streaming.value && CARET, className.value)} {...domProps(props.value)}>
       {jitter.value && !bidi.value ? <style>
           {CSS}
