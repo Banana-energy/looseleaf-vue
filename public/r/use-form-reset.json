@@ -3,7 +3,7 @@
   "name": "use-form-reset",
   "type": "registry:hook",
   "title": "use-form-reset",
-  "description": "The use-form-reset React hook from Looseleaf.",
+  "description": "The use-form-reset Vue hook from Looseleaf.",
   "files": [
     {
       "path": "src/hooks/use-form-reset.ts",

@@ -51,12 +51,12 @@
       "Density `calm` draws hairline pencil outlines with a flat wash (the tail included); forced colors replace the drawing with a real outline.",
       "Difference from upstream: the body is drawn, so `bg-*`, `border-*` and `rounded-*` classes on `BubbleContent` (or `*:data-[slot=bubble-content]:bg-*` on `Bubble`) paint a plain CSS box behind the ink instead of restyling it. Choose the look with `variant`, `pen` and `shape`."
     ],
-    "usage": "import { Bubble, BubbleContent, BubbleGroup, BubbleReactions } from \"@/components/ui/bubble\"\n\nexport function Example() {\n  return (\n    <BubbleGroup>\n      <Bubble variant=\"muted\">\n        <BubbleContent>Can you add tags to my notes?</BubbleContent>\n      </Bubble>\n      <Bubble variant=\"default\" align=\"end\">\n        <BubbleContent>Yes, small ones.</BubbleContent>\n        <BubbleReactions>+1</BubbleReactions>\n      </Bubble>\n    </BubbleGroup>\n  )\n}\n\n<Bubble shape=\"note\"><BubbleContent paper={{ tilt: -1.5 }}>meet me at four</BubbleContent></Bubble>",
+    "usage": "import { Bubble, BubbleContent, BubbleGroup, BubbleVueions } from \"@/components/ui/bubble\"\n\nexport function Example() {\n  return (\n    <BubbleGroup>\n      <Bubble variant=\"muted\">\n        <BubbleContent>Can you add tags to my notes?</BubbleContent>\n      </Bubble>\n      <Bubble variant=\"default\" align=\"end\">\n        <BubbleContent>Yes, small ones.</BubbleContent>\n        <BubbleVueions>+1</BubbleVueions>\n      </Bubble>\n    </BubbleGroup>\n  )\n}\n\n<Bubble shape=\"note\"><BubbleContent paper={{ tilt: -1.5 }}>meet me at four</BubbleContent></Bubble>",
     "parts": [
       "BubbleGroup",
       "Bubble",
       "BubbleContent",
-      "BubbleReactions"
+      "BubbleVueions"
     ]
   }
 }

@@ -3,7 +3,7 @@
   "name": "drawer",
   "type": "registry:ui",
   "title": "Drawer",
-  "description": "A slip of paper you pull up from the bottom of the screen (or in from any edge), built on vaul. From the bottom it is torn off a pad along its top edge with a strip of tape as the grab tab; drag it, flick it away, or give it snap points.",
+  "description": "A slip of paper you pull up from the bottom of the screen (or in from any edge), built on vaul-vue. From the bottom it is torn off a pad along its top edge with a strip of tape as the grab tab; drag it, flick it away, or give it snap points.",
   "categories": [
     "Overlays"
   ],
@@ -35,8 +35,8 @@
       "tape"
     ],
     "a11y": [
-      "vaul builds on Reka UI Dialog: role=dialog named by DrawerTitle and described by DrawerDescription, Escape closes, the page behind is inert, and focus returns to the trigger.",
-      "Focus moves onto the sheet itself when it opens, not onto the first control (vaul's own default leaves it on the trigger behind the dim, and a field would pop a phone keyboard up over the drawer): a screen reader announces the dialog and Tab starts inside it. Pass `autoFocus` on `Drawer` to jump to the first control instead.",
+      "vaul-vue builds on Reka UI Dialog: role=dialog named by DrawerTitle and described by DrawerDescription, Escape closes, the page behind is inert, and focus returns to the trigger.",
+      "Focus moves onto the sheet itself when it opens, not onto the first control (vaul-vue's own default leaves it on the trigger behind the dim, and a field would pop a phone keyboard up over the drawer): a screen reader announces the dialog and Tab starts inside it. Pass `autoFocus` on `Drawer` to jump to the first control instead.",
       "The drawer sits on the same level of the z-scale as dialogs and sheets (`--ll-z-overlay`), so one opened from a dialog stacks above it by open order. A click on a Sonner toast does not count as \"outside\" and does not dismiss it. On a phone with a home indicator the sheet pads its bottom by `env(safe-area-inset-bottom)`.",
       "Dragging is a pointer shortcut only: every drawer also closes with Escape, the Cancel/Close buttons you provide, or a tap on the dim.",
       "The tape is a decorative aria-hidden strip, not a control. With reduced motion the slip simply appears; in `calm` density it is a plain cut slip."

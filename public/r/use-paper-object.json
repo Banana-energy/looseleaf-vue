@@ -3,7 +3,7 @@
   "name": "use-paper-object",
   "type": "registry:hook",
   "title": "use-paper-object",
-  "description": "The use-paper-object React hook from Looseleaf.",
+  "description": "The use-paper-object Vue hook from Looseleaf.",
   "registryDependencies": [
     "ink",
     "ink-paper"

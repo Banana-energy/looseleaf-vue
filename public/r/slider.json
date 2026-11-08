@@ -45,7 +45,7 @@
       "Pointer: dragging the thumb or pressing anywhere on the groove works, on touch too (touch-action: none on the slider); the thumb's hit area is larger than the drawing.",
       "The drawing is aria-hidden, pointer-events: none and never focusable. Keyboard focus draws a blue felt ring around the knob. Windows high contrast replaces the ink by real boxes (a bordered groove, a Highlight range, a solid knob).",
       "The value is not shown by the slider: pair it with an <output> or text next to it, as the examples do.",
-      "In a react-hook-form Form, FormLabel's htmlFor cannot name a slider (a span with role=slider is not a labelable element): give the FormLabel an `id` and the Slider `aria-labelledby` with it, as the Form \"Every control\" example does. FormControl's aria-describedby and aria-invalid do reach the thumb.",
+      "In a vee-validate Form, FormLabel's htmlFor cannot name a slider (a span with role=slider is not a labelable element): give the FormLabel an `id` and the Slider `aria-labelledby` with it, as the Form \"Every control\" example does. FormControl's aria-describedby and aria-invalid do reach the thumb.",
       "A non-finite value (NaN) is held at `min`. Form reset: a name'd slider goes back to its defaultValue and the range follows."
     ],
     "usage": "import { Label } from \"@/components/ui/label\"\nimport { Slider } from \"@/components/ui/slider\"\n\nexport function Example() {\n  return (\n    <div class=\"grid w-full max-w-sm gap-3\">\n      <Label id=\"pressure-label\">Pencil pressure</Label>\n      <Slider defaultValue={[60]} max={100} step={1} aria-labelledby=\"pressure-label\" />\n    </div>\n  )\n}",

@@ -3,7 +3,7 @@
   "name": "use-live-motion",
   "type": "registry:hook",
   "title": "use-live-motion",
-  "description": "The use-live-motion React hook from Looseleaf.",
+  "description": "The use-live-motion Vue hook from Looseleaf.",
   "registryDependencies": [
     "ink"
   ],

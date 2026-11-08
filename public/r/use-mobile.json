@@ -3,7 +3,7 @@
   "name": "use-mobile",
   "type": "registry:hook",
   "title": "use-mobile",
-  "description": "The use-mobile React hook from Looseleaf.",
+  "description": "The use-mobile Vue hook from Looseleaf.",
   "files": [
     {
       "path": "src/hooks/use-mobile.ts",
